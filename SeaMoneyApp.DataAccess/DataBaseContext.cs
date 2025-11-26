@@ -1,0 +1,21 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SeaMoneyApp.DataAccess.Models;
+
+namespace SeaMoneyApp.DataAccess;
+
+public class DataBaseContext : DbContext
+{
+    public DbSet<Account> Accounts { get; set; }
+    public DbSet<ChangeRubToDollar> ChangeRubToDollars { get; set; }
+    public DbSet<PersonalBonus> PersonalBonuses { get; set; }
+    public DbSet<Position> Positions { get; set; }
+    public DbSet<Salary> Salaries { get; set; }
+    public DbSet<WageLog> WageLogs { get; set; }
+
+
+    public DataBaseContext(DbContextOptions<DataBaseContext> options)
+        : base(options)
+    {
+        
+    }
+}
