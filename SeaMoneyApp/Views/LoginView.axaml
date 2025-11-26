@@ -1,0 +1,20 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:LoginViewModel, IsDesignTimeCreatable=True}"
+             
+             x:DataType="viewModels:LoginViewModel"
+             
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SeaMoneyApp.Views.LoginView">
+    <Grid RowDefinitions="48,48,48,48,*">
+        <TextBlock Grid.Row="0" Text="Login view" Margin="5" />
+        <TextBox Grid.Row="1" Text="{Binding Username, Mode=TwoWay}" />
+        <TextBox Grid.Row="2" PasswordChar="*"
+                 Text="{Binding Password, Mode=TwoWay}" />
+        <Button Grid.Row="3" Content="Login" Command="{Binding Login}" />
+    </Grid>
+</UserControl>
