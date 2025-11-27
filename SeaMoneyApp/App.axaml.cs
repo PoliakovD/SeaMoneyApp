@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -93,6 +94,9 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        
+        Localization.Localization.Culture = new CultureInfo("ru-RU");
+        
         LoggerSetup.SetupLogger(LogLevel.Debug); // Регистрируем логгер
         
         switch (ApplicationLifetime)

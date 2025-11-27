@@ -27,4 +27,7 @@
     <data name="LoginText" xml:space="preserve">
         <value>Имя пользователя</value>
     </data>
+    <data name="EnterText" xml:space="preserve">
+        <value>Войти</value>
+    </data>
 </root>

@@ -1,13 +1,9 @@
-﻿using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using System.ComponentModel;
-using System.Windows.Input;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using System.Reactive;
+using System.Runtime.Serialization;
+using System.Windows.Input;
 using ReactiveUI;
-using ReactiveUI.SourceGenerators;
 using Splat;
-
 
 namespace SeaMoneyApp.ViewModels;
 
@@ -16,19 +12,24 @@ public partial class MainViewModel : ViewModelBase, IScreen
 {
     private readonly ReactiveCommand<Unit, Unit> _search;
     private readonly ReactiveCommand<Unit, Unit> _login;
-   
+
     private RoutingState _router = new RoutingState();
+
+    private SearchViewModel? _searchViewModel;
+    private LoginViewModel? _loginViewModel;
 
     public MainViewModel()
     {
-        Router = new RoutingState();
-        
         var canLogin = this
             .WhenAnyObservable(x => x.Router.CurrentViewModel)
             .Select(current => !(current is LoginViewModel));
 
         _login = ReactiveCommand.Create(
-            () => { Router.Navigate.Execute(new LoginViewModel()); },
+            () =>
+            {
+                _loginViewModel ??= new LoginViewModel();
+                Router.Navigate.Execute(_loginViewModel);
+            },
             canLogin);
 
         var canSearch = this
@@ -36,9 +37,14 @@ public partial class MainViewModel : ViewModelBase, IScreen
             .Select(current => !(current is SearchViewModel));
 
         _search = ReactiveCommand.Create(
-            () => { Router.Navigate.Execute(new SearchViewModel()); },
+            () =>
+            {
+                _searchViewModel ??= new SearchViewModel();
+                Router.Navigate.Execute(_searchViewModel);
+            },
             canSearch);
     }
+
     [DataMember]
     public RoutingState Router
     {
@@ -47,6 +53,5 @@ public partial class MainViewModel : ViewModelBase, IScreen
     }
 
     public ICommand Search => _search;
-
     public ICommand Login => _login;
 }
