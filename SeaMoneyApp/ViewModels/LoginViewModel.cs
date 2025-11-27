@@ -14,11 +14,11 @@ namespace SeaMoneyApp.ViewModels;
 public class LoginViewModel : ViewModelBase, IRoutableViewModel
 {
     private readonly ReactiveCommand<Unit, Unit> _login;
-    [Reactive] private string? Password { get; set; }
+    [Reactive] public string? Password { get; set; }
 
     [DataMember]
     [Reactive]
-    private string? Username{ get; set; }
+    public string? Username{ get; set; }
 
     public LoginViewModel(IScreen? screen = null)
     {

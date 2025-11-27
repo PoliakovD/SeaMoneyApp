@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
         <reactiveUi:RoutedViewHost Grid.Row="0" Router="{Binding Router}">
             <reactiveUi:RoutedViewHost.DefaultContent>
-                <TextBlock Text="Default Content" />
+                <TextBlock Text="Router Default Content" />
             </reactiveUi:RoutedViewHost.DefaultContent>
         </reactiveUi:RoutedViewHost>
         <Grid Grid.Row="1">

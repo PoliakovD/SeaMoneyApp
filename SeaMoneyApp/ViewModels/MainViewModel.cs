@@ -5,19 +5,24 @@ using System.Windows.Input;
 using System.Reactive.Linq;
 using System.Reactive;
 using ReactiveUI;
+using ReactiveUI.SourceGenerators;
 using Splat;
 
 
 namespace SeaMoneyApp.ViewModels;
+
 [DataContract]
-public class MainViewModel : ViewModelBase, IScreen
+public partial class MainViewModel : ViewModelBase, IScreen
 {
     private readonly ReactiveCommand<Unit, Unit> _search;
     private readonly ReactiveCommand<Unit, Unit> _login;
+   
     private RoutingState _router = new RoutingState();
 
     public MainViewModel()
     {
+        Router = new RoutingState();
+        
         var canLogin = this
             .WhenAnyObservable(x => x.Router.CurrentViewModel)
             .Select(current => !(current is LoginViewModel));
@@ -34,7 +39,6 @@ public class MainViewModel : ViewModelBase, IScreen
             () => { Router.Navigate.Execute(new SearchViewModel()); },
             canSearch);
     }
-
     [DataMember]
     public RoutingState Router
     {
