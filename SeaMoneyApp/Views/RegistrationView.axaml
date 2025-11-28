@@ -1,0 +1,26 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SeaMoneyApp.Localization"
+             
+             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             
+             x:DataType="viewModels:RegistrationViewModel"
+             
+             x:Class="SeaMoneyApp.Views.RegistrationView">
+    
+    <Grid RowDefinitions="48,48,48,48,48,*">
+        <TextBlock Grid.Row="0" Text="{x:Static local:Localization.RegistrationText}" Margin="5" />
+        <TextBox Grid.Row="1" Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Grid.Row="2" PasswordChar="*"
+                 Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="3" 
+                   Text="{Binding ErrorMessage}" 
+                   Margin="5" 
+                   Foreground="Red"
+                   IsVisible="{Binding ErrorMessage}" />
+        <Button Grid.Row="4" Content="{x:Static local:Localization.EnterText}" Command="{Binding LoginCommand}" />
+    </Grid>
+</UserControl>
