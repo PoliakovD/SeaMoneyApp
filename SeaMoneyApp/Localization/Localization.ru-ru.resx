@@ -30,4 +30,13 @@
     <data name="EnterText" xml:space="preserve">
         <value>Войти</value>
     </data>
+    <data name="PositionText" xml:space="preserve">
+        <value>Должность</value>
+    </data>
+    <data name="RegistrationText" xml:space="preserve">
+        <value>Регистрация</value>
+    </data>
+    <data name="BackText" xml:space="preserve">
+        <value>Назад</value>
+    </data>
 </root>

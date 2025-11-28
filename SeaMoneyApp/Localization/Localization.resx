@@ -38,4 +38,13 @@
     <data name="EnterText" xml:space="preserve">
         <value>Enter</value>
     </data>
+    <data name="RegistrationText" xml:space="preserve">
+        <value>Registration</value>
+    </data>
+    <data name="PositionText" xml:space="preserve">
+        <value>Position</value>
+    </data>
+    <data name="BackText" xml:space="preserve">
+        <value>Back</value>
+    </data>
 </root>
