@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeaMoneyApp.DataAccess.Models;
-
+[Table("table_personal_bonuses")]
 public class PersonalBonus
 {
     [Column("id")]

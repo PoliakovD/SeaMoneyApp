@@ -8,8 +8,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
+using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.Drivers;
 using SeaMoneyApp.Services;
+using SeaMoneyApp.Services.Authorization;
 using SeaMoneyApp.ViewModels;
 using SeaMoneyApp.Views;
 using Splat;
@@ -98,6 +100,14 @@ public partial class App : Application
         Localization.Localization.Culture = new CultureInfo("ru-RU");
         
         LoggerSetup.SetupLogger(LogLevel.Debug); // Регистрируем логгер
+        // Регистрируем сервис database context как Singleton
+        //Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>(() => new AuthorizationService());
+        
+        Locator.CurrentMutable.RegisterLazySingleton<DataBaseContext>(() => DataBaseContextFactory.CreateWithDefaultConnectionString());
+        
+        // Регистрируем сервис авторизации как Singleton
+        Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>
+            (() => new AuthorizationService());
         
         switch (ApplicationLifetime)
         {
@@ -108,6 +118,7 @@ public partial class App : Application
                 Locator.CurrentMutable.RegisterConstant<IScreen>(screen);
 
                 desktop.MainWindow = new MainWindow { DataContext = screen };
+                screen.Router.Navigate.Execute(new LoginViewModel());
                 desktop.ShutdownRequested += (sender, e) => SaveAppStateManually();
                 break;
             }
@@ -135,6 +146,7 @@ public partial class App : Application
         
         Locator.CurrentMutable.Register<IViewFor<SearchViewModel>>(() => new SearchView());
         Locator.CurrentMutable.Register<IViewFor<LoginViewModel>>(() => new LoginView());
+        Locator.CurrentMutable.Register<IViewFor<RegistrationViewModel>>(() => new RegistrationView());
         
         LogHost.Default.Info("Registered views successfully");
         base.OnFrameworkInitializationCompleted();

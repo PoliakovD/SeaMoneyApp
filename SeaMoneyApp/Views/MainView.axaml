@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:reactiveUi="http://reactiveui.net"
              
+             xmlns:view="clr-namespace:SeaMoneyApp.Views"
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:LoginViewModel, IsDesignTimeCreatable=True}"
              
@@ -17,30 +18,10 @@
     <vm:MainViewModel />
   </Design.DataContext>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="48" />
-        </Grid.RowDefinitions>
-        <reactiveUi:RoutedViewHost Grid.Row="0" Router="{Binding Router}">
+        <reactiveUi:RoutedViewHost  Router="{Binding Router}">
             <reactiveUi:RoutedViewHost.DefaultContent>
-                <TextBlock Text="Router Default Content" />
+                <view:LoginView/>
             </reactiveUi:RoutedViewHost.DefaultContent>
         </reactiveUi:RoutedViewHost>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" 
-                    Command="{Binding Search}"
-                    Content="Search" />
-            <Button Grid.Column="1" 
-                    Command="{Binding Login}"
-                    Content="Login" />
-            <Button Grid.Column="2" 
-                    Command="{Binding Router.NavigateBack}"
-                    Content="Back" />
-        </Grid>
     </Grid>
 </UserControl>

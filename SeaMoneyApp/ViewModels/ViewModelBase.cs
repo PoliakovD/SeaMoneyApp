@@ -2,6 +2,6 @@
 
 namespace SeaMoneyApp.ViewModels;
 
-public abstract class ViewModelBase : ReactiveObject
+public abstract partial class ViewModelBase : ReactiveObject
 {
 }

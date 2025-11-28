@@ -10,48 +10,51 @@ namespace SeaMoneyApp.ViewModels;
 [DataContract]
 public partial class MainViewModel : ViewModelBase, IScreen
 {
-    private readonly ReactiveCommand<Unit, Unit> _search;
-    private readonly ReactiveCommand<Unit, Unit> _login;
-
     private RoutingState _router = new RoutingState();
-
-    private SearchViewModel? _searchViewModel;
+    
     private LoginViewModel? _loginViewModel;
+    private RegistrationViewModel? _registrationViewModel;
+    private SearchViewModel? _searchViewModel;
 
     public MainViewModel()
     {
-        var canLogin = this
-            .WhenAnyObservable(x => x.Router.CurrentViewModel)
-            .Select(current => !(current is LoginViewModel));
-
-        _login = ReactiveCommand.Create(
-            () =>
-            {
-                _loginViewModel ??= new LoginViewModel();
-                Router.Navigate.Execute(_loginViewModel);
-            },
-            canLogin);
-
-        var canSearch = this
-            .WhenAnyObservable(x => x.Router.CurrentViewModel)
-            .Select(current => !(current is SearchViewModel));
-
-        _search = ReactiveCommand.Create(
-            () =>
-            {
-                _searchViewModel ??= new SearchViewModel();
-                Router.Navigate.Execute(_searchViewModel);
-            },
-            canSearch);
+// Создаём команды навигации
+        LoginCommand = ReactiveCommand.Create(EnsureLoginViewModelAndNavigate);
+        SearchCommand = ReactiveCommand.Create(EnsureSearchViewModelAndNavigate);
+        RegisterCommand = ReactiveCommand.Create(EnsureRegistrationViewModelAndNavigate);
+        // Команда "Назад" — доступна, если есть куда возвращаться
     }
 
-    [DataMember]
+    [IgnoreDataMember]
     public RoutingState Router
     {
         get => _router;
         set => this.RaiseAndSetIfChanged(ref _router, value);
     }
+    [IgnoreDataMember]
+    public ICommand LoginCommand { get; }
 
-    public ICommand Search => _search;
-    public ICommand Login => _login;
+    [IgnoreDataMember]
+    public ICommand SearchCommand { get; }
+
+    [IgnoreDataMember]
+    public ICommand RegisterCommand { get; }
+    
+    private void EnsureLoginViewModelAndNavigate()
+    {
+        _loginViewModel ??= new LoginViewModel();
+        Router.Navigate.Execute(_loginViewModel);
+    }
+
+    private void EnsureSearchViewModelAndNavigate()
+    {
+        _searchViewModel ??= new SearchViewModel();
+        Router.Navigate.Execute(_searchViewModel);
+    }
+
+    private void EnsureRegistrationViewModelAndNavigate()
+    {
+        _registrationViewModel ??= new RegistrationViewModel();
+        Router.Navigate.Execute(_registrationViewModel);
+    }
 }

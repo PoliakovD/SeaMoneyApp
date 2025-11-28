@@ -56,4 +56,8 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SeaMoneyApp.DataAccess\SeaMoneyApp.DataAccess.csproj" />
+    </ItemGroup>
+
 </Project>
