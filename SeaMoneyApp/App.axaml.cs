@@ -118,20 +118,19 @@ public partial class App : Application
                 Locator.CurrentMutable.RegisterConstant<IScreen>(screen);
 
                 desktop.MainWindow = new MainWindow { DataContext = screen };
-                screen.Router.Navigate.Execute(new LoginViewModel());
+               // screen.Router.Navigate.Execute(new LoginViewModel());
                 desktop.ShutdownRequested += (sender, e) => SaveAppStateManually();
                 break;
             }
             case ISingleViewApplicationLifetime singleView:
             {
                 // На Android — вручную загружаем состояние
-                LoadAppStateManuallyAsync().Wait();
+                LoadAppStateManuallyAsync().GetAwaiter().GetResult();
 
                 var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
                 Locator.CurrentMutable.RegisterConstant<IScreen>(screen);
 
                 singleView.MainView = new MainView { DataContext = screen };
-
                 singleView.MainView.DetachedFromVisualTree += async (sender, e) =>
                 {
                     // Сохраняем состояние вручную
@@ -147,6 +146,8 @@ public partial class App : Application
         Locator.CurrentMutable.Register<IViewFor<SearchViewModel>>(() => new SearchView());
         Locator.CurrentMutable.Register<IViewFor<LoginViewModel>>(() => new LoginView());
         Locator.CurrentMutable.Register<IViewFor<RegistrationViewModel>>(() => new RegistrationView());
+
+        Locator.Current.GetService<IScreen>()?.Router.Navigate.Execute(new LoginViewModel());
         
         LogHost.Default.Info("Registered views successfully");
         base.OnFrameworkInitializationCompleted();

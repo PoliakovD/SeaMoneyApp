@@ -15,7 +15,7 @@ namespace SeaMoneyApp.ViewModels;
 [DataContract]
 public partial class LoginViewModel : ViewModelBase, IRoutableViewModel
 {
-    public IScreen HostScreen { get; }
+    public IScreen HostScreen { get; init; }
     public string UrlPathSegment => "/login";
    
     private string? _password = string.Empty;
