@@ -94,7 +94,7 @@ namespace SeaMoneyApp.DataAccess.Migrations
 
                     b.HasIndex("position_id");
 
-                    b.ToTable("PersonalBonuses");
+                    b.ToTable("table_personal_bonuses");
                 });
 
             modelBuilder.Entity("SeaMoneyApp.DataAccess.Models.Position", b =>

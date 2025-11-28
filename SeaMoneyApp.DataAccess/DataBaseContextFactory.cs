@@ -31,4 +31,6 @@ public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContex
 
     public static DataBaseContext CreateForTesting() => 
         new DataBaseContextFactory().CreateDbContext(["Test"]);
+    public static DataBaseContext CreateWithDefaultConnectionString() => 
+        new DataBaseContextFactory().CreateDbContext(["DefaultConnection"]);
 }
