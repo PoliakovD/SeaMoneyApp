@@ -39,4 +39,7 @@
     <data name="BackText" xml:space="preserve">
         <value>Назад</value>
     </data>
+    <data name="ChoosePositionText" xml:space="preserve">
+        <value>Выбрать должность</value>
+    </data>
 </root>

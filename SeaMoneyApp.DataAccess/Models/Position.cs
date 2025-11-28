@@ -14,5 +14,9 @@ public class Position
     [Column("name")]
     [Required]
     public string Name { get; set; }
-    
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }

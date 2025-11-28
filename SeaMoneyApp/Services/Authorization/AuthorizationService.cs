@@ -69,11 +69,17 @@ public class AuthorizationService : IAuthorizationService
             return false;
         }
         
-        if(_dbContext.Accounts.FirstOrDefault(u => u.Login == account.Login && u.Password ==account.Password) is null);
+        if(_dbContext.Accounts.FirstOrDefault(u => u.Login == account.Login && u.Password ==account.Password) is null)
         {
             _dbContext.Accounts.Add(account);
             _dbContext.SaveChanges();
-            LogHost.Default.Debug("User registred: " + account.Login);
+        }
+        else
+        {
+            var errorMsg = "Cannot register user already exist: " + account.Login;
+            LogHost.Default.Debug(errorMsg);
+            _errorMessageSubject.OnNext(errorMsg);
+            return false;
         }
        
         _isLoggedIn = true;

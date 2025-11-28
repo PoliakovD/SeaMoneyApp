@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
+             xmlns:c="clr-namespace:SeaMoneyApp.Components"
              
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -11,16 +12,34 @@
              
              x:Class="SeaMoneyApp.Views.RegistrationView">
     
-    <Grid RowDefinitions="48,48,48,48,48,*">
-        <TextBlock Grid.Row="0" Text="{x:Static local:Localization.RegistrationText}" Margin="5" />
-        <TextBox Grid.Row="1" Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Row="2" PasswordChar="*"
-                 Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBlock Grid.Row="3" 
+    <Grid RowDefinitions="*,*,*,*,*,*,*,*,*">
+        <c:InputComponent Grid.Row="1" Label="{x:Static local:Localization.LoginText}"
+                          Value="{Binding Path=Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        
+        <c:InputComponent Grid.Row="2" Label="{x:Static local:Localization.PasswordText}"
+                          Value="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        
+        <c:InputComponent Grid.Row="3" Label="{x:Static local:Localization.ChoosePositionText}" 
+                          Value="{Binding Path=SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        
+        <ListBox Grid.Row="4" ItemsSource="{Binding Positions}"
+                 SelectedItem="{Binding SelectedPosition}"
+                 SelectionMode="Single"/>
+
+        <TextBlock Grid.Row="5" 
                    Text="{Binding ErrorMessage}" 
                    Margin="5" 
                    Foreground="Red"
                    IsVisible="{Binding ErrorMessage}" />
-        <Button Grid.Row="4" Content="{x:Static local:Localization.EnterText}" Command="{Binding LoginCommand}" />
+        
+        <StackPanel Grid.Row="6" Orientation="Horizontal">
+            
+            <Button  Content="{x:Static local:Localization.EnterText}" 
+                     Command="{Binding HostScreen.Router.NavigateBack}" />
+            
+            <Button  Margin="40,0,0,0" Content="{x:Static local:Localization.RegistrationText}" 
+                     Command="{Binding HostScreen.Router.NavigateBack}" />
+            
+        </StackPanel>
     </Grid>
 </UserControl>

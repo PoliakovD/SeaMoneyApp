@@ -31,8 +31,6 @@
                      Command="{Binding LoginCommand}" />
             <Button  Margin="40,0,0,0" Content="{x:Static local:Localization.RegistrationText}" 
                      Command="{Binding ToRegistrationCommand}" />
-            <Button  Margin="40,0,0,0" Content="{x:Static local:Localization.BackText}" 
-                     Command="{Binding HostScreen.Router.NavigateBack}" />
         </StackPanel>
        
     </Grid>

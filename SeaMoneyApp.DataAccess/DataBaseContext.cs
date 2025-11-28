@@ -18,4 +18,15 @@ public class DataBaseContext : DbContext
     {
         
     }
+
+    public IEnumerable<Position> GetAllPositions()
+    {
+        return Positions.AsEnumerable();
+    }
+
+    public IEnumerable<Position> GetPositionsByName(string name)
+    {
+        var positions = GetAllPositions();
+        return positions.Where(product => product.Name.Contains(name, StringComparison.CurrentCultureIgnoreCase));
+    }
 }
