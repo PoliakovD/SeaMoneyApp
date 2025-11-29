@@ -1,11 +1,13 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using SeaMoneyApp.DataAccess;
@@ -108,13 +110,15 @@ public partial class App : Application
         // Регистрируем сервис авторизации как Singleton
         Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>
             (() => new AuthorizationService());
+        var screen = new MainViewModel();
         
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
             {
-                LoadAppStateManuallyAsync().Wait();
-                var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
+                //LoadAppStateManuallyAsync().GetAwaiter().GetResult();
+                //var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
+                
                 Locator.CurrentMutable.RegisterConstant<IScreen>(screen);
 
                 desktop.MainWindow = new MainWindow { DataContext = screen };
@@ -125,18 +129,19 @@ public partial class App : Application
             case ISingleViewApplicationLifetime singleView:
             {
                 // На Android — вручную загружаем состояние
-                LoadAppStateManuallyAsync().GetAwaiter().GetResult();
+                //LoadAppStateManuallyAsync().GetAwaiter().GetResult();
 
-                var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
+                //var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
+                
                 Locator.CurrentMutable.RegisterConstant<IScreen>(screen);
 
                 singleView.MainView = new MainView { DataContext = screen };
-                singleView.MainView.DetachedFromVisualTree += async (sender, e) =>
-                {
-                    // Сохраняем состояние вручную
-                    await new NewtonsoftJsonSuspensionDriver(AppStatePath)
-                        .SaveState(RxApp.SuspensionHost.GetAppState<MainViewModel>());
-                };
+               // singleView.MainView.DetachedFromVisualTree += async (sender, e) =>
+               // {
+               //     // Сохраняем состояние вручную
+               //     await new NewtonsoftJsonSuspensionDriver(AppStatePath)
+                //        .SaveState(RxApp.SuspensionHost.GetAppState<MainViewModel>());
+                //};
                 break;
             }
         }
@@ -147,9 +152,24 @@ public partial class App : Application
         Locator.CurrentMutable.Register<IViewFor<LoginViewModel>>(() => new LoginView());
         Locator.CurrentMutable.Register<IViewFor<RegistrationViewModel>>(() => new RegistrationView());
 
-        Locator.Current.GetService<IScreen>()?.Router.Navigate.Execute(new LoginViewModel());
+        Locator.Current.GetService<IScreen>()?.Router.Navigate.Execute(new LoginViewModel(screen));
         
         LogHost.Default.Info("Registered views successfully");
+        
+        
+        //Test
+        var context = Locator.Current.GetService<DataBaseContext>();
+        context?.Database.EnsureCreated();
+        var positions = context?.Positions.ToList();
+        var str=context.Database.GetConnectionString();
+        LogHost.Default.Debug($"Loaded positions count: {positions?.Count}");
+        LogHost.Default.Debug($"Connection string is: {str}");
+        //Test
+        
+        
+        
+        
         base.OnFrameworkInitializationCompleted();
     }
 }
+

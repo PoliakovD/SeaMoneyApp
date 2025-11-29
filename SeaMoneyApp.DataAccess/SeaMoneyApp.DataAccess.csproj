@@ -22,12 +22,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="appsettings.json">
+      <None Remove="appsettings.json" />
+      <EmbeddedResource Include="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="sea_money_app.db">
+      </EmbeddedResource>
+      <None Remove="sea_money_app.db" />
+      <EmbeddedResource Include="sea_money_app.db">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

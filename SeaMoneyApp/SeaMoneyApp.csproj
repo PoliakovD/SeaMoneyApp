@@ -49,13 +49,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-
-    <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
+    
     <ItemGroup>
       <ProjectReference Include="..\SeaMoneyApp.DataAccess\SeaMoneyApp.DataAccess.csproj" />
     </ItemGroup>

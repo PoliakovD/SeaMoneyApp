@@ -20,7 +20,7 @@
     <Grid>
         <reactiveUi:RoutedViewHost  Router="{Binding Router}">
             <reactiveUi:RoutedViewHost.DefaultContent>
-                <view:LoginView/>
+               <TextBlock> Default</TextBlock>
             </reactiveUi:RoutedViewHost.DefaultContent>
         </reactiveUi:RoutedViewHost>
     </Grid>

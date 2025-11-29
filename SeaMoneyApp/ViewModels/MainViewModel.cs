@@ -10,15 +10,22 @@ namespace SeaMoneyApp.ViewModels;
 [DataContract]
 public partial class MainViewModel : ViewModelBase, IScreen
 {
-    private RoutingState _router = new RoutingState();
+    private RoutingState _router;
     
     private LoginViewModel? _loginViewModel;
     private RegistrationViewModel? _registrationViewModel;
     private SearchViewModel? _searchViewModel;
 
+    public LoginViewModel? LoginViewModel
+    {
+        get => _loginViewModel;
+    }
+    
     public MainViewModel()
     {
-// Создаём команды навигации
+        Router ??= new RoutingState();
+        
+        // Создаём команды навигации
         LoginCommand = ReactiveCommand.Create(EnsureLoginViewModelAndNavigate);
         SearchCommand = ReactiveCommand.Create(EnsureSearchViewModelAndNavigate);
         RegisterCommand = ReactiveCommand.Create(EnsureRegistrationViewModelAndNavigate);

@@ -21,4 +21,5 @@ public class MainActivity : AvaloniaMainActivity<App>
             .WithInterFont()
             .UseReactiveUI();
     }
+   
 }
