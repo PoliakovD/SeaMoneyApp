@@ -16,6 +16,7 @@
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
+        <EmbeddedResource Include="sea_money_app.db" />
     </ItemGroup>
 
     <ItemGroup>

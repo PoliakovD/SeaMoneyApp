@@ -1,4 +1,121 @@
-﻿using System.Reflection;
+﻿// using System.Reflection;
+// using System.Text;
+// using Microsoft.EntityFrameworkCore;
+// using Microsoft.EntityFrameworkCore.Design;
+// using Microsoft.Extensions.Configuration;
+//
+// namespace SeaMoneyApp.DataAccess;
+//
+// public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContext>
+// {
+//     private const string DbFileName = "sea_money_app.db";
+//
+//     private string GetConnectionString(string connectionName = "DefaultConnection")
+//     {
+//         var assembly = Assembly.GetExecutingAssembly();
+//         var resourceName = "SeaMoneyApp.DataAccess.appsettings.json";
+//
+//         using var stream = assembly.GetManifestResourceStream(resourceName);
+//         if (stream == null)
+//             throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
+//
+//         using var reader = new StreamReader(stream);
+//         var json = reader.ReadToEnd();
+//
+//         var config = new ConfigurationBuilder()
+//             .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(json)))
+//             .Build();
+//
+//         var connectionStringTemplate = config.GetConnectionString(connectionName);
+//         var basePath = GetBasePath();
+//         var dbPath = Path.Combine(basePath, DbFileName);
+//
+//         // Копируем БД только если её нет
+//         EnsureDatabaseCopied(dbPath);
+//
+//         return connectionStringTemplate.Replace("{BasePath}", basePath);
+//     }
+//
+//     private void EnsureDatabaseCopied(string dbPath)
+//     {
+//         if (File.Exists(dbPath))
+//             return; // Не перезаписываем существующую БД
+//
+//         var directory = Path.GetDirectoryName(dbPath);
+//         if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+//             Directory.CreateDirectory(directory);
+//
+//         if (OperatingSystem.IsAndroid())
+//         {
+// #if ANDROID
+//             try
+//             {
+//                 var assetStream = global::Android.App.Application.Context.Assets.Open(DbFileName);
+//                 using var fileStream = File.Create(dbPath);
+//                 assetStream.CopyTo(fileStream);
+//                 assetStream.Close();
+//                 return;
+//             }
+//             catch (Exception ex)
+//             {
+//                 throw new InvalidOperationException($"Failed to copy DB from Assets: {ex.Message}", ex);
+//             }
+// #else
+//             throw new PlatformNotSupportedException();
+// #endif
+//         }
+//         else
+//         {
+//             // Desktop: ищем в выходной папке
+//             var sourcePath = Path.Combine(AppContext.BaseDirectory, DbFileName);
+//             if (File.Exists(sourcePath))
+//             {
+//                 File.Copy(sourcePath, dbPath);
+//             }
+//             else
+//             {
+//                 // Создаём пустую БД (если нет исходной)
+//                 var options = new DbContextOptionsBuilder<DataBaseContext>()
+//                     .UseSqlite($"Data Source={dbPath}")
+//                     .Options;
+//                 var context = new DataBaseContext(options);
+//                 context.Database.EnsureCreated();
+//             }
+//         }
+//     }
+//
+//     private string GetBasePath()
+//     {
+//         if (OperatingSystem.IsAndroid())
+//         {
+//             return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+//         }
+//         else
+//         {
+//             var exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+//             return exeDir ?? Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+//         }
+//     }
+//
+//     public DataBaseContext CreateDbContext(string[] args)
+//     {
+//         var connectionName = args.Length > 0 ? args[0] : "DefaultConnection";
+//         var connectionString = GetConnectionString(connectionName);
+//
+//         var optionsBuilder = new DbContextOptionsBuilder<DataBaseContext>();
+//         optionsBuilder.UseSqlite(connectionString);
+//
+//         return new DataBaseContext(optionsBuilder.Options);
+//     }
+//
+//     public static DataBaseContext CreateForTesting() => 
+//         new DataBaseContextFactory().CreateDbContext(["Test"]);
+//
+//     public static DataBaseContext CreateWithDefaultConnectionString() => 
+//         new DataBaseContextFactory().CreateDbContext(["DefaultConnection"]);
+// }
+
+using System.Reflection;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -8,95 +125,89 @@ namespace SeaMoneyApp.DataAccess;
 
 public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContext>
 {
-    const string defaultDbName = "sea_money_app.db";
+    private const string DbFileName = "sea_money_app.db";
+    private static IDatabaseInitializer? _initializer;
+
+    public static void SetInitializer(IDatabaseInitializer? initializer)
+    {
+        _initializer = initializer;
+    }
+
     private string GetConnectionString(string connectionName = "DefaultConnection")
     {
-        // Загружаем appsettings.json как встроенный ресурс
         var assembly = Assembly.GetExecutingAssembly();
         var resourceName = "SeaMoneyApp.DataAccess.appsettings.json";
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
         if (stream == null)
-            throw new FileNotFoundException($"Embedded resource '{resourceName}' not found. Check the name and that it's set as 'EmbeddedResource' in .csproj.");
+            throw new FileNotFoundException($"Embedded resource '{resourceName}' not found.");
 
         using var reader = new StreamReader(stream);
         var json = reader.ReadToEnd();
-        
+
         var config = new ConfigurationBuilder()
             .AddJsonStream(new MemoryStream(Encoding.UTF8.GetBytes(json)))
             .Build();
 
         var connectionStringTemplate = config.GetConnectionString(connectionName);
-
-        // Заменяем {BasePath} на реальный путь
         var basePath = GetBasePath();
-        
-        var connectionString = connectionStringTemplate.Replace("{BasePath}", basePath);
-        
-        var dbPath = Path.Combine(basePath, defaultDbName);
-        CopyEmbeddedDatabase(dbPath);
-        return connectionString;
-       
+        var dbPath = Path.Combine(basePath, DbFileName);
+
+        // Инициализируем БД через внешний инициализатор
+        InitializeDatabase(dbPath);
+
+        return connectionStringTemplate.Replace("{BasePath}", basePath);
     }
-    
-    private void CopyEmbeddedDatabase(string dbPath)
+
+    private void InitializeDatabase(string dbPath)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = "SeaMoneyApp.DataAccess.sea_money_app.db";
+        if (File.Exists(dbPath))
+            return;
 
-        using var resourceStream = assembly.GetManifestResourceStream(resourceName);
-        if (resourceStream == null)
-            throw new InvalidOperationException("Database embedded resource not found.");
+        var directory = Path.GetDirectoryName(dbPath);
+        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
 
-        using var fileStream = File.Create(dbPath);
-        resourceStream.CopyTo(fileStream);
+        // Используем внешний инициализатор (на Android) или копируем с диска
+        _initializer?.Initialize(dbPath);
+
+        // Если инициализатор не задан — пытаемся скопировать с диска (Desktop)
+        if (!File.Exists(dbPath))
+        {
+            var sourcePath = Path.Combine(AppContext.BaseDirectory, DbFileName);
+            if (File.Exists(sourcePath))
+            {
+                File.Copy(sourcePath, dbPath);
+            }
+            else
+            {
+                // Создаём пустую БД
+                var options = new DbContextOptionsBuilder<DataBaseContext>()
+                    .UseSqlite($"Data Source={dbPath}")
+                    .Options;
+                var context = new DataBaseContext(options);
+                context.Database.EnsureCreated();
+            }
+        }
     }
-    
+
     private string GetBasePath()
     {
-        if (OperatingSystem.IsAndroid())
-        {
-            // На Android используем внутреннюю папку приложения
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            return appData; // Например: /data/data/com.company.seamoneyapp/files
-        }
-        else if (OperatingSystem.IsWindows())
-        {
-            var exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return exePath ?? Directory.GetCurrentDirectory();
-            
-        }
-        else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
-        {
-            var folder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var appFolder = Path.Combine(folder, "seamoneyapp");
-            Directory.CreateDirectory(appFolder);
-            return appFolder;
-        }
-        else
-        {
-            // Fallback
-            var exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return exePath ?? Directory.GetCurrentDirectory();
-        }
-    }
-    
-    public DataBaseContext CreateDbContext(string[] args)
-    {
-        var connectionString = args.Length == 0 
-            ? GetConnectionString() 
-            : GetConnectionString(args[0]);
-        
-        var optionsBuilder = new DbContextOptionsBuilder<DataBaseContext>();
-        optionsBuilder.UseSqlite(connectionString);
-        var resultDbContext = new DataBaseContext(optionsBuilder.Options);
-        return resultDbContext;
+        var basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        return basePath;
     }
 
-    public static DataBaseContext CreateForTesting() => 
-        new DataBaseContextFactory().CreateDbContext(["Test"]);
+    public DataBaseContext CreateDbContext(string[] args)
+    {
+        var connectionName = args.Length > 0 ? args[0] : "DefaultConnection";
+        var connectionString = GetConnectionString(connectionName);
+
+        var optionsBuilder = new DbContextOptionsBuilder<DataBaseContext>();
+        optionsBuilder.UseSqlite(connectionString);
+
+        return new DataBaseContext(optionsBuilder.Options);
+    }
+
     public static DataBaseContext CreateWithDefaultConnectionString() => 
         new DataBaseContextFactory().CreateDbContext(["DefaultConnection"]);
-    
-    
 }
