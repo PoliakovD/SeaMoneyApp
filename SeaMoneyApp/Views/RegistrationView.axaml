@@ -19,12 +19,12 @@
         <c:InputComponent Grid.Row="2" Label="{x:Static local:Localization.PasswordText}"
                           Value="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         
-        <c:InputComponent Grid.Row="3" Label="{x:Static local:Localization.ChoosePositionText}" 
-                          Value="{Binding Path=SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Label Grid.Row="3" Content="{x:Static local:Localization.ChoosePositionText}"/>
+        <AutoCompleteBox Grid.Row="4" 
+                         ItemsSource="{Binding Positions}"
+                         SelectedItem="{Binding SelectedPosition}"
+                         FilterMode="ContainsCaseSensitive"/>
         
-        <ListBox Grid.Row="4" ItemsSource="{Binding Positions}"
-                 SelectedItem="{Binding SelectedPosition}"
-                 SelectionMode="Single"/>
         <Grid Grid.Row="5" ColumnDefinitions="2*,*">
             <Label Grid.Column="0" Content="{x:Static local:Localization.ChooseToursInRankText}"/>
             <ComboBox Grid.Column="1" ItemsSource="{Binding ToursInRanks}" 

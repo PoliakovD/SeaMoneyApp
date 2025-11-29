@@ -160,12 +160,12 @@ public partial class App : Application
         
         
         //Test
-        var context = Locator.Current.GetService<DataBaseContext>();
-        context?.Database.EnsureCreated();
-        var positions = context?.Positions.ToList();
-        var str=context.Database.GetConnectionString();
-        LogHost.Default.Debug($"Loaded positions count: {positions?.Count}");
-        LogHost.Default.Debug($"Connection string is: {str}");
+        // var context = Locator.Current.GetService<DataBaseContext>();
+        // context?.Database.EnsureCreated();
+        // var positions = context?.Positions.ToList();
+        // var str=context.Database.GetConnectionString();
+        // LogHost.Default.Debug($"Loaded positions count: {positions?.Count}");
+        // LogHost.Default.Debug($"Connection string is: {str}");
         //Test
         
         

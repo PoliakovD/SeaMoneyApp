@@ -44,7 +44,7 @@ public class AuthorizationService : IAuthorizationService
         }
 
         // TODO use Hash(password)
-        var account = _dbContext.Accounts.FirstOrDefault(u => u.Login == username && u.Password == password);
+        var account = _dbContext.Accounts.FirstOrDefault(u => u.Login == username);
         if (account == null)
         {
             var errorMsg = "User " + username + " not found";
@@ -53,14 +53,22 @@ public class AuthorizationService : IAuthorizationService
             return false;
         }
 
-        _isLoggedIn = true;
-        // Уведомляем подписчиков
-        _isLoggedInSubject.OnNext(true); 
-        _loggedInAccount.OnNext(account);
-        _errorMessageSubject.OnNext(null);
+        if (account.Password == password)
+        {
+            _isLoggedIn = true;
+            // Уведомляем подписчиков
+            _isLoggedInSubject.OnNext(true); 
+            _loggedInAccount.OnNext(account);
+            _errorMessageSubject.OnNext(null);
 
-        LogHost.Default.Info("User logged in: " + username);
-        return true;
+            LogHost.Default.Info("User logged in: " + username);
+            return true;
+        }
+        var errorMsgLast = "Wrong Password!";
+        LogHost.Default.Info(errorMsgLast);
+        _errorMessageSubject.OnNext(errorMsgLast);
+        return false;
+        
     }
 
     public bool Register(string? login, string? password, Position? position, short? toursInRank)
@@ -78,7 +86,7 @@ public class AuthorizationService : IAuthorizationService
 
         if (position is null)
         {
-            var errorMsg = "Position Cannot be null, Please select a position";
+            var errorMsg = "Position not found, Please select a position from list";
             LogHost.Default.Warn($"Registration failed: {errorMsg}");
             _errorMessageSubject.OnNext(errorMsg);
             return false;
