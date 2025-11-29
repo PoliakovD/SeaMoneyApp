@@ -14,6 +14,7 @@ using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.Drivers;
 using SeaMoneyApp.Services;
 using SeaMoneyApp.Services.Authorization;
+using SeaMoneyApp.Services.Logger;
 using SeaMoneyApp.ViewModels;
 using SeaMoneyApp.Views;
 using Splat;

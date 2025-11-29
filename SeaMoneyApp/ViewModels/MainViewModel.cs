@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using ReactiveUI;
+using SeaMoneyApp.DataAccess.Models;
 using Splat;
 
 namespace SeaMoneyApp.ViewModels;
@@ -15,7 +16,8 @@ public partial class MainViewModel : ViewModelBase, IScreen
     private LoginViewModel? _loginViewModel;
     private RegistrationViewModel? _registrationViewModel;
     private SearchViewModel? _searchViewModel;
-
+    
+    private Account? _currentAccount;
     public LoginViewModel? LoginViewModel
     {
         get => _loginViewModel;

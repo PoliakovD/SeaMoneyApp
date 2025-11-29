@@ -19,11 +19,15 @@ public class AuthorizationService : IAuthorizationService
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
     private bool _isLoggedIn;
     private readonly BehaviorSubject<bool> _isLoggedInSubject = new(false);
+    private readonly BehaviorSubject<Account?> _loggedInAccount = new(null);
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
 
     public bool IsLoggedIn => _isLoggedIn;
     public string? ErrorMessage { get; set; }
     public IObservable<bool> WhenLoggedInChanged => _isLoggedInSubject.AsObservable();
+
+    public IObservable<Account?> WhenAccountInChanged => _loggedInAccount.AsObservable();
+
     public IObservable<string?> WhenErrorMessageChanged => _errorMessageSubject.AsObservable();
 
     public bool Login(string username, string password)
@@ -43,50 +47,88 @@ public class AuthorizationService : IAuthorizationService
         var account = _dbContext.Accounts.FirstOrDefault(u => u.Login == username && u.Password == password);
         if (account == null)
         {
-            var errorMsg =  "User " + username + " not found";
+            var errorMsg = "User " + username + " not found";
             LogHost.Default.Info(errorMsg);
             _errorMessageSubject.OnNext(errorMsg);
             return false;
         }
+
         _isLoggedIn = true;
-        _isLoggedInSubject.OnNext(true); // Уведомляем подписчиков
+        // Уведомляем подписчиков
+        _isLoggedInSubject.OnNext(true); 
+        _loggedInAccount.OnNext(account);
         _errorMessageSubject.OnNext(null);
 
         LogHost.Default.Info("User logged in: " + username);
         return true;
     }
 
-    public bool Register(Account account)
+    public bool Register(string? login, string? password, Position? position, short? toursInRank)
     {
         _errorMessageSubject.OnNext(null); // Сброс ошибки
         // Проверка ввода
-        var validationResult = ValidateCredentials(account.Login, account.Password);
-        if (!validationResult.IsValid || account.Position is null)
+        var validationResult = ValidateCredentials(login, password);
+        if (!validationResult.IsValid)
         {
             var errorMsg = validationResult.ErrorMessage;
             LogHost.Default.Warn($"Registration failed: {errorMsg}");
             _errorMessageSubject.OnNext(errorMsg);
             return false;
         }
-        
-        if(_dbContext.Accounts.FirstOrDefault(u => u.Login == account.Login && u.Password ==account.Password) is null)
+
+        if (position is null)
         {
+            var errorMsg = "Position Cannot be null, Please select a position";
+            LogHost.Default.Warn($"Registration failed: {errorMsg}");
+            _errorMessageSubject.OnNext(errorMsg);
+            return false;
+        }
+
+        if (toursInRank is null)
+        {
+            var errorMsg = "Tours Cannot be null, Please select a tour";
+            LogHost.Default.Warn($"Registration failed: {errorMsg}");
+            _errorMessageSubject.OnNext(errorMsg);
+            return false;
+        }
+
+        if (toursInRank < 0)
+        {
+            var errorMsg = "Tours Cannot be negative";
+            LogHost.Default.Warn($"Registration failed: {errorMsg}");
+            _errorMessageSubject.OnNext(errorMsg);
+            return false;
+        }
+
+
+        if (_dbContext.Accounts.FirstOrDefault(u => u.Login == login) is null)
+        {
+            var account = new Account()
+            {
+                Login = login,
+                Password = password,
+                Position = position,
+                ToursInRank = (short)toursInRank
+            };
             _dbContext.Accounts.Add(account);
+            // Уведомляем подписчиков
             _dbContext.SaveChanges();
+            _isLoggedIn = true;
+            _isLoggedInSubject.OnNext(true); 
+            _errorMessageSubject.OnNext(null);
+            _loggedInAccount.OnNext(account);
+            LogHost.Default.Debug("User registred and logged in: " + login);
+            return true;
         }
         else
         {
-            var errorMsg = "Cannot register user already exist: " + account.Login;
+            var errorMsg = "Cannot register user already exist: " + login;
             LogHost.Default.Debug(errorMsg);
             _errorMessageSubject.OnNext(errorMsg);
             return false;
         }
-       
-        _isLoggedIn = true;
-        _isLoggedInSubject.OnNext(true); // Уведомляем подписчиков
-        _errorMessageSubject.OnNext(null);
-        LogHost.Default.Debug("User registred and logged in: " + account.Login);
-        return true;
+
+        
     }
 
     public void Logout()
@@ -167,12 +209,10 @@ public class AuthorizationService : IAuthorizationService
     /// <summary>
     /// Простой хеш пароля
     /// </summary>
-    private string Hash(string password) =>
-        Convert.ToBase64String(
-            System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(password)));
-
-    public void FlushErrorMessage() =>_errorMessageSubject.OnNext(null);
-    
+    // private string Hash(string password) =>
+    //     Convert.ToBase64String(
+    //         System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(password)));
+    public void FlushErrorMessage() => _errorMessageSubject.OnNext(null);
 }
 
 /// <summary>

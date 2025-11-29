@@ -11,14 +11,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SeaMoneyApp.Views.SearchView">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
-            <RowDefinition Height="48" />
-            <RowDefinition Height="48" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Search view" Margin="5" />
-        <TextBox Grid.Row="1" Text="{Binding SearchQuery, Mode=TwoWay}" />
-        <Button Grid.Row="2" Content="Search" Command="{Binding Search}" />
+        <TextBlock Text="{Binding CurrentAccount.Login, StringFormat=\{0:f0\} Добро пожаловать!}"></TextBlock>
     </Grid>
 </UserControl>

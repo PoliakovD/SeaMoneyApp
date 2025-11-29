@@ -50,4 +50,7 @@
     <data name="ChoosePositionText" xml:space="preserve">
         <value>Choose position</value>
     </data>
+    <data name="ChooseToursInRankText" xml:space="preserve">
+        <value>Choose tours in rank</value>
+    </data>
 </root>

@@ -18,6 +18,8 @@ public interface IAuthorizationService
     /// Реактивный поток, уведомляющий об изменениях состояния авторизации.
     /// </summary>
     IObservable<bool> WhenLoggedInChanged { get; }
+    
+    IObservable<Account?> WhenAccountInChanged { get; }
     IObservable<string?> WhenErrorMessageChanged { get; }
     /// <summary>
     /// Асинхронная попытка входа.
@@ -27,7 +29,7 @@ public interface IAuthorizationService
     /// <returns>Успех или ошибка</returns>
     bool Login(string username, string password);
     
-    bool Register(Account account);
+    bool Register(string? login, string? password, Position? position, short? toursInRank);
     /// <summary>
     /// Выход из аккаунта.
     /// </summary>

@@ -39,6 +39,8 @@ public class RegistrationViewModel : ViewModelBase, IRoutableViewModel
 
     public ObservableCollection<Position> Positions { get; set; } = new ObservableCollection<Position>();
 
+    public ObservableCollection<short> ToursInRanks { get; set; } = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
     private string? _password = string.Empty;
 
     public string? Password
@@ -104,9 +106,14 @@ public class RegistrationViewModel : ViewModelBase, IRoutableViewModel
 
         RegistrationCommand = ReactiveCommand.Create(() =>
             {
-                if (authService.Login(Username!, Password!))
+                if (authService.Register(Username, Password,SelectedPosition, ToursInRank))
                 {
+                    authService.FlushErrorMessage();
                     HostScreen.Router.Navigate.Execute(new SearchViewModel());
+                }
+                else
+                {
+                    return;
                 }
             },
             this

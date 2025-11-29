@@ -2,7 +2,7 @@
 using System.IO;
 using Splat;
 
-namespace SeaMoneyApp.Services;
+namespace SeaMoneyApp.Services.Logger;
 
 /// <summary>
 /// Сервис для настройки глобального логирования с использованием библиотеки <c>Splat</c>.

@@ -25,20 +25,25 @@
         <ListBox Grid.Row="4" ItemsSource="{Binding Positions}"
                  SelectedItem="{Binding SelectedPosition}"
                  SelectionMode="Single"/>
+        <Grid Grid.Row="5" ColumnDefinitions="2*,*">
+            <Label Grid.Column="0" Content="{x:Static local:Localization.ChooseToursInRankText}"/>
+            <ComboBox Grid.Column="1" ItemsSource="{Binding ToursInRanks}" 
+                      SelectedItem="{Binding ToursInRank}"/>
+        </Grid>
 
-        <TextBlock Grid.Row="5" 
+        <TextBlock Grid.Row="6" 
                    Text="{Binding ErrorMessage}" 
                    Margin="5" 
                    Foreground="Red"
                    IsVisible="{Binding ErrorMessage}" />
         
-        <StackPanel Grid.Row="6" Orientation="Horizontal">
+        <StackPanel Grid.Row="7" Orientation="Horizontal">
             
             <Button  Content="{x:Static local:Localization.EnterText}" 
                      Command="{Binding HostScreen.Router.NavigateBack}" />
             
             <Button  Margin="40,0,0,0" Content="{x:Static local:Localization.RegistrationText}" 
-                     Command="{Binding HostScreen.Router.NavigateBack}" />
+                     Command="{Binding RegistrationCommand}" />
             
         </StackPanel>
     </Grid>

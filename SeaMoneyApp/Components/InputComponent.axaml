@@ -4,7 +4,7 @@
              x:Name="Component">
     <Grid RowDefinitions="*,*"
           DataContext="{Binding ElementName=Component}">
-        <Label Grid.Row="0" 
+        <Label Margin="0,10,0,0" Grid.Row="0" 
                Content="{Binding Label}"/>
         
         <TextBox Grid.Row="1"
