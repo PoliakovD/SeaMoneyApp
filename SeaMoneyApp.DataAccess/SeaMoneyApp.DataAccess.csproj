@@ -13,6 +13,7 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.11" />
+      <PackageReference Include="Splat.Logging" Version="17.1.1" />
       <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
         
     </ItemGroup>
