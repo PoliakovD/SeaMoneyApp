@@ -142,14 +142,7 @@ public class AuthorizationService : IAuthorizationService
     }
 
     public void Dispose() => _isLoggedInSubject?.Dispose();
-
-
-    /// <summary>
-    /// Проверяет корректность введённых логина и пароля.
-    /// </summary>
-    /// <param name="username">Логин</param>
-    /// <param name="password">Пароль</param>
-    /// <returns>Результат валидации</returns>
+    
     private ValidationResult ValidateCredentials(string username, string password)
     {
         // Проверка логина
@@ -175,22 +168,11 @@ public class AuthorizationService : IAuthorizationService
 
         if (password.Length > 32)
             return new ValidationResult(false, "Пароль слишком длинный > 32 символов");
-
-        //if (!HasLowercase(password))
-        //  return new ValidationResult(false, "Пароль должен содержать хотя бы одну строчную букву");
-
-        // if (!HasUppercase(password))
-        //    return new ValidationResult(false, "Пароль должен содержать хотя бы одну заглавную букву");
-
-        //if (!HasDigit(password))
-        //    return new ValidationResult(false, "Пароль должен содержать хотя бы одну цифру");
+        
 
         return new ValidationResult(true, "OK");
     }
-
-    /// <summary>
-    /// Проверяет, что логин содержит только разрешённые символы.
-    /// </summary>
+    
     private bool IsValidUsername(string username)
     {
         foreach (char c in username)
@@ -206,16 +188,8 @@ public class AuthorizationService : IAuthorizationService
     private bool HasUppercase(string password) => password.Any(char.IsUpper);
     private bool HasDigit(string password) => password.Any(char.IsDigit);
 
-    /// <summary>
-    /// Простой хеш пароля
-    /// </summary>
-    // private string Hash(string password) =>
-    //     Convert.ToBase64String(
-    //         System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(password)));
+    
     public void FlushErrorMessage() => _errorMessageSubject.OnNext(null);
 }
 
-/// <summary>
-/// Результат проверки ввода.
-/// </summary>
 internal record ValidationResult(bool IsValid, string ErrorMessage);

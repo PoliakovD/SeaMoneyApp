@@ -123,9 +123,6 @@ public class RegistrationViewModel : ViewModelBase, IRoutableViewModel
         // Подписываемся на изменения ошибки
         authService.WhenErrorMessageChanged
             .BindTo(this, vm => vm.ErrorMessage);
-
-        //  сбрасывать ошибку при изменении полей
-        //this.WhenAnyValue(x => x.Username, x => x.Password)
-        //     .Subscribe(_ => ErrorMessage = string.Empty);
+        
     }
 }

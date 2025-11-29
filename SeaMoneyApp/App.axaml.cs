@@ -104,9 +104,10 @@ public partial class App : Application
         
         LoggerSetup.SetupLogger(LogLevel.Debug); // Регистрируем логгер
         // Регистрируем сервис database context как Singleton
-        //Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>(() => new AuthorizationService());
-        
         Locator.CurrentMutable.RegisterLazySingleton<DataBaseContext>(() => DataBaseContextFactory.CreateWithDefaultConnectionString());
+        Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>(() => new AuthorizationService());
+        
+        
         
         // Регистрируем сервис авторизации как Singleton
         Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>
@@ -117,8 +118,8 @@ public partial class App : Application
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
             {
-                //LoadAppStateManuallyAsync().GetAwaiter().GetResult();
-                //var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
+                // LoadAppStateManuallyAsync().GetAwaiter().GetResult();
+                // var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
                 
                 Locator.CurrentMutable.RegisterConstant<IScreen>(screen);
 

@@ -86,16 +86,6 @@ public partial class LoginViewModel : ViewModelBase, IRoutableViewModel
         authService.WhenErrorMessageChanged
             .BindTo(this, vm => vm.ErrorMessage);
 
-        //  сбрасывать ошибку при изменении полей
-        //this.WhenAnyValue(x => x.Username, x => x.Password)
-        //     .Subscribe(_ => ErrorMessage = string.Empty);
-        
-        // this.WhenAnyValue(x => x.Username, x => x.Password)
-        //     .Subscribe(x =>
-        //     {
-        //         var can = !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2);
-        //         //LogHost.Default.Info($"Username: '{x.Item1}', Password: '{x.Item2}' -> CanLogin: {can}");
-        //         //LogHost.Default.Info($"CanLogin updated: {can}");
-        //     });
+       
     }
 }

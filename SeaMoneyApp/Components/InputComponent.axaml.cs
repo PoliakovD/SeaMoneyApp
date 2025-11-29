@@ -13,9 +13,6 @@ public partial class InputComponent : UserControl
     public static readonly StyledProperty<string?> ValueProperty =
         AvaloniaProperty.Register<InputComponent, string?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
 
-    // public static readonly StyledProperty<bool> IsPasswordProperty =
-    //     AvaloniaProperty.Register<InputComponent, bool>(nameof(IsPassword), defaultValue: true);
-
     public static readonly StyledProperty<bool> IsReadOnlyProperty =
         AvaloniaProperty.Register<InputComponent, bool>(nameof(IsReadOnly), defaultValue: false);
 
@@ -31,11 +28,7 @@ public partial class InputComponent : UserControl
         set => SetValue(ValueProperty, value);
     }
 
-    // public bool IsPassword
-    // {
-    //     get => GetValue(IsPasswordProperty);
-    //     set => SetValue(IsPasswordProperty, !value);
-    // }
+   
 
     public bool IsReadOnly
     {
