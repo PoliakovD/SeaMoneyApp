@@ -16,7 +16,13 @@ public class WageLog
     [Column("amount_in_rub")] [Required]
     public decimal AmountInRub { get; set; }
     
+    [ForeignKey("account_id")] public Account? Account { get; set; }
+    
     [ForeignKey("change_rub_to_dollar_id")] public ChangeRubToDollar? ChangeRubToDollar { get; set; }
+    
+    
+    
+    
     
     
 }

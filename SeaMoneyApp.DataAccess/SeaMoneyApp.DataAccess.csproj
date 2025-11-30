@@ -23,6 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="sea_money_app.db">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
       <None Remove="appsettings.json" />
       <EmbeddedResource Include="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
