@@ -1,22 +1,14 @@
-﻿using System.Reflection;
+﻿
+using System.Reflection;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Splat;
 
 namespace SeaMoneyApp.DataAccess;
 
 public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContext>
 {
-    private const string DbFileName = "sea_money_app.db";
-    private static IDatabaseInitializer? _initializer;
-
-    public static void SetInitializer(IDatabaseInitializer? initializer)
-    {
-        _initializer = initializer;
-    }
-
     private string GetConnectionString(string connectionName = "DefaultConnection")
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -35,16 +27,19 @@ public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContex
 
         var connectionStringTemplate = config.GetConnectionString(connectionName);
         var basePath = GetBasePath();
-        var dbPath = Path.Combine(basePath, DbFileName);
+        var connectionString = connectionStringTemplate.Replace("{BasePath}", basePath);
 
-        // Инициализируем БД через внешний инициализатор
-        InitializeDatabase(dbPath);
+        // Сохраняем строку подключения для дальнейшего использования (например, копирование)
+        EnsureDatabaseInitialized(connectionString);
 
-        return connectionStringTemplate.Replace("{BasePath}", basePath);
+        return connectionString;
     }
 
-    private void InitializeDatabase(string dbPath)
+    private void EnsureDatabaseInitialized(string connectionString)
     {
+        var csBuilder = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(connectionString);
+        var dbPath = csBuilder.DataSource; // Полный путь к файлу БД
+
         if (File.Exists(dbPath))
             return;
 
@@ -52,35 +47,37 @@ public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContex
         if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             Directory.CreateDirectory(directory);
 
-        // Используем внешний инициализатор (на Android) или копируем с диска
+        // Используем инициализатор (Android) или копируем с диска
         _initializer?.Initialize(dbPath);
 
-        // Если инициализатор не задан — пытаемся скопировать с диска (Desktop)
+        // Если БД так и не появилась — создаём пустую
         if (!File.Exists(dbPath))
         {
-            var sourcePath = Path.Combine(AppContext.BaseDirectory, DbFileName);
-            if (File.Exists(sourcePath))
-            {
-                File.Copy(sourcePath, dbPath);
-            }
-            else
-            {
-                // Создаём пустую БД
-                var options = new DbContextOptionsBuilder<DataBaseContext>()
-                    .UseSqlite($"Data Source={dbPath}")
-                    .Options;
-                var context = new DataBaseContext(options);
-                context.Database.EnsureCreated();
-            }
+            var options = new DbContextOptionsBuilder<DataBaseContext>()
+                .UseSqlite($"Data Source={dbPath}")
+                .Options;
+            var context = new DataBaseContext(options);
+            context.Database.EnsureCreated();
         }
     }
 
     private string GetBasePath()
     {
-        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        string basePath;
 
-        // Debug
-        LogHost.Default.Debug("base path for this application is: " + basePath);
+        if (OperatingSystem.IsAndroid())
+        {
+            basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        }
+        else if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            basePath = AppContext.BaseDirectory;
+        }
+        else
+        {
+            basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        }
+
         return basePath;
     }
 
@@ -97,4 +94,14 @@ public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContex
 
     public static DataBaseContext CreateWithDefaultConnectionString() => 
         new DataBaseContextFactory().CreateDbContext(["DefaultConnection"]);
+
+    public static DataBaseContext CreateWithTestConnectionString() => 
+        new DataBaseContextFactory().CreateDbContext(["Test"]);
+
+    public static void SetInitializer(IDatabaseInitializer? initializer)
+    {
+        _initializer = initializer;
+    }
+
+    private static IDatabaseInitializer? _initializer;
 }
