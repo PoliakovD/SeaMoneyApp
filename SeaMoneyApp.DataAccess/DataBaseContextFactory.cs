@@ -77,15 +77,8 @@ public class DataBaseContextFactory : IDesignTimeDbContextFactory<DataBaseContex
 
     private string GetBasePath()
     {
-        string basePath;
-        if (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData).Contains("Android"))
-        {
-            basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        }
-        else
-        {
-            basePath = Environment.CurrentDirectory;
-        }
+        string basePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
         // Debug
         LogHost.Default.Debug("base path for this application is: " + basePath);
         return basePath;
