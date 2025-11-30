@@ -21,7 +21,7 @@ public class TestIsolatedDbTest : IDisposable
     [Fact]
     public void Test1_AddPosition()
     {
-        Context.Positions.Add(new Position { Name = "QA" });
+        Context.Positions.Add(new Position { Name = "Master" });
         Context.SaveChanges();
 
         Assert.Single(Context.Positions.ToList());

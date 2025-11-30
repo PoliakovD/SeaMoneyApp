@@ -23,7 +23,7 @@
         <AutoCompleteBox Grid.Row="4" 
                          ItemsSource="{Binding Positions}"
                          SelectedItem="{Binding SelectedPosition}"
-                         FilterMode="ContainsCaseSensitive"/>
+                         FilterMode="Contains"/>
         
         <Grid Grid.Row="5" ColumnDefinitions="2*,*">
             <Label Grid.Column="0" Content="{x:Static local:Localization.ChooseToursInRankText}"/>
