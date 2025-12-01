@@ -8,7 +8,7 @@ using SeaMoneyApp.Extensions;
 namespace SeaMoneyApp.ViewModels;
 
 [DataContract]
-public partial class MainViewModel : RoutableViewModel, IScreen
+public partial class MainViewModel : ReactiveObject, IScreen
 {
     private RoutingState? _router;
     
@@ -17,7 +17,6 @@ public partial class MainViewModel : RoutableViewModel, IScreen
     public MainViewModel()
     {
         Router ??= new RoutingState();
-        HostScreen = this;
         
         LoginCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<LoginViewModel>());
         SearchCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<SearchViewModel>());

@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Reactive;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Services.Authorization;
 using Splat;
 
@@ -61,11 +62,7 @@ public partial class LoginViewModel : RoutableViewModel
             if (authService.Login(Username!, Password!))
             {
                 authService.FlushErrorMessage();
-               HostScreen.Router.Navigate.Execute(new SearchViewModel());
-            }
-            else
-            {
-                return;
+                HostScreen.Router.NavigateAndCache<SearchViewModel>();
             }
         },
             this
@@ -74,7 +71,7 @@ public partial class LoginViewModel : RoutableViewModel
 
         ToRegistrationCommand = ReactiveCommand.Create(() =>
         {
-            HostScreen.Router.Navigate.Execute(new RegistrationViewModel());
+            HostScreen.Router.NavigateAndCache<RegistrationViewModel>();
         });
         
 

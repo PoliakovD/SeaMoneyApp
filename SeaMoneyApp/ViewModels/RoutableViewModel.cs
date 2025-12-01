@@ -12,7 +12,7 @@ public abstract partial class RoutableViewModel : ReactiveObject,IRoutableViewMo
 
     public RoutableViewModel()
     {
-        if (this is not IScreen)
+       
         HostScreen ??= Locator.Current.GetService<IScreen>()
                        ?? throw new InvalidOperationException("IScreen not registered");
         

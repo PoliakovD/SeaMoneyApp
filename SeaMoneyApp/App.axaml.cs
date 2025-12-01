@@ -12,6 +12,7 @@ using ReactiveUI;
 using ReactiveUI.Avalonia;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.Drivers;
+using SeaMoneyApp.Models;
 using SeaMoneyApp.Services;
 using SeaMoneyApp.Services.Authorization;
 using SeaMoneyApp.Services.Logger;
@@ -103,15 +104,17 @@ public partial class App : Application
         Localization.Localization.Culture = new CultureInfo("ru-RU");
         
         LoggerSetup.SetupLogger(LogLevel.Debug); // Регистрируем логгер
+        
         // Регистрируем сервис database context как Singleton
         Locator.CurrentMutable.RegisterLazySingleton(DataBaseContextFactory.CreateWithDefaultConnectionString);
-        Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>(() => new AuthorizationService());
-        
-        
         
         // Регистрируем сервис авторизации как Singleton
         Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>
             (() => new AuthorizationService());
+        
+        // Регистрируем AppSession как синглтон
+        Locator.CurrentMutable.RegisterLazySingleton(() => new AppSession());
+        
         var screen = new MainViewModel();
         
         switch (ApplicationLifetime)

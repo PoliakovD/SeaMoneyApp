@@ -10,6 +10,7 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
+using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Services.Authorization;
 using Splat;
 
@@ -71,7 +72,7 @@ public class RegistrationViewModel : RoutableViewModel
         set => this.RaiseAndSetIfChanged(ref _toursInRank, value);
     }
 
-    public RegistrationViewModel() :base()
+    public RegistrationViewModel()
     {
         var authService = Locator.Current.GetService<IAuthorizationService>()
                           ?? throw new InvalidOperationException("IAuthorizationService not registered");
@@ -105,7 +106,7 @@ public class RegistrationViewModel : RoutableViewModel
                 if (authService.Register(Username, Password,SelectedPosition, ToursInRank))
                 {
                     authService.FlushErrorMessage();
-                    HostScreen.Router.Navigate.Execute(new SearchViewModel());
+                    HostScreen.Router.NavigateAndCache<SearchViewModel>();
                 }
                 else
                 {
