@@ -106,7 +106,7 @@ public class RegistrationViewModel : RoutableViewModel
                 if (authService.Register(Username, Password,SelectedPosition, ToursInRank))
                 {
                     authService.FlushErrorMessage();
-                    HostScreen.Router.NavigateAndCache<SearchViewModel>();
+                    HostScreen.Router.NavigateAndCache<OverallViewModel>();
                 }
                 else
                 {

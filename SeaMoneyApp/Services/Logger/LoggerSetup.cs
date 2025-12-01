@@ -7,6 +7,12 @@ public static class LoggerSetup
 {
     public static void SetupLogger(LogLevel level = LogLevel.Debug)
     {
+        var logPath = GetLogFilePath();
+        Locator.CurrentMutable.Register<ILogger>(() => new FileLogger(logPath){Level = level});
+    }
+
+    public static string GetLogFilePath()
+    {
         string logPath;
         var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
         var logDirectory = Path.Combine(appDirectory, "log");
@@ -15,7 +21,7 @@ public static class LoggerSetup
         {
             // Пытаемся создать папку и проверить доступ
             Directory.CreateDirectory(logDirectory);
-            logPath = Path.Combine(logDirectory, "logs.txt");
+            logPath = Path.Combine(logDirectory, "logs.log");
             
             // Проверим, можем ли мы записать тестовую строку 
             File.AppendAllText(logPath, "");
@@ -25,10 +31,9 @@ public static class LoggerSetup
             // Если не удалось записать в папку приложения — используем временный каталог
             var tempDir = Path.Combine(Path.GetTempPath(), "SeaMoneyApp", "log");
             Directory.CreateDirectory(tempDir);
-            logPath = Path.Combine(tempDir, "logs.txt");
+            logPath = Path.Combine(tempDir, "logs.log");
         }
-
-        Locator.CurrentMutable.Register<ILogger>(() => new FileLogger(logPath){Level = level});
+        return logPath;
     }
     
     private class FileLogger : ILogger

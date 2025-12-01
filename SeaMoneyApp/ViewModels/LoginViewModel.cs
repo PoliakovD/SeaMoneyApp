@@ -62,7 +62,8 @@ public partial class LoginViewModel : RoutableViewModel
             if (authService.Login(Username!, Password!))
             {
                 authService.FlushErrorMessage();
-                HostScreen.Router.NavigateAndCache<SearchViewModel>();
+                HostScreen!.Router.NavigateAndCache<OverallViewModel>();
+                HostScreen.Router.ClearCache<LoginViewModel>();
             }
         },
             this
@@ -71,7 +72,7 @@ public partial class LoginViewModel : RoutableViewModel
 
         ToRegistrationCommand = ReactiveCommand.Create(() =>
         {
-            HostScreen.Router.NavigateAndCache<RegistrationViewModel>();
+            HostScreen!.Router.NavigateAndCache<RegistrationViewModel>();
         });
         
 

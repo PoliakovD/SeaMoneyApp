@@ -12,12 +12,14 @@ using ReactiveUI;
 using ReactiveUI.Avalonia;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.Drivers;
+using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Models;
 using SeaMoneyApp.Services;
 using SeaMoneyApp.Services.Authorization;
 using SeaMoneyApp.Services.Logger;
 using SeaMoneyApp.ViewModels;
 using SeaMoneyApp.Views;
+using SeaMoneyApp.Views.OverallViews;
 using Splat;
 
 namespace SeaMoneyApp;
@@ -153,11 +155,13 @@ public partial class App : Application
         
         LogHost.Default.Info("Initialized application successfully");
         
-        Locator.CurrentMutable.Register<IViewFor<SearchViewModel>>(() => new SearchView());
+        Locator.CurrentMutable.Register<IViewFor<OverallViewModel>>(() => new OverallView());
         Locator.CurrentMutable.Register<IViewFor<LoginViewModel>>(() => new LoginView());
         Locator.CurrentMutable.Register<IViewFor<RegistrationViewModel>>(() => new RegistrationView());
-
-        Locator.Current.GetService<IScreen>()?.Router.Navigate.Execute(new LoginViewModel());
+        
+        Locator.CurrentMutable.Register<IViewFor<LogsViewModel>>(() => new LogsView());
+        
+        Locator.Current.GetService<IScreen>()?.Router.NavigateAndCache<LoginViewModel>();
         
         LogHost.Default.Info("Registered views successfully");
         

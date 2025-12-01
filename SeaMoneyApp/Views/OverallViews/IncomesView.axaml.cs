@@ -7,11 +7,11 @@ using SeaMoneyApp.ViewModels;
 
 namespace SeaMoneyApp.Views;
 
-public partial class SearchView : ReactiveUserControl<SearchViewModel>
+public partial class IncomesView : ReactiveUserControl<IncomesViewModel>
 {
-    public SearchView()
+    public IncomesView()
     {
-        this.WhenActivated(disposable => { });
+        this.WhenActivated(disposables => { });
         AvaloniaXamlLoader.Load(this);
     }
 }

@@ -19,7 +19,7 @@ public partial class MainViewModel : ReactiveObject, IScreen
         Router ??= new RoutingState();
         
         LoginCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<LoginViewModel>());
-        SearchCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<SearchViewModel>());
+        SearchCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<OverallViewModel>());
         RegisterCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<RegistrationViewModel>());
        
     }
