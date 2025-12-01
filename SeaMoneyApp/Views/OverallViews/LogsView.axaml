@@ -14,9 +14,11 @@
              
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SeaMoneyApp.Views.OverallViews.LogsView">
-    <Grid>
-        <TextBlock Text="This is Logs View"></TextBlock>
-        <TextBox Text="{Binding LogContent}"/>
-    </Grid>
+    <DockPanel LastChildFill="True">
+        <TextBlock DockPanel.Dock="Top" Text="This is Logs View"></TextBlock>
+        <ScrollViewer>
+            <TextBlock   Inlines="{Binding LogContent}"/>
+        </ScrollViewer>
+    </DockPanel>
     
 </UserControl>
