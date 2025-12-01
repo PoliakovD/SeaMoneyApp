@@ -13,10 +13,8 @@ using Splat;
 namespace SeaMoneyApp.ViewModels;
 
 [DataContract]
-public partial class LoginViewModel : ViewModelBase, IRoutableViewModel
+public partial class LoginViewModel : RoutableViewModel
 {
-    public IScreen HostScreen { get; init; }
-    public string UrlPathSegment => "/login";
    
     private string? _password = string.Empty;
     public ReactiveCommand<Unit, Unit> LoginCommand { get; private set; } 
@@ -52,13 +50,11 @@ public partial class LoginViewModel : ViewModelBase, IRoutableViewModel
     }
 
 
-    public LoginViewModel(IScreen? screen = null)
+    public LoginViewModel()
     {
         var authService = Locator.Current.GetService<IAuthorizationService>() 
                            ?? throw new InvalidOperationException("IAuthorizationService not registered");
-
-        HostScreen = screen ?? Locator.Current.GetService<IScreen>() 
-            ?? throw new InvalidOperationException("IScreen not registered");
+        
 
         LoginCommand = ReactiveCommand.Create(() =>
         {

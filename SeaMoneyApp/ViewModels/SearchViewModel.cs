@@ -11,7 +11,7 @@ using Splat;
 
 namespace SeaMoneyApp.ViewModels;
 [DataContract]
-public class SearchViewModel: ViewModelBase, IRoutableViewModel
+public class SearchViewModel: RoutableViewModel
 {
     private readonly ReactiveCommand<Unit, Unit> _search;
     private string? _searchQuery;
@@ -26,9 +26,8 @@ public class SearchViewModel: ViewModelBase, IRoutableViewModel
         }
     }
 
-    public SearchViewModel(IScreen? screen = null)
+    public SearchViewModel()
     {
-        HostScreen = screen ?? Locator.Current.GetService<IScreen>()!;
 
         var canSearch = this
             .WhenAnyValue(x => x.SearchQuery)
@@ -42,10 +41,7 @@ public class SearchViewModel: ViewModelBase, IRoutableViewModel
         authService.WhenAccountInChanged
             .BindTo(this, vm => vm.CurrentAccount);
     }
-
-    public IScreen HostScreen { get; }
-
-    public string UrlPathSegment => "/search";
+    
 
     public ICommand Search => _search;
 

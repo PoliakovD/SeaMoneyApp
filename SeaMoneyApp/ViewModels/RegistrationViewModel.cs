@@ -15,10 +15,8 @@ using Splat;
 
 namespace SeaMoneyApp.ViewModels;
 
-public class RegistrationViewModel : ViewModelBase, IRoutableViewModel
+public class RegistrationViewModel : RoutableViewModel
 {
-    public IScreen HostScreen { get; }
-    public string UrlPathSegment => "/login";
     public ReactiveCommand<Unit, Unit> RegistrationCommand { get; private set; }
 
     private Position? _selectedPosition;
@@ -73,13 +71,11 @@ public class RegistrationViewModel : ViewModelBase, IRoutableViewModel
         set => this.RaiseAndSetIfChanged(ref _toursInRank, value);
     }
 
-    public RegistrationViewModel(IScreen? screen = null)
+    public RegistrationViewModel() :base()
     {
         var authService = Locator.Current.GetService<IAuthorizationService>()
                           ?? throw new InvalidOperationException("IAuthorizationService not registered");
-
-        HostScreen = screen ?? Locator.Current.GetService<IScreen>()
-            ?? throw new InvalidOperationException("IScreen not registered");
+        
 
         Positions = new ObservableCollection<Position>();
 

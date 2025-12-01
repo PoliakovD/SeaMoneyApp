@@ -104,7 +104,7 @@ public partial class App : Application
         
         LoggerSetup.SetupLogger(LogLevel.Debug); // Регистрируем логгер
         // Регистрируем сервис database context как Singleton
-        Locator.CurrentMutable.RegisterLazySingleton<DataBaseContext>(() => DataBaseContextFactory.CreateWithDefaultConnectionString());
+        Locator.CurrentMutable.RegisterLazySingleton(DataBaseContextFactory.CreateWithDefaultConnectionString);
         Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>(() => new AuthorizationService());
         
         
@@ -118,7 +118,7 @@ public partial class App : Application
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
             {
-                // LoadAppStateManuallyAsync().GetAwaiter().GetResult();
+                 LoadAppStateManuallyAsync().GetAwaiter().GetResult();
                 // var screen = RxApp.SuspensionHost.GetAppState<MainViewModel>();
                 
                 Locator.CurrentMutable.RegisterConstant<IScreen>(screen);
@@ -154,19 +154,9 @@ public partial class App : Application
         Locator.CurrentMutable.Register<IViewFor<LoginViewModel>>(() => new LoginView());
         Locator.CurrentMutable.Register<IViewFor<RegistrationViewModel>>(() => new RegistrationView());
 
-        Locator.Current.GetService<IScreen>()?.Router.Navigate.Execute(new LoginViewModel(screen));
+        Locator.Current.GetService<IScreen>()?.Router.Navigate.Execute(new LoginViewModel());
         
         LogHost.Default.Info("Registered views successfully");
-        
-        
-        //Test
-        // var context = Locator.Current.GetService<DataBaseContext>();
-        // context?.Database.EnsureCreated();
-        // var positions = context?.Positions.ToList();
-        // var str=context.Database.GetConnectionString();
-        // LogHost.Default.Debug($"Loaded positions count: {positions?.Count}");
-        // LogHost.Default.Debug($"Connection string is: {str}");
-        //Test
         
         
         
