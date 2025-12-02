@@ -63,9 +63,9 @@ public partial class LoginViewModel : RoutableViewModel
             {
                 // очищаем ErrorMessage
                 authService.FlushErrorMessage();
+                
                 // создаем новую вьюху Overall и регестрируем ее как текущую для навигации назад
                 var overall = new OverallViewModel();
-                
                 Locator.CurrentMutable.RegisterConstant<IScreenBackCommand>(overall);
                 
                 // очищаем кеш предыдущего рутера

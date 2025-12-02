@@ -42,6 +42,9 @@ public partial class App : Application
         Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>
             (() => new AuthorizationService());
         
+        // Устанавливаем глобальный ViewLocator
+        Locator.CurrentMutable.RegisterViewsForViewModels(typeof(App).Assembly);
+        
         // Регистрируем AppSession как синглтон
         Locator.CurrentMutable.RegisterLazySingleton(() => new AppSession());
         
@@ -67,12 +70,6 @@ public partial class App : Application
         }
         
         LogHost.Default.Info("Initialized application successfully");
-        
-        Locator.CurrentMutable.Register<IViewFor<OverallViewModel>>(() => new OverallView());
-        Locator.CurrentMutable.Register<IViewFor<LoginViewModel>>(() => new LoginView());
-        Locator.CurrentMutable.Register<IViewFor<RegistrationViewModel>>(() => new RegistrationView());
-        
-        Locator.CurrentMutable.Register<IViewFor<LogsViewModel>>(() => new LogsView());
         
         Locator.Current.GetService<IScreen>()?.Router.NavigateAndCache<LoginViewModel>();
         

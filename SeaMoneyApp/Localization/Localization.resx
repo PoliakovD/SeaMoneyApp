@@ -53,4 +53,16 @@
     <data name="ChooseToursInRankText" xml:space="preserve">
         <value>Choose tours in rank</value>
     </data>
+    <data name="ToursInRankText" xml:space="preserve">
+        <value>Tours in rank text</value>
+    </data>
+    <data name="GeneralInfoText" xml:space="preserve">
+        <value>General Account Information</value>
+    </data>
+    <data name="ToLogsText" xml:space="preserve">
+        <value>Logs</value>
+    </data>
+    <data name="ToAccountText" xml:space="preserve">
+        <value>Account</value>
+    </data>
 </root>

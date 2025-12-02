@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
+using SeaMoneyApp.Models;
 using Splat;
 
 
@@ -21,9 +22,12 @@ public class AuthorizationService : IAuthorizationService
     private readonly BehaviorSubject<bool> _isLoggedInSubject = new(false);
     private readonly BehaviorSubject<Account?> _loggedInAccount = new(null);
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
+    private readonly BehaviorSubject<DateTime?> _lastLoginTime = new (null);
 
     public bool IsLoggedIn => _isLoggedIn;
-    public string? ErrorMessage { get; set; }
+
+    public IObservable<DateTime?> LastLoginTimeChanged => _lastLoginTime.AsObservable();
+
     public IObservable<bool> WhenLoggedInChanged => _isLoggedInSubject.AsObservable();
 
     public IObservable<Account?> WhenAccountInChanged => _loggedInAccount.AsObservable();
@@ -44,7 +48,9 @@ public class AuthorizationService : IAuthorizationService
         }
 
         // TODO use Hash(password)
-        var account = _dbContext.Accounts.FirstOrDefault(u => u.Login == username);
+        var account = _dbContext.Accounts
+            .Include(a => a.Position)
+            .FirstOrDefault(u => u.Login == username);
         if (account == null)
         {
             var errorMsg = "User " + username + " not found";
@@ -56,11 +62,13 @@ public class AuthorizationService : IAuthorizationService
         if (account.Password == password)
         {
             _isLoggedIn = true;
+            
             // Уведомляем подписчиков
             _isLoggedInSubject.OnNext(true); 
             _loggedInAccount.OnNext(account);
             _errorMessageSubject.OnNext(null);
-
+            _lastLoginTime.OnNext(DateTime.Now);
+            
             LogHost.Default.Info("User logged in: " + username);
             return true;
         }
@@ -118,6 +126,7 @@ public class AuthorizationService : IAuthorizationService
                 Position = position,
                 ToursInRank = (short)toursInRank
             };
+            
             _dbContext.Accounts.Add(account);
             // Уведомляем подписчиков
             _dbContext.SaveChanges();
@@ -125,6 +134,8 @@ public class AuthorizationService : IAuthorizationService
             _isLoggedInSubject.OnNext(true); 
             _errorMessageSubject.OnNext(null);
             _loggedInAccount.OnNext(account);
+            _lastLoginTime.OnNext(DateTime.Now);
+            
             LogHost.Default.Debug("User registred and logged in: " + login);
             return true;
         }

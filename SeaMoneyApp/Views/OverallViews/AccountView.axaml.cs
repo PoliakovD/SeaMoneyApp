@@ -7,7 +7,7 @@ using SeaMoneyApp.ViewModels;
 
 namespace SeaMoneyApp.Views;
 
-public partial class AccountView :   ReactiveUserControl<AccountViewViewModel>
+public partial class AccountView :   ReactiveUserControl<AccountViewModel>
 {
     public AccountView()
     {

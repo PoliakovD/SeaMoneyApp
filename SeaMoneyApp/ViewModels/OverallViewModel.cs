@@ -11,11 +11,12 @@ using SeaMoneyApp.Services.Authorization;
 using Splat;
 
 namespace SeaMoneyApp.ViewModels;
+
 [DataContract]
-public class OverallViewModel: RoutableViewModel, IScreenBackCommand
+public class OverallViewModel : RoutableViewModel, IScreenBackCommand
 {
     public ICommand ToLogsCommand { get; }
-    
+    public ICommand ToAccountCommand { get; }
     private RoutingState? _router;
 
     [IgnoreDataMember]
@@ -24,16 +25,16 @@ public class OverallViewModel: RoutableViewModel, IScreenBackCommand
         get => _router;
         set => this.RaiseAndSetIfChanged(ref _router, value);
     }
-  
 
     public OverallViewModel()
     {
         Router ??= new RoutingState();
-        ToLogsCommand = ReactiveCommand.Create(() =>
-        {
-            Router.NavigateAndCache<LogsViewModel>();
-        });
-        if (Router != null && Router.NavigationStack.Count > 0)
-            Router.NavigateAndCache<LogsViewModel>();
+
+        //Router?.NavigateAndCache<AccountViewModel>();
+
+        ToLogsCommand = ReactiveCommand.Create(() => { Router.NavigateAndCache<LogsViewModel>(); });
+       
+        ToAccountCommand = ReactiveCommand.Create(() => { Router.NavigateAndCache<AccountViewModel>();});
+        
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using ReactiveUI;
 using SeaMoneyApp.DataAccess.Models;
+using SeaMoneyApp.Services.Authorization;
+using Splat;
 
 namespace SeaMoneyApp.Models;
 
@@ -23,4 +25,14 @@ public class AppSession : ReactiveObject
     }
 
     public bool IsLoggedIn => CurrentAccount is not null;
+
+    public AppSession()
+    {
+        var authService = Locator.Current.GetService<IAuthorizationService>();
+        // Подписываемся на изменения ошибки
+        authService!.WhenAccountInChanged
+            .BindTo(this, vm => vm.CurrentAccount);
+        authService!.LastLoginTimeChanged
+            .BindTo(this, vm => vm.LastLoginTime);
+    }
 }

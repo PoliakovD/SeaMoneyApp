@@ -45,4 +45,16 @@
     <data name="ChooseToursInRankText" xml:space="preserve">
         <value>Укажите количество контрактов в должности:</value>
     </data>
+    <data name="ToursInRankText" xml:space="preserve">
+        <value>Количество контрактов в доложности</value>
+    </data>
+    <data name="GeneralInfoText" xml:space="preserve">
+        <value>Информация об аккаунте</value>
+    </data>
+    <data name="ToAccountText" xml:space="preserve">
+        <value>Аккаунт</value>
+    </data>
+    <data name="ToLogsText" xml:space="preserve">
+        <value>Логи</value>
+    </data>
 </root>

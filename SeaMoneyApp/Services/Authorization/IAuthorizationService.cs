@@ -8,6 +8,7 @@ namespace SeaMoneyApp.Services.Authorization;
 public interface IAuthorizationService
 {
     bool IsLoggedIn { get; }
+    IObservable<DateTime?> LastLoginTimeChanged { get; }
     IObservable<bool> WhenLoggedInChanged { get; }
     IObservable<Account?> WhenAccountInChanged { get; }
     IObservable<string?> WhenErrorMessageChanged { get; }
