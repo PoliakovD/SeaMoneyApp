@@ -20,7 +20,7 @@ public class LogsViewModel : RoutableViewModel
 
     public LogsViewModel()
     {
-        var logFilePath = LoggerSetup.GetLogFilePath();
+        var logFilePath = LoggerSetup.LogFilePath;
         //LogHost.Default.Debug($"GetLogFilePath is {logFilePath}");
         string logString;
         if (System.IO.File.Exists(logFilePath))

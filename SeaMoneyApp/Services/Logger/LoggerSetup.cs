@@ -1,17 +1,23 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Splat;
 
 namespace SeaMoneyApp.Services.Logger;
 public static class LoggerSetup
 {
+    private static string? _logFilePath; // Приватное поле
+
+    public static string LogFilePath => _logFilePath ?? throw new InvalidOperationException("Logger not initialized");
+    
     public static void SetupLogger(LogLevel level = LogLevel.Debug)
     {
-        var logPath = GetLogFilePath();
-        Locator.CurrentMutable.Register<ILogger>(() => new FileLogger(logPath){Level = level});
+        if (_logFilePath != null) return; // Защита от повторного вызова
+        _logFilePath = GenerateLogFilePath();
+        Locator.CurrentMutable.Register<ILogger>(() => new FileLogger(LogFilePath){Level = level});
     }
-
-    public static string GetLogFilePath()
+    
+    private static string GenerateLogFilePath()
     {
         string logPath;
         var appDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -19,21 +25,60 @@ public static class LoggerSetup
 
         try
         {
-            // Пытаемся создать папку и проверить доступ
+            // Создаём папку log, если её нет
             Directory.CreateDirectory(logDirectory);
-            logPath = Path.Combine(logDirectory, "logs.log");
             
-            // Проверим, можем ли мы записать тестовую строку 
-            File.AppendAllText(logPath, "");
+            // Удаляем старые логи, оставляя только 3 последних
+            CleanupOldLogFiles(logDirectory, 3);
+
+            // Генерируем имя файла с меткой времени (каждый запуск — новый файл)
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            var fileName = $"logs_{timestamp}.log";
+            logPath = Path.Combine(logDirectory, fileName);
+
+            // Создаём новый лог-файл
+            File.WriteAllText(logPath, $"Log started at {DateTime.Now:yyyy-MM-dd HH:mm:ss}{Environment.NewLine}");
         }
         catch
         {
-            // Если не удалось записать в папку приложения — используем временный каталог
+            // Если не удалось записать в основную папку — используем временную
             var tempDir = Path.Combine(Path.GetTempPath(), "SeaMoneyApp", "log");
             Directory.CreateDirectory(tempDir);
-            logPath = Path.Combine(tempDir, "logs.log");
+            
+            // Очищаем резервную папку
+            CleanupOldLogFiles(tempDir, 3);
+            
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            var fileName = $"logs_{timestamp}.log";
+            logPath = Path.Combine(tempDir, fileName);
+
+            File.WriteAllText(logPath, $"Log started at {DateTime.Now:yyyy-MM-dd HH:mm:ss}{Environment.NewLine}");
         }
+
         return logPath;
+    }
+    
+    private static void CleanupOldLogFiles(string directory, int maxFilesToKeep = 3)
+    {
+        if (!Directory.Exists(directory)) return;
+
+        var logFiles = Directory.GetFiles(directory, "logs_*.log")
+            .Select(f => new FileInfo(f))
+            .OrderByDescending(f => f.CreationTime)  // Сортируем по времени создания: новые сверху
+            .Skip(maxFilesToKeep)                    // Пропускаем первые N (самые новые)
+            .ToList();
+
+        foreach (var file in logFiles)
+        {
+            try
+            {
+                file.Delete();
+            }
+            catch
+            {
+                // Игнорируем ошибки удаления (файл может быть занят)
+            }
+        }
     }
     
     private class FileLogger : ILogger
