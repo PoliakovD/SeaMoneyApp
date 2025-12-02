@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
+using Avalonia.Threading;
 using ReactiveUI;
 using SeaMoneyApp.Services.Logger;
 using Splat;
@@ -16,13 +18,18 @@ public class LogsViewModel : RoutableViewModel
 
     public InlineCollection LogContent
     {
-        get => _logContent;
+        get
+        {
+            
+            return _logContent;
+        }
         set => this.RaiseAndSetIfChanged(ref _logContent, value);
     }
 
     public LogsViewModel()
     {
         UpdateLogs();
+        SetupFileWatcher();
     }
 
     public void UpdateLogs()
@@ -71,5 +78,26 @@ public class LogsViewModel : RoutableViewModel
                         : line.Contains("[Debug]", System.StringComparison.OrdinalIgnoreCase)
                             ? Brushes.Black
                             : Brushes.Gray;
+    }
+    
+    private FileSystemWatcher _watcher;
+    
+    private void SetupFileWatcher()
+    {
+        var path = Path.GetDirectoryName(LoggerSetup.LogFilePath);
+        var fileName = Path.GetFileName(LoggerSetup.LogFilePath);
+
+        _watcher = new FileSystemWatcher(path, fileName)
+        {
+            EnableRaisingEvents = true,
+            NotifyFilter = NotifyFilters.LastWrite
+        };
+
+        _watcher.Changed += (s, e) =>
+        {
+            // Защита от множественных вызовов
+            Thread.Sleep(100);
+            Dispatcher.UIThread.Post(UpdateLogs);
+        };
     }
 }
