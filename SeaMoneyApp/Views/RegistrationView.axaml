@@ -11,7 +11,10 @@
              x:DataType="viewModels:RegistrationViewModel"
              
              x:Class="SeaMoneyApp.Views.RegistrationView">
-    
+    <UserControl.KeyBindings>
+        <!-- Привязка: при нажатии Enter — выполнить RegistrationCommand -->
+        <KeyBinding Gesture="Enter" Command="{Binding RegistrationCommand}" />
+    </UserControl.KeyBindings>
     <Grid RowDefinitions="*,*,*,*,*,*,*,*,*">
         <c:InputComponent Grid.Row="1" Label="{x:Static local:Localization.LoginText}"
                           Value="{Binding Path=Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

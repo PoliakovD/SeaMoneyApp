@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
@@ -20,6 +22,11 @@ public class LogsViewModel : RoutableViewModel
 
     public LogsViewModel()
     {
+        UpdateLogs();
+    }
+
+    public void UpdateLogs()
+    {
         var logFilePath = LoggerSetup.LogFilePath;
         //LogHost.Default.Debug($"GetLogFilePath is {logFilePath}");
         string logString;
@@ -31,8 +38,10 @@ public class LogsViewModel : RoutableViewModel
         {
             logString = $"# [ERROR] Ошибка\nФайл лога не найден:\n{logFilePath}";
         }
+
         ApplyColoredLogText(LogContent, logString);
     }
+
     private void ApplyColoredLogText(InlineCollection inlineCollection, string logContent)
     {
         inlineCollection.Clear();
@@ -63,7 +72,4 @@ public class LogsViewModel : RoutableViewModel
                             ? Brushes.Black
                             : Brushes.Gray;
     }
-
-
-    
 }

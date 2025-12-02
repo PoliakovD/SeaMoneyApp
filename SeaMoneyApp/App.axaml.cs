@@ -47,6 +47,9 @@ public partial class App : Application
         
         var screen = new MainViewModel();
         
+        // Регистрируем screen как команду для перемещения назад как синглтон
+        Locator.CurrentMutable.RegisterConstant<IScreenBackCommand>(screen);
+        
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktop:

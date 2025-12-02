@@ -61,9 +61,18 @@ public partial class LoginViewModel : RoutableViewModel
         {
             if (authService.Login(Username!, Password!))
             {
+                // очищаем ErrorMessage
                 authService.FlushErrorMessage();
-                HostScreen!.Router.NavigateAndCache<OverallViewModel>();
-                HostScreen.Router.ClearCache<LoginViewModel>();
+                // создаем новую вьюху Overall и регестрируем ее как текущую для навигации назад
+                var overall = new OverallViewModel();
+                
+                Locator.CurrentMutable.RegisterConstant<IScreenBackCommand>(overall);
+                
+                // очищаем кеш предыдущего рутера
+                HostScreen.Router.ClearCache();
+                
+                // Переходим к новой вьюхе
+                HostScreen!.Router.NavigateAndCache<OverallViewModel>(overall);
             }
         },
             this

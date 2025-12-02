@@ -18,6 +18,13 @@ public static class RoutingStateExtensions
         router.Navigate.Execute(vm);
     }
     
+    public static void NavigateAndCache<T>(this RoutingState router, RoutableViewModel routableViewModel) 
+    {
+        var type = typeof(T);
+        var vm = ViewModelCache.GetOrAdd(type, routableViewModel);
+        router.Navigate.Execute(vm);
+    }
+    
     public static void ClearCache(this RoutingState router)
     {
         ViewModelCache.Clear();
@@ -27,4 +34,9 @@ public static class RoutingStateExtensions
     {
         ViewModelCache.TryRemove(typeof(T), out _);
     }
+}
+
+public interface IScreenBackCommand : IScreen
+{
+    
 }

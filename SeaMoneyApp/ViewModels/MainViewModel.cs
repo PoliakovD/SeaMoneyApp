@@ -8,12 +8,11 @@ using SeaMoneyApp.Extensions;
 namespace SeaMoneyApp.ViewModels;
 
 [DataContract]
-public partial class MainViewModel : ReactiveObject, IScreen
+public partial class MainViewModel : ReactiveObject, IScreen, IScreenBackCommand
 {
     private RoutingState? _router;
     
     private Account? _currentAccount;
-    
     public MainViewModel()
     {
         Router ??= new RoutingState();
@@ -21,7 +20,6 @@ public partial class MainViewModel : ReactiveObject, IScreen
         LoginCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<LoginViewModel>());
         SearchCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<OverallViewModel>());
         RegisterCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<RegistrationViewModel>());
-       
     }
 
     [IgnoreDataMember]
@@ -38,6 +36,5 @@ public partial class MainViewModel : ReactiveObject, IScreen
 
     [IgnoreDataMember]
     public ICommand RegisterCommand { get; }
-    
     
 }

@@ -12,7 +12,12 @@
              
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SeaMoneyApp.Views.LoginView">
+    <UserControl.KeyBindings>
+        <!-- Привязка: при нажатии Enter — выполнить LoginCommand -->
+        <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}" />
+    </UserControl.KeyBindings>
     <Grid RowDefinitions="*,*,*,*,*,*">
+        
         <TextBlock Grid.Row="0" Text="{x:Static local:Localization.Authorization}" Margin="5" />
         
         <c:InputComponent Grid.Row="1" Label="{x:Static local:Localization.LoginText}"
@@ -28,7 +33,7 @@
                    IsVisible="{Binding ErrorMessage}" />
         <StackPanel Grid.Row="4" Orientation="Horizontal">
             <Button  Content="{x:Static local:Localization.EnterText}" 
-                     Command="{Binding LoginCommand}" />
+                     Command="{Binding LoginCommand}"/>
             <Button  Margin="40,0,0,0" Content="{x:Static local:Localization.RegistrationText}" 
                      Command="{Binding ToRegistrationCommand}" />
         </StackPanel>

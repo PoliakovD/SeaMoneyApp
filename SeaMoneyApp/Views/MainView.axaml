@@ -6,7 +6,7 @@
              
              xmlns:view="clr-namespace:SeaMoneyApp.Views"
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
-             d:DataContext="{d:DesignInstance viewModels:LoginViewModel, IsDesignTimeCreatable=True}"
+             d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=True}"
              
              xmlns:vm="using:SeaMoneyApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"

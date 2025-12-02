@@ -12,11 +12,12 @@ using Splat;
 
 namespace SeaMoneyApp.ViewModels;
 [DataContract]
-public class OverallViewModel: RoutableViewModel
+public class OverallViewModel: RoutableViewModel, IScreenBackCommand
 {
     public ICommand ToLogsCommand { get; }
     
     private RoutingState? _router;
+
     [IgnoreDataMember]
     public RoutingState? Router
     {
@@ -28,10 +29,11 @@ public class OverallViewModel: RoutableViewModel
     public OverallViewModel()
     {
         Router ??= new RoutingState();
-        ToLogsCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<LogsViewModel>());
+        ToLogsCommand = ReactiveCommand.Create(() =>
+        {
+            Router.NavigateAndCache<LogsViewModel>();
+        });
         if (Router != null && Router.NavigationStack.Count > 0)
             Router.NavigateAndCache<LogsViewModel>();
     }
-    
-   
 }
