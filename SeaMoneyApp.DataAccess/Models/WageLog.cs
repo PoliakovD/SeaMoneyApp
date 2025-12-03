@@ -9,20 +9,15 @@ public class WageLog
     [Column("id")]
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    
-    [Column("date")] [Required]
-    public DateTime Date { get; set; }
-    
-    [Column("amount_in_rub")] [Required]
-    public decimal AmountInRub { get; set; }
-    
+
+    [Column("date")] [Required] public DateTime Date { get; set; }
+
+    [Column("amount_in_rub")] [Required] public decimal AmountInRub { get; set; }
+
+    [ForeignKey("position_id")] public Position? Position { get; set; }
+
     [ForeignKey("account_id")] public Account? Account { get; set; }
-    
-    [ForeignKey("change_rub_to_dollar_id")] public ChangeRubToDollar? ChangeRubToDollar { get; set; }
-    
-    
-    
-    
-    
-    
+
+    [ForeignKey("change_rub_to_dollar_id")]
+    public ChangeRubToDollar? ChangeRubToDollar { get; set; }
 }
