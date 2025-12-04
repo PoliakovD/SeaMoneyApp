@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using Splat;
 
 namespace SeaMoneyApp.Components;
 
@@ -27,13 +28,14 @@ public partial class InputComponent : UserControl
         get => GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
     }
-
-   
-
+    
     public bool IsReadOnly
     {
         get => GetValue(IsReadOnlyProperty);
-        set => SetValue(IsReadOnlyProperty, value);
+        set
+        {
+            SetValue(IsReadOnlyProperty, value);
+        }
     }
 
     public InputComponent()
