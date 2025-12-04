@@ -8,11 +8,11 @@ public class WageLog
 {
     [Column("id")]
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
-    [Column("date")] [Required] public DateTime Date { get; set; }
+    [Column("date")] [Required] public DateTime? Date { get; set; }
 
-    [Column("amount_in_rub")] [Required] public decimal AmountInRub { get; set; }
+    [Column("amount_in_rub")] [Required] public decimal? AmountInRub { get; set; }
 
     [ForeignKey("position_id")] public Position? Position { get; set; }
 

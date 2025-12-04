@@ -7,7 +7,7 @@ public class PersonalBonus
 {
     [Column("id")]
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     
     [Column("year")]
     [Required] public short year { get; set; }

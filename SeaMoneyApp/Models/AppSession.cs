@@ -11,6 +11,12 @@ public class AppSession : ReactiveObject
 {
     private Account? _currentAccount;
     private DateTime? _lastLoginTime;
+    private bool? _isAdmin;
+    private bool? IsAdmin 
+    {
+        get => _isAdmin;
+        set => this.RaiseAndSetIfChanged(ref _isAdmin, value);
+    }
 
     public Account? CurrentAccount
     {
@@ -29,10 +35,14 @@ public class AppSession : ReactiveObject
     public AppSession()
     {
         var authService = Locator.Current.GetService<IAuthorizationService>();
+        
         // Подписываемся на изменения ошибки
         authService!.WhenAccountInChanged
             .BindTo(this, vm => vm.CurrentAccount);
+        
         authService!.LastLoginTimeChanged
             .BindTo(this, vm => vm.LastLoginTime);
+        
+        authService.WhenAccountInChanged.Subscribe(a => IsAdmin = a!.Login == "admin");
     }
 }

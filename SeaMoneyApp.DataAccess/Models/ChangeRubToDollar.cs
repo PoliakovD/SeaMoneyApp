@@ -9,7 +9,7 @@ public class ChangeRubToDollar
 {
     [Column("id")]
     [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     
     [Column("value")]
     public decimal Value { get; set; }

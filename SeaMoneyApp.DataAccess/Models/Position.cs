@@ -9,7 +9,7 @@ public class Position
 {
     [Column("id")]
     [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     
     [Column("name")]
     [Required]

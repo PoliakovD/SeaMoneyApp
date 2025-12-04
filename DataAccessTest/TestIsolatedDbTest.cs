@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
-using Xunit;
 
 namespace DataAccessTest;
 
@@ -32,5 +31,11 @@ public class TestIsolatedDbTest : IDisposable
     {
         // Каждый тест начинается с чистой БД
         Assert.Empty(Context.Positions.ToList());
+    }
+    [Fact]
+    public void Test3_AddChangeRubToDollar()
+    {
+        
+        Context.Positions.Add(new Position { Name = "Master" });
     }
 }

@@ -8,7 +8,7 @@ public class Salary
 {
     [Column("id")]
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int id { get; set; }
+    public int? Id { get; set; }
 
     [Column("year")] [Required] public short Year { get; set; }
     
