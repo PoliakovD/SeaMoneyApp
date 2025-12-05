@@ -1,25 +1,57 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using SeaMoneyApp.DataAccess.Models;
+using Splat;
 
 namespace HtmlParcerCbrCources
 {
     public static class HTMLParcerCbrCources
     {
         private static readonly HttpClient HttpClient = new HttpClient();
+        
+        // Кэш для курсов: дата -> курс USD/RUB
+        private static readonly ConcurrentDictionary<DateTime, ChangeRubToDollar> CourseCache = new();
 
         static HTMLParcerCbrCources()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             HttpClient.DefaultRequestHeaders.Add("User-Agent",
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+            
+            LogHost.Default.Info("HTMLParcerCbrCources Constructor");
+            LogHost.Default.Info($"{HttpClient.BaseAddress}");
+            LogHost.Default.Info($"{HttpClient.DefaultRequestHeaders}");
+            LogHost.Default.Info($"{HttpClient.DefaultProxy}");
         }
 
         public static async Task<ChangeRubToDollar> GetUsdCourseOnDateAsync(DateTime date)
+        {
+
+            // Проверяем кэш
+            if (CourseCache.TryGetValue(date, out var cachedCourse))
+            {
+                LogHost.Default.Debug($"Cache hit for date {date:dd.MM.yyyy}: {cachedCourse.Value}");
+                return cachedCourse;
+            }
+
+            // Если нет в кэше — загружаем
+            var course = await FetchCourseFromCbr(date);
+            if (course != null)
+            {
+                // Сохраняем в кэш только при успешном получении
+                CourseCache.TryAdd(date, course);
+                LogHost.Default.Debug($"Course cached for date {date:dd.MM.yyyy}: {course.Value}");
+            }
+
+            return course;
+        }
+
+        private static async Task<ChangeRubToDollar> FetchCourseFromCbr(DateTime date)
         {
             string dateString = date.ToString("dd/MM/yyyy");
             string url = $"https://www.cbr.ru/scripts/XML_daily.asp?date_req={dateString}";
@@ -27,72 +59,82 @@ namespace HtmlParcerCbrCources
             try
             {
                 var response = await HttpClient.GetAsync(url);
-                if (!response.IsSuccessStatusCode) return null;
-
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    LogHost.Default.Error("Response status is not success");
+                    return null;
+                }
+                
+                LogHost.Default.Debug($"Response: {response.StatusCode}");
+                
                 byte[] raw = await response.Content.ReadAsByteArrayAsync();
                 string xmlContent = Encoding.GetEncoding("windows-1251").GetString(raw);
 
                 var doc = XDocument.Parse(xmlContent);
+                if (doc == null)
+                {
+                    LogHost.Default.Error("XDocument.Parse returned null");
+                    return null;
+                }
 
                 var usdElement = doc.Descendants("Valute")
                     .FirstOrDefault(v => v.Element("CharCode")?.Value == "USD");
 
-                if (usdElement == null) return null;
-
-                string valueText = usdElement.Element("Value")?.Value?.Replace(',', '.');
-                if (decimal.TryParse(valueText, NumberStyles.Float, null, out decimal course))
+                if (usdElement == null)
                 {
+                    LogHost.Default.Warn("USD element not found in XML");
+                    return null;
+                }
+
+                char decimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
+                LogHost.Default.Info($"Current decimal separator: {decimalSeparator}");
+
+                string? valueText = usdElement.Element("Value")?.Value;
+                if (string.IsNullOrWhiteSpace(valueText))
+                {
+                    LogHost.Default.Warn("Value text is null or empty");
+                    return null;
+                }
+
+                // Заменяем стандартный разделитель ЦБ (,) на локальный
+                valueText = valueText.Replace(',', decimalSeparator);
+
+                if (decimal.TryParse(valueText, NumberStyles.Currency | NumberStyles.Number, 
+                    CultureInfo.CurrentCulture, out decimal course))
+                {
+                    LogHost.Default.Debug($"USD course parsed: {course}");
                     return new ChangeRubToDollar
                     {
                         Id = null,
                         Value = course,
-                        Date = date.Date
+                        Date = date
                     };
                 }
 
+                LogHost.Default.Warn($"Failed to parse course value: {valueText}");
                 return null;
             }
             catch (Exception ex)
             {
+                LogHost.Default.Error(ex, "Exception in GetUsdCourseOnDateAsync");
                 return null;
             }
         }
 
-        public static List<DateTime> GetDatesFrom2020()
-        {
-            var result = new List<DateTime>();
-            int year = 2024;
-            int month = 1;
-            const int day = 15;
-            DateTime observedDate = new DateTime(year, month, day);
-            var currentDate = DateTime.Today;
+        // Опционально: очистка кэша (например, при ручном обновлении)
+        public static void ClearCache() => CourseCache.Clear();
 
-            while (observedDate <= currentDate)
+        // Опционально: предзагрузка курсов за несколько дней
+        public static async Task PreloadCoursesAsync(DateTime startDate, DateTime endDate)
+        {
+            for (var date = startDate.Date; date <= endDate; date = date.AddDays(1))
             {
-                observedDate = new DateTime(year, month, day);
-                result.Add(observedDate);
-                if (month == 12)
+                if (!CourseCache.ContainsKey(date))
                 {
-                    month = 1;
-                    ++year;
+                    await GetUsdCourseOnDateAsync(date);
                 }
-                ++month;
             }
-            return result;
-        }
-
-        public static async Task<List<ChangeRubToDollar>> GetUsdCourcesFrom2020()
-        {
-            var listDates = GetDatesFrom2020();
-            var result = new List<ChangeRubToDollar>();
-            foreach (var date in listDates)
-            {
-                var course =  await GetUsdCourseOnDateAsync(date);
-                result.Add(course);
-                Console.WriteLine($"Дата:{course.Date} - Курс:{course.Value}");
-                Thread.Sleep(200);
-            }
-            return result;
         }
     }
 }

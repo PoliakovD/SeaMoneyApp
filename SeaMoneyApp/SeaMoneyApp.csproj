@@ -26,7 +26,6 @@
         <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)"/>
         
-        
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         
         
@@ -56,6 +55,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\HtmlParcerCbrCources\HtmlParcerCbrCources.csproj" />
       <ProjectReference Include="..\SeaMoneyApp.DataAccess\SeaMoneyApp.DataAccess.csproj" />
     </ItemGroup>
     

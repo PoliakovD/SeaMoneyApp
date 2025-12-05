@@ -23,6 +23,9 @@
             <Button Content="{x:Static local:Localization.ToAccountText}"
                     Command="{Binding ToAccountCommand}" />
             
+            <Button Content="{x:Static local:Localization.ToCourcesText}"
+                    Command="{Binding ToCourcesCommand}" />
+            
         </StackPanel>
         <Grid>
 

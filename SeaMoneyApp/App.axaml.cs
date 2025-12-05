@@ -17,6 +17,7 @@ using SeaMoneyApp.Models;
 using SeaMoneyApp.Services;
 using SeaMoneyApp.Services.Authorization;
 using SeaMoneyApp.Services.Logger;
+using SeaMoneyApp.Services.UpdateCources;
 using SeaMoneyApp.ViewModels;
 using SeaMoneyApp.Views;
 using SeaMoneyApp.Views.OverallViews;
@@ -41,6 +42,10 @@ public partial class App : Application
         // Регистрируем сервис авторизации как Singleton
         Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>
             (() => new AuthorizationService());
+        
+        // Регистрируем сервис загрузки курсов как Singleton
+        Locator.CurrentMutable.RegisterLazySingleton
+            (() => new UpdateCourcesService());
         
         // Устанавливаем глобальный ViewLocator
         Locator.CurrentMutable.RegisterViewsForViewModels(typeof(App).Assembly);

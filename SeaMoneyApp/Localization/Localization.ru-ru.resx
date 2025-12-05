@@ -57,4 +57,10 @@
     <data name="ToLogsText" xml:space="preserve">
         <value>Логи</value>
     </data>
+    <data name="ToCourcesText" xml:space="preserve">
+        <value>Курсы</value>
+    </data>
+    <data name="LoadCourcesFromHttpText" xml:space="preserve">
+        <value>Загрузить курсы с сайта ЦБ</value>
+    </data>
 </root>

@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Models;
@@ -23,6 +24,8 @@ public class AuthorizationService : IAuthorizationService
     private readonly BehaviorSubject<Account?> _loggedInAccount = new(null);
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
     private readonly BehaviorSubject<DateTime?> _lastLoginTime = new (null);
+    
+    private readonly BehaviorSubject<ChangeRubToDollar?> _changeRubToDollar = new(null);
 
     public bool IsLoggedIn => _isLoggedIn;
 
