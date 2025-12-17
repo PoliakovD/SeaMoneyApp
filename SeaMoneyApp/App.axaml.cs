@@ -36,12 +36,12 @@ public partial class App : Application
         
         LoggerSetup.SetupLogger(LogLevel.Debug); // Регистрируем логгер
         
-        // Регистрируем сервис database context как Singleton
-        Locator.CurrentMutable.RegisterLazySingleton(DataBaseContextFactory.CreateWithDefaultConnectionString);
+        // Регистрируем сервис database context
+        Locator.CurrentMutable.RegisterConstant(DataBaseContextFactory.CreateWithDefaultConnectionString());
         
-        // Регистрируем сервис авторизации как Singleton
-        Locator.CurrentMutable.RegisterLazySingleton<IAuthorizationService>
-            (() => new AuthorizationService());
+        // Регистрируем сервис авторизации
+        Locator.CurrentMutable.RegisterConstant<IAuthorizationService>
+            ( new AuthorizationService());
         
         // Регистрируем сервис загрузки курсов как Singleton
         Locator.CurrentMutable.RegisterLazySingleton
@@ -50,8 +50,16 @@ public partial class App : Application
         // Устанавливаем глобальный ViewLocator
         Locator.CurrentMutable.RegisterViewsForViewModels(typeof(App).Assembly);
         
+        
         // Регистрируем AppSession как синглтон
-        Locator.CurrentMutable.RegisterLazySingleton(() => new AppSession());
+        //Locator.CurrentMutable.RegisterLazySingleton(() => new AppSession());
+        
+        
+        //var appSession = new AppSession();
+        //appSession.RestoreSession();
+        var appSession = new AppSession();
+        Locator.CurrentMutable.RegisterConstant(appSession);
+        
         
         var screen = new MainViewModel();
         
@@ -75,8 +83,11 @@ public partial class App : Application
         }
         
         LogHost.Default.Info("Initialized application successfully");
+
+        var router = Locator.Current.GetService<IScreen>()?.Router;
         
-        Locator.Current.GetService<IScreen>()?.Router.NavigateAndCache<LoginViewModel>();
+        if(appSession.CurrentAccount is null) router.NavigateAndCache<LoginViewModel>();
+        else router.NavigateAndCache<OverallViewModel>();
         
         LogHost.Default.Info("Registered views successfully");
         

@@ -24,6 +24,8 @@
            <c:InputComponent IsReadOnly="True"
                              Label="{x:Static local:Localization.ToursInRankText}"
                              Value="{Binding ToursInRank}"/>
+          
        </StackPanel>
+       <Button Content="Logout" Command="{Binding LogOutCommand}"/>
    </Grid>
 </UserControl>

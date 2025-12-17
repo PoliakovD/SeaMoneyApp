@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeaMoneyApp.DataAccess.Models;
 
-
+[Serializable]
 [Table("table_positions")]
 public class Position
 {

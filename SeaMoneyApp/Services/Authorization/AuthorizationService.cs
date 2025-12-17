@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Models;
@@ -16,28 +18,32 @@ namespace SeaMoneyApp.Services.Authorization;
 /// <summary>
 /// Реализация сервиса авторизации.
 /// </summary>
-public class AuthorizationService : IAuthorizationService
+public class AuthorizationService : IAuthorizationService, IDisposable
 {
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
-    private bool _isLoggedIn;
+
+   
+
     private readonly BehaviorSubject<bool> _isLoggedInSubject = new(false);
     private readonly BehaviorSubject<Account?> _loggedInAccount = new(null);
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
-    private readonly BehaviorSubject<DateTime?> _lastLoginTime = new (null);
-    
-    private readonly BehaviorSubject<ChangeRubToDollar?> _changeRubToDollar = new(null);
-
-    public bool IsLoggedIn => _isLoggedIn;
+    private readonly BehaviorSubject<DateTime?> _lastLoginTime = new(null);
+    private readonly BehaviorSubject<bool> _rememberMeSubject = new(false);
 
     public IObservable<DateTime?> LastLoginTimeChanged => _lastLoginTime.AsObservable();
 
     public IObservable<bool> WhenLoggedInChanged => _isLoggedInSubject.AsObservable();
 
+    public IObservable<bool> WhenRememberMeChanged => _rememberMeSubject.AsObservable();
+
     public IObservable<Account?> WhenAccountInChanged => _loggedInAccount.AsObservable();
 
     public IObservable<string?> WhenErrorMessageChanged => _errorMessageSubject.AsObservable();
 
-    public bool Login(string username, string password)
+
+    
+
+    public bool Login(string? username, string? password, bool rememberMe = false)
     {
         _errorMessageSubject.OnNext(null); // Сброс ошибки
         // Проверка ввода
@@ -64,22 +70,22 @@ public class AuthorizationService : IAuthorizationService
 
         if (account.Password == password)
         {
-            _isLoggedIn = true;
-            
             // Уведомляем подписчиков
-            _isLoggedInSubject.OnNext(true); 
+            _isLoggedInSubject.OnNext(true);
             _loggedInAccount.OnNext(account);
             _errorMessageSubject.OnNext(null);
             _lastLoginTime.OnNext(DateTime.Now);
-            
+            _rememberMeSubject.OnNext(rememberMe);
+
+
             LogHost.Default.Info("User logged in: " + username);
             return true;
         }
+
         var errorMsgLast = "Wrong Password!";
         LogHost.Default.Info(errorMsgLast);
         _errorMessageSubject.OnNext(errorMsgLast);
         return false;
-        
     }
 
     public bool Register(string? login, string? password, Position? position, short? toursInRank)
@@ -129,16 +135,15 @@ public class AuthorizationService : IAuthorizationService
                 Position = position,
                 ToursInRank = (short)toursInRank
             };
-            
+
             _dbContext.Accounts.Add(account);
             // Уведомляем подписчиков
             _dbContext.SaveChanges();
-            _isLoggedIn = true;
-            _isLoggedInSubject.OnNext(true); 
+            _isLoggedInSubject.OnNext(true);
             _errorMessageSubject.OnNext(null);
             _loggedInAccount.OnNext(account);
             _lastLoginTime.OnNext(DateTime.Now);
-            
+
             LogHost.Default.Debug("User registred and logged in: " + login);
             return true;
         }
@@ -149,22 +154,20 @@ public class AuthorizationService : IAuthorizationService
             _errorMessageSubject.OnNext(errorMsg);
             return false;
         }
-
-        
     }
 
     public void Logout()
     {
-        if (!_isLoggedIn) return;
-
-        _isLoggedIn = false;
+        if (!_isLoggedInSubject.Value) return;
+        
         _isLoggedInSubject.OnNext(false);
+        _loggedInAccount.OnNext(null);
         _errorMessageSubject.OnNext(null);
+        _lastLoginTime.OnNext(null);
+
         LogHost.Default.Info("User logged out");
     }
 
-    public void Dispose() => _isLoggedInSubject?.Dispose();
-    
     private ValidationResult ValidateCredentials(string username, string password)
     {
         // Проверка логина
@@ -190,11 +193,11 @@ public class AuthorizationService : IAuthorizationService
 
         if (password.Length > 32)
             return new ValidationResult(false, "Пароль слишком длинный > 32 символов");
-        
+
 
         return new ValidationResult(true, "OK");
     }
-    
+
     private bool IsValidUsername(string username)
     {
         foreach (char c in username)
@@ -206,12 +209,15 @@ public class AuthorizationService : IAuthorizationService
         return true;
     }
 
-    private bool HasLowercase(string password) => password.Any(char.IsLower);
-    private bool HasUppercase(string password) => password.Any(char.IsUpper);
-    private bool HasDigit(string password) => password.Any(char.IsDigit);
-
-    
     public void FlushErrorMessage() => _errorMessageSubject.OnNext(null);
+
+    public void Dispose()
+    {
+        _isLoggedInSubject?.Dispose();
+        _loggedInAccount?.Dispose();
+        _errorMessageSubject?.Dispose();
+        _lastLoginTime?.Dispose();
+    }
 }
 
 internal record ValidationResult(bool IsValid, string ErrorMessage);

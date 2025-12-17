@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeaMoneyApp.DataAccess.Models;
-
+[Serializable]
 [Table("table_accounts")]
 public class Account
 {
+    
     [Column("id")]
     [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int? Id { get; set; }

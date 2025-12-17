@@ -71,4 +71,7 @@
     <data name="LoadCourcesFromHttpText" xml:space="preserve">
         <value>Load Cource sFrom Http</value>
     </data>
+    <data name="RememberMeText" xml:space="preserve">
+        <value>Remember me</value>
+    </data>
 </root>

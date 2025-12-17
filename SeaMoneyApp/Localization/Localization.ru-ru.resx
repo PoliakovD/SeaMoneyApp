@@ -63,4 +63,7 @@
     <data name="LoadCourcesFromHttpText" xml:space="preserve">
         <value>Загрузить курсы с сайта ЦБ</value>
     </data>
+    <data name="RememberMeText" xml:space="preserve">
+        <value>Запомнить меня</value>
+    </data>
 </root>

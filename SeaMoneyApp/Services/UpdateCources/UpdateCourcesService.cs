@@ -62,7 +62,7 @@ public class UpdateCourcesService: ReactiveObject
     public static List<DateTime> GetDatesFrom2020()
     {
         var result = new List<DateTime>();
-        int year = 2025;
+        int year = 2020;
         int month = 1;
         const int day = 15;
         DateTime observedDate = new DateTime(year, month, day);
