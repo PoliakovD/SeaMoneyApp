@@ -74,4 +74,10 @@
     <data name="RememberMeText" xml:space="preserve">
         <value>Remember me</value>
     </data>
+    <data name="LogoutText" xml:space="preserve">
+        <value>Logout</value>
+    </data>
+    <data name="LocalizationText" xml:space="preserve">
+        <value>Language</value>
+    </data>
 </root>

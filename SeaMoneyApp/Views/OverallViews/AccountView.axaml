@@ -26,6 +26,6 @@
                              Value="{Binding ToursInRank}"/>
           
        </StackPanel>
-       <Button Content="Logout" Command="{Binding LogOutCommand}"/>
+       <Button Content="{x:Static local:Localization.LogoutText}" Command="{Binding LogOutCommand}"/>
    </Grid>
 </UserControl>

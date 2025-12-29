@@ -1,8 +1,20 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+            
+             xmlns:local="clr-namespace:SeaMoneyApp.Localization"
+             xmlns:c="clr-namespace:SeaMoneyApp.Components"
+             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
+             xmlns:m="using:SeaMoneyApp.DataAccess.Models"
+
+             x:DataType="viewModels:CourcesViewModel"
+             d:DataContext="{d:DesignInstance viewModels:AppSettingsViewModel, IsDesignTimeCreatable=True}"
+             
              x:Class="SeaMoneyApp.Views.OverallViews.AppSettingsView">
-    Welcome to Avalonia!
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <c:InputComponent Label="{x:Static local:Localization.LocalizationText}"/>
+        </StackPanel>
+    </Grid>
 </UserControl>
