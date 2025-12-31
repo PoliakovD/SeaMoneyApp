@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -20,43 +21,55 @@ public class UpdateCourcesService: ReactiveObject
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
 
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
-    private readonly BehaviorSubject<bool> _canStart = new(false);
-
+    private readonly BehaviorSubject<bool> _canStart = new(true);
+    
     public IObservable<string?> WhenErrorMessageChanged => _errorMessageSubject.AsObservable();
     
     public IObservable<bool> WhenCanStartChanged => _canStart.AsObservable();
-    
 
-    public async Task LoadCourcesAsync( ObservableCollection<ChangeRubToDollar> collection)
+    public async Task LoadCourcesAsync( ObservableCollection<ChangeRubToDollar> collection, 
+        CancellationToken cToken = default)
     {
-        _canStart.OnNext(false); // Запрет  
+        _canStart.OnNext(false); // Запрет на повторный запуск
+        string? errorMsg=null;
         try
         {
+            cToken.ThrowIfCancellationRequested();
             _errorMessageSubject.OnNext(null); // Сброс ошибки
 
             var dates = GetDatesFrom2020();
             foreach (var date in dates)
             {
-                var course = await HTMLParcerCbrCources.GetUsdCourseOnDateAsync(date);
-                if (course != null)
-                {
-                    collection.Add(course);
-                }
+                if (IsDateExistInCollection(date,collection)) continue;
+
+                var course = await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken);
+                collection.Add(course);
 
                 LogHost.Default.Info($"Загружен курс: {course?.Date:dd.MM.yyyy} = {course?.Value:F4} ₽");
-                await Task.Delay(100); // Анти-спам задержка
+                await Task.Delay(100, cToken); // Анти-спам задержка
             }
-
-            // await SaveToDatabaseAsync(collection, token);
+        }
+        catch (OperationCanceledException)
+        {
+            errorMsg = "Загрузка курсов отменена или вышло время ожидания";
+            LogHost.Default.Error(errorMsg);
         }
         catch (Exception ex)
         {
-            var errorMsg = $"Ошибка загрузки курсов: {ex.Message}";
-            _errorMessageSubject.OnNext(errorMsg);
+            errorMsg = $"Ошибка загрузки курсов: {ex.Message}";
             LogHost.Default.Error(ex, errorMsg);
+        }
+        finally
+        {
+            if(errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
             _canStart.OnNext(true);
         }
-        _canStart.OnNext(true);
+    }
+
+    private bool IsDateExistInCollection(DateTime date, ObservableCollection<ChangeRubToDollar> collection)
+    {
+        var result = collection?.Any(x => x.Date == date);
+        return result ?? false;
     }
 
     public static List<DateTime> GetDatesFrom2020()
@@ -79,21 +92,6 @@ public class UpdateCourcesService: ReactiveObject
 
             ++month;
             observedDate = new DateTime(year, month, day);
-        }
-
-        return result;
-    }
-
-    public static async Task<List<ChangeRubToDollar>> GetUsdCourcesFrom2020()
-    {
-        var listDates = GetDatesFrom2020();
-        var result = new List<ChangeRubToDollar>();
-        foreach (var date in listDates)
-        {
-            var course = await HTMLParcerCbrCources.GetUsdCourseOnDateAsync(date);
-            result.Add(course);
-            LogHost.Default.Info($"Дата:{course.Date} - Курс:{course.Value}");
-            Thread.Sleep(100);
         }
 
         return result;

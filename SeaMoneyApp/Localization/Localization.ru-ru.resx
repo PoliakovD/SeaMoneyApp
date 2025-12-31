@@ -72,4 +72,7 @@
     <data name="LocalizationText" xml:space="preserve">
         <value>Язык</value>
     </data>
+    <data name="StopLoadCourcesFromHttpText" xml:space="preserve">
+        <value>Остановить загрузку</value>
+    </data>
 </root>

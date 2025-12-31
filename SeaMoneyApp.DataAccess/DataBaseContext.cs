@@ -23,6 +23,11 @@ public class DataBaseContext : DbContext
     {
         return Positions.AsEnumerable();
     }
+    
+    public IEnumerable<ChangeRubToDollar> GetAllCources()
+    {
+        return ChangeRubToDollars.AsEnumerable();
+    }
 
     public IEnumerable<Position> GetPositionsByName(string name)
     {

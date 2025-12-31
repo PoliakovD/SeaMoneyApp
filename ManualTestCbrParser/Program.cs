@@ -83,7 +83,7 @@ namespace HtmlParcerCbrCources.ConsoleTest
                     }
 
                     Console.WriteLine("   🔍 Вызываем GetUsdCourseOnDateAsync(date)...");
-                    var result = await HTMLParcerCbrCources.GetUsdCourseOnDateAsync(date);
+                    var result = await HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date);
 
                     if (result != null)
                     {

@@ -10,14 +10,14 @@ using Splat;
 
 namespace HtmlParcerCbrCources
 {
-    public static class HTMLParcerCbrCources
+    public static class HtmlParcerCbrCources
     {
         private static readonly HttpClient HttpClient = new HttpClient();
         
         // Кэш для курсов: дата -> курс USD/RUB
         private static readonly ConcurrentDictionary<DateTime, ChangeRubToDollar> CourseCache = new();
 
-        static HTMLParcerCbrCources()
+        static HtmlParcerCbrCources()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             HttpClient.DefaultRequestHeaders.Add("User-Agent",
@@ -29,36 +29,46 @@ namespace HtmlParcerCbrCources
             LogHost.Default.Info($"{HttpClient.DefaultProxy}");
         }
 
-        public static async Task<ChangeRubToDollar> GetUsdCourseOnDateAsync(DateTime date)
+        public static async Task<ChangeRubToDollar> GetUsdCourseOnDateAsync
+            (DateTime date, CancellationToken cToken = default)
         {
-
-            // Проверяем кэш
-            if (CourseCache.TryGetValue(date, out var cachedCourse))
+            try
             {
-                LogHost.Default.Debug($"Cache hit for date {date:dd.MM.yyyy}: {cachedCourse.Value}");
-                return cachedCourse;
+                cToken.ThrowIfCancellationRequested();
+                // Проверяем кэш
+                if (CourseCache.TryGetValue(date, out var cachedCourse))
+                {
+                    LogHost.Default.Debug($"Cache hit for date {date:dd.MM.yyyy}: {cachedCourse.Value}");
+                    return cachedCourse;
+                }
+
+                // Если нет в кэше — загружаем
+                var course = await FetchCourseFromCbr(date, cToken);
+                if (course != null)
+                {
+                    // Сохраняем в кэш только при успешном получении
+                    CourseCache.TryAdd(date, course);
+                    LogHost.Default.Debug($"Course cached for date {date:dd.MM.yyyy}: {course.Value}");
+                }
+
+                return course;
+            }
+            catch (Exception ex)
+            {
+                LogHost.Default.Error(ex, ex.Message);
             }
 
-            // Если нет в кэше — загружаем
-            var course = await FetchCourseFromCbr(date);
-            if (course != null)
-            {
-                // Сохраняем в кэш только при успешном получении
-                CourseCache.TryAdd(date, course);
-                LogHost.Default.Debug($"Course cached for date {date:dd.MM.yyyy}: {course.Value}");
-            }
-
-            return course;
+            return null;
         }
 
-        private static async Task<ChangeRubToDollar> FetchCourseFromCbr(DateTime date)
+        private static async Task<ChangeRubToDollar> FetchCourseFromCbr(DateTime date, CancellationToken ct  = default)
         {
             string dateString = date.ToString("dd/MM/yyyy");
             string url = $"https://www.cbr.ru/scripts/XML_daily.asp?date_req={dateString}";
 
             try
             {
-                var response = await HttpClient.GetAsync(url);
+                var response = await HttpClient.GetAsync(url, ct);
                 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -68,7 +78,7 @@ namespace HtmlParcerCbrCources
                 
                 LogHost.Default.Debug($"Response: {response.StatusCode}");
                 
-                byte[] raw = await response.Content.ReadAsByteArrayAsync();
+                byte[] raw = await response.Content.ReadAsByteArrayAsync(ct);
                 string xmlContent = Encoding.GetEncoding("windows-1251").GetString(raw);
 
                 var doc = XDocument.Parse(xmlContent);
@@ -122,19 +132,7 @@ namespace HtmlParcerCbrCources
             }
         }
 
-        // Опционально: очистка кэша (например, при ручном обновлении)
+        //  очистка кэша 
         public static void ClearCache() => CourseCache.Clear();
-
-        // Опционально: предзагрузка курсов за несколько дней
-        public static async Task PreloadCoursesAsync(DateTime startDate, DateTime endDate)
-        {
-            for (var date = startDate.Date; date <= endDate; date = date.AddDays(1))
-            {
-                if (!CourseCache.ContainsKey(date))
-                {
-                    await GetUsdCourseOnDateAsync(date);
-                }
-            }
-        }
     }
 }

@@ -48,7 +48,7 @@ namespace TestAutoUpdateCources
             var result = new List<ChangeRubToDollar>();
             foreach (var date in listDates)
             {
-                var course =  await HTMLParcerCbrCources.GetUsdCourseOnDateAsync(date);
+                var course =  await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date);
                 result.Add(course);
                 Console.WriteLine($"Дата:{course.Date} - Курс:{course.Value}");
                 Thread.Sleep(100);
