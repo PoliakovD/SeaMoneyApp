@@ -7,7 +7,7 @@
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-            
+
 
              x:DataType="viewModels:CourcesViewModel"
              d:DataContext="{d:DesignInstance viewModels:CourcesViewModel, IsDesignTimeCreatable=True}"
@@ -17,33 +17,31 @@
     <UserControl.Resources>
         <DataTemplate x:Key="TemplateCource"
                       DataType="{x:Type TypeName=m:ChangeRubToDollar}">
-
-            <TextBlock TextAlignment="{Binding}">
-                <TextBlock.Text>
-                    <MultiBinding StringFormat=" {0} - {1} руб.)">
-                        <Binding Path="Date.Date" />
-                        <Binding Path="Value" />
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Date.Date, StringFormat=mm.yyyy}"
+                         x:Name="DateOfCource" />
+                <TextBox Text="{Binding Value}" />
+                <DatePicker SelectedDate="{Binding ElementName=DateOfCource}" />
+                <Button Content="Del" />
+                <Button Content="Edit" />
+                <Button Content="Save" />
+            </StackPanel>
         </DataTemplate>
-    </UserControl.Resources>
+       </UserControl.Resources>
+
 
     <DockPanel LastChildFill="True">
 
         <Button DockPanel.Dock="Top" Content="{x:Static local:Localization.LoadCourcesFromHttpText}"
-                Command="{Binding UpdateCourcesFromHttpCommand}" />
+                Command="{Binding UpdateCourcesFromHttpCommand}"
+                Classes="menue" />
         <Button DockPanel.Dock="Top" Content="{x:Static local:Localization.StopLoadCourcesFromHttpText}"
-                Command="{Binding StopLoadFromHttpCommand}" />
+                Command="{Binding StopLoadFromHttpCommand}"
+                Classes="menue" />
         <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}" />
 
 
         <Grid DockPanel.Dock="Top" RowDefinitions="200, 50">
-
-            <!--
-        We use the DrawMargin property to align both charts,
-        both charts have a left margin of 100 and a right margin of 50
-        -->
 
             <lvc:CartesianChart
                 x:Name="MainChart"
@@ -56,14 +54,16 @@
                     <lvc:XamlLineSeries
                         Values="{Binding Values, UpdateSourceTrigger=PropertyChanged}"
                         GeometryStroke="{x:Null}"
-                        GeometryFill="{x:Null}"
-                        DataPadding="{lvc:Point '0,1'}"/>
+                        GeometryFill="{lvc:SolidColorPaint Color=#FF0066CC}"
+                        GeometrySize="10.0"
+                        DataPadding="{lvc:Point '0,1'}" />
+                    <!--  -->
                 </lvc:CartesianChart.Series>
 
                 <lvc:CartesianChart.XAxes>
                     <lvc:XamlDateTimeAxis
                         MinLimit="{Binding MinX}"
-                        MaxLimit="{Binding MaxX}"/>
+                        MaxLimit="{Binding MaxX}" />
                 </lvc:CartesianChart.XAxes>
 
             </lvc:CartesianChart>

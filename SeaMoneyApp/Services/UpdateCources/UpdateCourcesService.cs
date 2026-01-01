@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -65,6 +66,44 @@ public class UpdateCourcesService: ReactiveObject
             _canStart.OnNext(true);
         }
     }
+    
+    public async Task<IEnumerable<ChangeRubToDollar>> UpdateCourcesAsync( ObservableCollection<ChangeRubToDollar> collection, 
+        CancellationToken cToken = default)
+    {
+        var resultCollection = new ConcurrentQueue<ChangeRubToDollar>();
+        _canStart.OnNext(false); // Запрет на повторный запуск
+        string? errorMsg=null;
+        try
+        {
+            cToken.ThrowIfCancellationRequested();
+            _errorMessageSubject.OnNext(null); // Сброс ошибки
+
+            var dates = GetDatesFrom2020();
+            foreach (var date in dates)
+            {
+                if (IsDateExistInCollection(date,collection)) continue;
+                resultCollection.Enqueue(await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken));
+                 await Task.Delay(100, cToken); // Анти-спам задержка
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            errorMsg = "Загрузка курсов отменена или вышло время ожидания";
+            LogHost.Default.Error(errorMsg);
+        }
+        catch (Exception ex)
+        {
+            errorMsg = $"Ошибка загрузки курсов: {ex.Message}";
+            LogHost.Default.Error(ex, errorMsg);
+        }
+        finally
+        {
+            if(errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
+            _canStart.OnNext(true);
+           
+        }
+        return resultCollection;
+    }
 
     private bool IsDateExistInCollection(DateTime date, ObservableCollection<ChangeRubToDollar> collection)
     {
@@ -86,7 +125,7 @@ public class UpdateCourcesService: ReactiveObject
             result.Add(observedDate);
             if (month == 12)
             {
-                month = 1;
+                month = 0;
                 ++year;
             }
 

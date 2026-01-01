@@ -3,29 +3,33 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:reactiveUi="http://reactiveui.net"
 
+
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
-             
+
              d:DataContext="{d:DesignInstance viewModels:OverallViewModel, IsDesignTimeCreatable=True}"
              x:DataType="viewModels:OverallViewModel"
              x:Class="SeaMoneyApp.Views.OverallView">
-    
     <DockPanel LastChildFill="True">
-        
+
         <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
-            
+
             <Button Content="{x:Static local:Localization.BackText}"
-                    Command="{Binding Router.NavigateBack}"/>
-            
+                    Command="{Binding Router.NavigateBack}"
+                    Classes="menue"/>
+
             <Button Content="{x:Static local:Localization.ToLogsText}"
-                    Command="{Binding ToLogsCommand}" />
-            
+                    Command="{Binding ToLogsCommand}" 
+                    Classes="menue"/>
+
             <Button Content="{x:Static local:Localization.ToAccountText}"
-                    Command="{Binding ToAccountCommand}" />
-            
+                    Command="{Binding ToAccountCommand}" 
+                    Classes="menue"/>
+
             <Button Content="{x:Static local:Localization.ToCourcesText}"
-                    Command="{Binding ToCourcesCommand}" />
-            
+                    Command="{Binding ToCourcesCommand}" 
+                    Classes="menue"/>
+
         </StackPanel>
         <Grid>
 

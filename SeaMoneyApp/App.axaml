@@ -6,6 +6,6 @@
   
     <Application.Styles>
         <FluentTheme />
-
+        <StyleInclude Source="avares://SeaMoneyApp/Styles/OverallViewStyles.axaml" />
     </Application.Styles>
 </Application>

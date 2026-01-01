@@ -1,0 +1,41 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+     <Style Selector="Button.menue">
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontStyle" Value="Normal"/>
+        <Setter Property="Background" Value="LightBlue" />
+        <Setter Property="Foreground" Value="DarkBlue"  />
+        <Setter Property="BorderBrush" Value="DarkBlue" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="25" />
+        <Setter Property="MinWidth" Value="100" />
+        <Setter Property="MaxWidth" Value="200" />
+    </Style>
+
+    <!-- Hover эффект -->
+    <Style Selector="Button.menue:pointerover">
+        <Setter Property="Background" Value="#005A9E" />
+    </Style>
+
+    <!-- Нажатие -->
+    <Style Selector="Button.menue:pressed">
+        <Setter Property="Background" Value="#004578" />
+    </Style>
+    
+    <Style Selector="TextBox.accountview">
+        <Setter Property="MaxWidth" Value="200"/>
+        <Setter Property="Margin" Value="5"/>
+    </Style>
+  
+
+</Styles>

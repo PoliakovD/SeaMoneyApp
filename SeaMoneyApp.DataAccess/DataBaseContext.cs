@@ -19,6 +19,20 @@ public class DataBaseContext : DbContext
         
     }
 
+    public void UpdateChangeRubToDollar(ChangeRubToDollar oldCource, ChangeRubToDollar newCource)
+    {
+        var findedCource = ChangeRubToDollars.FirstOrDefault(c => c.Date == oldCource.Date);
+        findedCource.Value = newCource.Value;
+        ChangeRubToDollars.Update(findedCource);
+        this.SaveChanges();
+    }
+    
+    public void DeleteChangeRubToDollar(ChangeRubToDollar Cource)
+    {
+        var findedCource = ChangeRubToDollars.FirstOrDefault(c => c.Date == Cource.Date);
+        ChangeRubToDollars.Remove(findedCource);
+        this.SaveChanges();
+    }
     public IEnumerable<Position> GetAllPositions()
     {
         return Positions.AsEnumerable();
