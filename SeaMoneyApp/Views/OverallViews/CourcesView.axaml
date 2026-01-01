@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
-             xmlns:c="clr-namespace:SeaMoneyApp.Components"
+             xmlns:c="clr-namespace:SeaMoneyApp.Converters"
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
@@ -15,13 +15,14 @@
 
              x:Class="SeaMoneyApp.Views.OverallViews.CourcesView">
     <UserControl.Resources>
+        <c:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
         <DataTemplate x:Key="TemplateCource"
                       DataType="{x:Type TypeName=m:ChangeRubToDollar}">
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding Date.Date, StringFormat=mm.yyyy}"
-                         x:Name="DateOfCource" />
+                <!-- <TextBlock Text="{Binding Date.Date, StringFormat=dd.MM.yyyy}"/> -->
+                <DatePicker SelectedDate="{Binding Date.Date, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}" 
+                            IsEnabled="False"/>
                 <TextBox Text="{Binding Value}" />
-                <DatePicker SelectedDate="{Binding ElementName=DateOfCource}" />
                 <Button Content="Del" />
                 <Button Content="Edit" />
                 <Button Content="Save" />

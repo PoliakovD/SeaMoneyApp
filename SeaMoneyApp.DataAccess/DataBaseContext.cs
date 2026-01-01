@@ -27,10 +27,16 @@ public class DataBaseContext : DbContext
         this.SaveChanges();
     }
     
-    public void DeleteChangeRubToDollar(ChangeRubToDollar Cource)
+    public void DeleteChangeRubToDollar(ChangeRubToDollar cource)
     {
-        var findedCource = ChangeRubToDollars.FirstOrDefault(c => c.Date == Cource.Date);
+        var findedCource = ChangeRubToDollars.FirstOrDefault(c => c.Date == cource.Date);
         ChangeRubToDollars.Remove(findedCource);
+        this.SaveChanges();
+    }
+    
+    public void AddChangeRubToDollar(ChangeRubToDollar cource)
+    {
+        ChangeRubToDollars.Add(cource);
         this.SaveChanges();
     }
     public IEnumerable<Position> GetAllPositions()

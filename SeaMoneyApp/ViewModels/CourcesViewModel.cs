@@ -28,7 +28,19 @@ public partial class CourcesViewModel : RoutableViewModel
     private CancellationTokenSource _ctsHttp;
     public ReactiveCommand<Unit, Unit> UpdateCourcesFromHttpCommand { get; }
     public ReactiveCommand<Unit, Unit> StopLoadFromHttpCommand { get; }
-
+    
+    public ReactiveCommand<Unit, Unit> DeleteCourceCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> EditCourceCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> SaveCourceCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> AddCourceCommand { get; }
+    
+    public ChangeRubToDollar? SelectedCourse { get; set; }
+    public ChangeRubToDollar? LastAddedCourse { get; set; }
+    public bool CanSelectAnotherCource { get; set; } = true;
+    public bool CanAddAnotherCource { get; set; } = true;
     public string? ErrorMessage
     {
         get => _errorMessage;
@@ -48,33 +60,7 @@ public partial class CourcesViewModel : RoutableViewModel
                          ?? throw new ArgumentNullException(nameof(_updateService));
 
         htmlRunning = _updateService.WhenCanStartChanged;
-
-        // UpdateCourcesFromHttpCommand = ReactiveCommand.CreateFromTask(
-        //     async () =>
-        //     {
-        //         _ctsHttp = new CancellationTokenSource(HttpTimeOut);
-        //         var cToken = _ctsHttp.Token;
-        //         try
-        //         {
-        //             cToken.ThrowIfCancellationRequested();
-        //             Cources.Clear();
-        //             LogHost.Default.Debug("LoadCourcesFromHttpCommand started");
-        //             
-        //             await _updateService.LoadCourcesAsync(Cources, cToken);
-        //             LogHost.Default.Debug("LoadCourcesFromHttpCommand finished");
-        //             
-        //         }
-        //         catch (OperationCanceledException)
-        //         {
-        //             LogHost.Default.Debug("LoadCourcesFromHttpCommand cancelled or timed out");
-        //         }
-        //         catch (Exception ex)
-        //         {
-        //             LogHost.Default.Error(ex, "LoadCourcesFromHttpCommand error");
-        //         }
-        //     },
-        //     canExecute: htmlRunning
-        // );
+        
 
         UpdateCourcesFromHttpCommand = ReactiveCommand.CreateFromTask(
             UpdateEnumerableCourcesFromHttpAsync,
@@ -85,43 +71,14 @@ public partial class CourcesViewModel : RoutableViewModel
         StopLoadFromHttpCommand = ReactiveCommand.Create(() => _ctsHttp?.Cancel(),
             canExecute: UpdateCourcesFromHttpCommand.IsExecuting);
 
+        AddCourceCommand = ReactiveCommand.Create(AddCource,
+            canExecute: this.WhenAnyValue(x => x.CanAddAnotherCource));
+
         // Подписываемся на изменения ошибки
         _updateService.WhenErrorMessageChanged
             .BindTo(this, vm => vm.ErrorMessage);
-
+        
        
-    }
-
-    private async Task UpdateCourcesFromHttpAsync()
-    {
-        _ctsHttp = new CancellationTokenSource(HttpTimeOut);
-        var cToken = _ctsHttp.Token;
-        try
-        {
-            cToken.ThrowIfCancellationRequested();
-            LogHost.Default.Debug("UpdateCourcesFromHttpCommand started");
-
-            var newCources = await _updateService.UpdateCourcesAsync(Cources, cToken);
-            var changeRubToDollars = newCources.ToList();
-            ErrorMessage = $"Всего добавлено {changeRubToDollars.Count()} новых курсов.";
-            foreach (var course in changeRubToDollars)
-            {
-                Cources.Add(course);
-                _dbContext.ChangeRubToDollars.Add(course);
-            }
-            _dbContext.SaveChanges();
-                    
-            LogHost.Default.Debug("UpdateCourcesFromHttpCommand finished");
-        }
-        catch (OperationCanceledException)
-        {
-            LogHost.Default.Debug("UpdateCourcesFromHttpCommand cancelled or timed out");
-        }
-        catch (Exception ex)
-        {
-            LogHost.Default.Error(ex, "UpdateCourcesFromHttpCommand error");
-            ErrorMessage= ex.Message;
-        }
     }
     private async Task UpdateEnumerableCourcesFromHttpAsync()
     {
@@ -162,5 +119,21 @@ public partial class CourcesViewModel : RoutableViewModel
         {
             Cources.Add(cources);
         }
+    }
+
+    private void AddCource()
+    {
+        var cource = new ChangeRubToDollar()
+        {
+            Date = DateTime.Now,
+            Value = 0.0m
+        };
+        SelectedCourse = cource;
+        LastAddedCourse = cource;
+        
+        Cources.Add(cource);
+        
+        CanSelectAnotherCource = false;
+        CanAddAnotherCource = false;
     }
 }

@@ -28,45 +28,11 @@ public class UpdateCourcesService : ReactiveObject
 
     public IObservable<bool> WhenCanStartChanged => _canStart.AsObservable();
 
-    public async Task LoadCourcesAsync(ObservableCollection<ChangeRubToDollar> collection,
-        CancellationToken cToken = default)
-    {
-        _canStart.OnNext(false); // Запрет на повторный запуск
-        string? errorMsg = null;
-        try
-        {
-            cToken.ThrowIfCancellationRequested();
-            _errorMessageSubject.OnNext(null); // Сброс ошибки
-
-            var dates = GetDatesFrom2020();
-            foreach (var date in dates)
-            {
-                if (IsDateExistInCollection(date, collection)) continue;
-
-                var course = await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken);
-                collection.Add(course);
-
-                LogHost.Default.Info($"Загружен курс: {course?.Date:dd.MM.yyyy} = {course?.Value:F4} ₽");
-                await Task.Delay(100, cToken); // Анти-спам задержка
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            errorMsg = "Загрузка курсов отменена или вышло время ожидания";
-            LogHost.Default.Error(errorMsg);
-        }
-        catch (Exception ex)
-        {
-            errorMsg = $"Ошибка загрузки курсов: {ex.Message}";
-            LogHost.Default.Error(ex, errorMsg);
-        }
-        finally
-        {
-            if (errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
-            _canStart.OnNext(true);
-        }
-    }
-
+    public void DeleteCource(ChangeRubToDollar cource) => _dbContext.DeleteChangeRubToDollar(cource);
+    public void UpdateCource(ChangeRubToDollar oldCource, ChangeRubToDollar newCource) => 
+        _dbContext.UpdateChangeRubToDollar(oldCource,newCource);
+    public void AddCource(ChangeRubToDollar cource) => _dbContext.AddChangeRubToDollar(cource);
+    
     public async Task<IEnumerable<ChangeRubToDollar>> UpdateCourcesAsync(
         ObservableCollection<ChangeRubToDollar> collection,
         CancellationToken cToken = default)

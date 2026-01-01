@@ -13,9 +13,6 @@ namespace HtmlParcerCbrCources
     public static class HtmlParcerCbrCources
     {
         private static readonly HttpClient HttpClient = new HttpClient();
-        
-        // Кэш для курсов: дата -> курс USD/RUB
-        private static readonly ConcurrentDictionary<DateTime, ChangeRubToDollar> CourseCache = new();
 
         static HtmlParcerCbrCources()
         {
@@ -35,23 +32,14 @@ namespace HtmlParcerCbrCources
             try
             {
                 cToken.ThrowIfCancellationRequested();
-                // Проверяем кэш
-                if (CourseCache.TryGetValue(date, out var cachedCourse))
-                {
-                    LogHost.Default.Debug($"Cache hit for date {date:dd.MM.yyyy}: {cachedCourse.Value}");
-                    return cachedCourse;
-                }
-
-                // Если нет в кэше — загружаем
+               
+                
                 var course = await FetchCourseFromCbr(date, cToken);
                 if (course != null)
                 {
-                    // Сохраняем в кэш только при успешном получении
-                    CourseCache.TryAdd(date, course);
                     LogHost.Default.Debug($"Course cached for date {date:dd.MM.yyyy}: {course.Value}");
+                    return course;
                 }
-
-                return course;
             }
             catch (Exception ex)
             {
@@ -131,8 +119,5 @@ namespace HtmlParcerCbrCources
                 return null;
             }
         }
-
-        //  очистка кэша 
-        public static void ClearCache() => CourseCache.Clear();
     }
 }
