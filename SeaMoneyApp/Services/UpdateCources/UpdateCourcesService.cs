@@ -17,22 +17,22 @@ using Splat;
 
 namespace SeaMoneyApp.Services.UpdateCources;
 
-public class UpdateCourcesService: ReactiveObject
+public class UpdateCourcesService : ReactiveObject
 {
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
 
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
     private readonly BehaviorSubject<bool> _canStart = new(true);
-    
+
     public IObservable<string?> WhenErrorMessageChanged => _errorMessageSubject.AsObservable();
-    
+
     public IObservable<bool> WhenCanStartChanged => _canStart.AsObservable();
 
-    public async Task LoadCourcesAsync( ObservableCollection<ChangeRubToDollar> collection, 
+    public async Task LoadCourcesAsync(ObservableCollection<ChangeRubToDollar> collection,
         CancellationToken cToken = default)
     {
         _canStart.OnNext(false); // Запрет на повторный запуск
-        string? errorMsg=null;
+        string? errorMsg = null;
         try
         {
             cToken.ThrowIfCancellationRequested();
@@ -41,7 +41,7 @@ public class UpdateCourcesService: ReactiveObject
             var dates = GetDatesFrom2020();
             foreach (var date in dates)
             {
-                if (IsDateExistInCollection(date,collection)) continue;
+                if (IsDateExistInCollection(date, collection)) continue;
 
                 var course = await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken);
                 collection.Add(course);
@@ -62,17 +62,18 @@ public class UpdateCourcesService: ReactiveObject
         }
         finally
         {
-            if(errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
+            if (errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
             _canStart.OnNext(true);
         }
     }
-    
-    public async Task<IEnumerable<ChangeRubToDollar>> UpdateCourcesAsync( ObservableCollection<ChangeRubToDollar> collection, 
+
+    public async Task<IEnumerable<ChangeRubToDollar>> UpdateCourcesAsync(
+        ObservableCollection<ChangeRubToDollar> collection,
         CancellationToken cToken = default)
     {
         var resultCollection = new ConcurrentQueue<ChangeRubToDollar>();
         _canStart.OnNext(false); // Запрет на повторный запуск
-        string? errorMsg=null;
+        string? errorMsg = null;
         try
         {
             cToken.ThrowIfCancellationRequested();
@@ -81,9 +82,10 @@ public class UpdateCourcesService: ReactiveObject
             var dates = GetDatesFrom2020();
             foreach (var date in dates)
             {
-                if (IsDateExistInCollection(date,collection)) continue;
-                resultCollection.Enqueue(await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken));
-                 await Task.Delay(100, cToken); // Анти-спам задержка
+                if (IsDateExistInCollection(date, collection)) continue;
+                resultCollection.Enqueue(
+                    await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken));
+                await Task.Delay(100, cToken); // Анти-спам задержка
             }
         }
         catch (OperationCanceledException)
@@ -98,11 +100,32 @@ public class UpdateCourcesService: ReactiveObject
         }
         finally
         {
-            if(errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
+            if (errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
             _canStart.OnNext(true);
-           
         }
+
         return resultCollection;
+    }
+
+    public async IAsyncEnumerable<ChangeRubToDollar> UpdateCourcesEnumerableAsync(
+        ObservableCollection<ChangeRubToDollar> collection,
+        CancellationToken cToken = default)
+    {
+        _canStart.OnNext(false); // Запрет на повторный запуск
+
+        cToken.ThrowIfCancellationRequested();
+        _errorMessageSubject.OnNext(null); // Сброс ошибки
+
+        var dates = GetDatesFrom2020();
+        foreach (var date in dates)
+        {
+            if (IsDateExistInCollection(date, collection)) continue;
+            yield return await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken);
+            await Task.Delay(100, cToken); // Анти-спам задержка
+        }
+
+        _canStart.OnNext(true);
+        _errorMessageSubject.OnNext(null);
     }
 
     private bool IsDateExistInCollection(DateTime date, ObservableCollection<ChangeRubToDollar> collection)

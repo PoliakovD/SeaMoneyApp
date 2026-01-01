@@ -77,7 +77,7 @@ public partial class CourcesViewModel : RoutableViewModel
         // );
 
         UpdateCourcesFromHttpCommand = ReactiveCommand.CreateFromTask(
-            UpdateCourcesFromHttp,
+            UpdateEnumerableCourcesFromHttpAsync,
             canExecute: htmlRunning
         );
 
@@ -92,7 +92,7 @@ public partial class CourcesViewModel : RoutableViewModel
        
     }
 
-    private async Task UpdateCourcesFromHttp()
+    private async Task UpdateCourcesFromHttpAsync()
     {
         _ctsHttp = new CancellationTokenSource(HttpTimeOut);
         var cToken = _ctsHttp.Token;
@@ -111,6 +111,39 @@ public partial class CourcesViewModel : RoutableViewModel
             }
             _dbContext.SaveChanges();
                     
+            LogHost.Default.Debug("UpdateCourcesFromHttpCommand finished");
+        }
+        catch (OperationCanceledException)
+        {
+            LogHost.Default.Debug("UpdateCourcesFromHttpCommand cancelled or timed out");
+        }
+        catch (Exception ex)
+        {
+            LogHost.Default.Error(ex, "UpdateCourcesFromHttpCommand error");
+            ErrorMessage= ex.Message;
+        }
+    }
+    private async Task UpdateEnumerableCourcesFromHttpAsync()
+    {
+        _ctsHttp = new CancellationTokenSource(HttpTimeOut);
+        var cToken = _ctsHttp.Token;
+        try
+        {
+            cToken.ThrowIfCancellationRequested();
+            LogHost.Default.Debug("UpdateCourcesFromHttpCommand started");
+
+            var counter = 0;
+            
+            await foreach (var course in _updateService.UpdateCourcesEnumerableAsync(Cources, cToken))
+            {
+                Cources.Add(course);
+                _dbContext.ChangeRubToDollars.Add(course);
+                counter++;
+                ErrorMessage = $"Добавлено {counter} новых курсов.";
+            }
+            _dbContext.SaveChanges();
+            ErrorMessage = $"Всего добавлено {counter} новых курсов.";
+            
             LogHost.Default.Debug("UpdateCourcesFromHttpCommand finished");
         }
         catch (OperationCanceledException)
