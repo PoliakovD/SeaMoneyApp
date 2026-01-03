@@ -8,7 +8,7 @@
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
 
-             x:DataType="viewModels:CourcesViewModel"
+             x:DataType="viewModels:CoursesViewModel"
              d:DataContext="{d:DesignInstance viewModels:AppSettingsViewModel, IsDesignTimeCreatable=True}"
              
              x:Class="SeaMoneyApp.Views.OverallViews.AppSettingsView">

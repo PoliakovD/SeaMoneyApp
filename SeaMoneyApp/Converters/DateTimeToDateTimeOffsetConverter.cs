@@ -8,10 +8,18 @@ public class DateTimeToDateTimeOffsetConverter: IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is DateTime dateTime)
+        try
         {
-            return new DateTimeOffset(dateTime);
+            if (value is DateTime dateTime)
+            {
+                return new DateTimeOffset(dateTime);
+            }
         }
+        catch (ArgumentOutOfRangeException e)
+        {
+            return new DateTimeOffset(DateTime.Now);
+        }
+        
         return null;
     }
 

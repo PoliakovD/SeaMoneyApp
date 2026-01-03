@@ -9,6 +9,8 @@
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
         <AvaloniaXaml Remove="Styles\OveralViewStyles.axaml" />
+        <AvaloniaXaml Remove="Styles\OverallViewStyles.axaml" />
+        <AvaloniaResource Include="Styles\OverallViewStyles.axaml" />
     </ItemGroup>
 
     <ItemGroup>

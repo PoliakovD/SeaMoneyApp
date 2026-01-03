@@ -8,38 +8,50 @@
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
 
+             x:DataType="viewModels:CoursesViewModel"
+             d:DataContext="{d:DesignInstance viewModels:CoursesViewModel, IsDesignTimeCreatable=True}"
 
-             x:DataType="viewModels:CourcesViewModel"
-             d:DataContext="{d:DesignInstance viewModels:CourcesViewModel, IsDesignTimeCreatable=True}"
+             x:Class="SeaMoneyApp.Views.OverallViews.CoursesView">
 
+    <UserControl.Styles>
+        <StyleInclude Source="avares://SeaMoneyApp/Styles/OverallViewStyles.axaml" />
+    </UserControl.Styles>
 
-             x:Class="SeaMoneyApp.Views.OverallViews.CourcesView">
     <UserControl.Resources>
         <c:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
-        <DataTemplate x:Key="TemplateCource"
+        <DataTemplate x:Key="TemplateCourse"
                       DataType="{x:Type TypeName=m:ChangeRubToDollar}">
-            <StackPanel Orientation="Horizontal">
-                <!-- <TextBlock Text="{Binding Date.Date, StringFormat=dd.MM.yyyy}"/> -->
-                <DatePicker SelectedDate="{Binding Date.Date, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}" 
-                            IsEnabled="False"/>
-                <TextBox Text="{Binding Value}" />
-                <Button Content="Del" />
-                <Button Content="Edit" />
-                <Button Content="Save" />
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left">
+                <TextBlock
+                    Text="{Binding Date,
+                UpdateSourceTrigger=PropertyChanged, Mode=OneWay, StringFormat=dd.MM.yyyy}"
+                    Margin="10,5,10,5"
+                    Width="100" />
+                <TextBlock Text="{Binding Value,UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                           Margin="10,5,10,5"
+                           Width="100" />
             </StackPanel>
         </DataTemplate>
-       </UserControl.Resources>
+    </UserControl.Resources>
 
 
     <DockPanel LastChildFill="True">
 
         <Button DockPanel.Dock="Top" Content="{x:Static local:Localization.LoadCourcesFromHttpText}"
-                Command="{Binding UpdateCourcesFromHttpCommand}"
+                Command="{Binding UpdateCoursesFromHttpCommand}"
+                HorizontalAlignment="Left"
+                Width="170"
                 Classes="menue" />
         <Button DockPanel.Dock="Top" Content="{x:Static local:Localization.StopLoadCourcesFromHttpText}"
                 Command="{Binding StopLoadFromHttpCommand}"
-                Classes="menue" />
-        <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}" />
+                Classes="menue"
+                HorizontalAlignment="Left"
+                Width="170" />
+        <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}"
+                   Foreground="Coral"
+                   FontWeight="Bold"
+                   FontSize="15" />
 
 
         <Grid DockPanel.Dock="Top" RowDefinitions="200, 50">
@@ -102,9 +114,38 @@
                 </lvc:CartesianChart.Sections>
             </lvc:CartesianChart>
         </Grid>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding CurrentState}"
+                   Foreground="MediumBlue"
+                   FontWeight="Bold"
+                   FontSize="15" />
+        <StackPanel DockPanel.Dock="Top"
+                    Margin="10"
+                    Orientation="Horizontal">
+            <DatePicker
+                SelectedDate="{Binding SelectedCourse.Date, 
+                Converter={StaticResource DateTimeToDateTimeOffsetConverter},
+                UpdateSourceTrigger=PropertyChanged,
+                Mode=TwoWay}"
+                IsEnabled="{Binding IsEditing}"
+                MonthFormat="MM" 
+                Margin="10"/>
+            <TextBox Text="{Binding SelectedCourse.Value}"
+                     Width="100"
+                     IsEnabled="{Binding IsEditing}" 
+                     Margin="10"/>
+            <Button Content="Del" Command="{Binding DeleteCourseCommand}" Classes="btn-danger" />
+            <Button Content="Add" Command="{Binding AddCourseCommand}" Classes="btn-primary" />
+            <Button Content="Edit" Command="{Binding EditCourseCommand}" Classes="btn-primary" />
+            <Button Content="Save" Command="{Binding SaveCourseCommand}" Classes="btn-success" />
+            <Button Content="Cancel" Command="{Binding CancelEditCourseCommand}" Classes="btn-secondary" />
+        </StackPanel>
 
-        <ListBox ItemsSource="{Binding Cources}"
-                 ItemTemplate="{StaticResource ResourceKey=TemplateCource}" />
+        <ListBox ItemsSource="{Binding Courses}"
+                 ItemTemplate="{StaticResource ResourceKey=TemplateCourse}"
+                 SelectedItem="{Binding SelectedCourse, Mode=OneWayToSource}"
+                 SelectionMode="Single"
+                 IsEnabled="{Binding !IsEditing}">
+        </ListBox>
 
     </DockPanel>
 

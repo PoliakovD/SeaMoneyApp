@@ -69,7 +69,7 @@
         <value>Cources</value>
     </data>
     <data name="LoadCourcesFromHttpText" xml:space="preserve">
-        <value>Load Cources From Http</value>
+        <value>Update from CBR</value>
     </data>
     <data name="RememberMeText" xml:space="preserve">
         <value>Remember me</value>

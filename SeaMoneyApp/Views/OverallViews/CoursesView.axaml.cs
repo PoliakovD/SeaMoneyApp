@@ -7,11 +7,13 @@ using SeaMoneyApp.ViewModels;
 
 namespace SeaMoneyApp.Views.OverallViews;
 
-public partial class CourcesView : ReactiveUserControl<CourcesViewModel>
+public partial class CoursesView : ReactiveUserControl<CoursesViewModel>
 {
-    public CourcesView()
+    public CoursesView()
     {
         this.WhenActivated(disposables => { });
         AvaloniaXamlLoader.Load(this);
     }
+
+    
 }

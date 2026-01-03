@@ -19,24 +19,28 @@ public class DataBaseContext : DbContext
         
     }
 
-    public void UpdateChangeRubToDollar(ChangeRubToDollar oldCource, ChangeRubToDollar newCource)
+    public void UpdateChangeRubToDollar(ChangeRubToDollar oldCourse, ChangeRubToDollar newCourse)
     {
-        var findedCource = ChangeRubToDollars.FirstOrDefault(c => c.Date == oldCource.Date);
-        findedCource.Value = newCource.Value;
-        ChangeRubToDollars.Update(findedCource);
+        var findedCourse = ChangeRubToDollars.FirstOrDefault(c => c.Id == oldCourse.Id);
+        
+        if (findedCourse == null)  throw new ArgumentNullException(nameof(findedCourse));
+        
+        findedCourse.Value = newCourse.Value;
+        findedCourse.Date = newCourse.Date;
+        ChangeRubToDollars.Update(findedCourse);
         this.SaveChanges();
     }
     
-    public void DeleteChangeRubToDollar(ChangeRubToDollar cource)
+    public void DeleteChangeRubToDollar(ChangeRubToDollar course)
     {
-        var findedCource = ChangeRubToDollars.FirstOrDefault(c => c.Date == cource.Date);
-        ChangeRubToDollars.Remove(findedCource);
+        var findedCourse = ChangeRubToDollars.FirstOrDefault(c => c.Date == course.Date);
+        ChangeRubToDollars.Remove(findedCourse);
         this.SaveChanges();
     }
     
-    public void AddChangeRubToDollar(ChangeRubToDollar cource)
+    public void AddChangeRubToDollar(ChangeRubToDollar course)
     {
-        ChangeRubToDollars.Add(cource);
+        ChangeRubToDollars.Add(course);
         this.SaveChanges();
     }
     public IEnumerable<Position> GetAllPositions()
@@ -44,9 +48,9 @@ public class DataBaseContext : DbContext
         return Positions.AsEnumerable();
     }
     
-    public IEnumerable<ChangeRubToDollar> GetAllCources()
+    public List<ChangeRubToDollar> GetAllCources()
     {
-        return ChangeRubToDollars.AsEnumerable();
+        return ChangeRubToDollars.OrderBy(c=>c.Date).ToList();
     }
 
     public IEnumerable<Position> GetPositionsByName(string name)

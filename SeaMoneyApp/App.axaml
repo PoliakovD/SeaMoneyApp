@@ -3,9 +3,11 @@
              x:Class="SeaMoneyApp.App"
              RequestedThemeVariant="Light">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-  
+             <!--  RequestedThemeVariant="Light"-->
     <Application.Styles>
-        <FluentTheme />
+        <!-- <DefaultTheme /> -->
+        <FluentTheme/>
+        <!-- <SimpleTheme/> -->
         <StyleInclude Source="avares://SeaMoneyApp/Styles/OverallViewStyles.axaml" />
     </Application.Styles>
 </Application>

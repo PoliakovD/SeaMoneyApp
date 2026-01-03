@@ -3,10 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:reactiveUi="http://reactiveui.net"
-             
-             xmlns:view="clr-namespace:SeaMoneyApp.Views"
-             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
-             d:DataContext="{d:DesignInstance viewModels:MainViewModel, IsDesignTimeCreatable=True}"
+             d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=True}"
              
              xmlns:vm="using:SeaMoneyApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"

@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalonia;
 using ReactiveUI.Avalonia;
+using Avalonia.Diagnostics;
 
 namespace SeaMoneyApp.Desktop;
 
@@ -20,4 +21,5 @@ sealed class Program
             .WithInterFont()
             .UseReactiveUI()
             .LogToTrace();
+    
 }

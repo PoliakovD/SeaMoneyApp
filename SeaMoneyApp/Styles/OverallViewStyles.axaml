@@ -1,17 +1,12 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.PreviewWith>
-        <Border Padding="20">
-            <!-- Add Controls for Previewer Here -->
-        </Border>
-    </Design.PreviewWith>
 
-     <Style Selector="Button.menue">
+    <Style Selector="Button.menue">
         <Setter Property="Margin" Value="5" />
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="FontStyle" Value="Normal"/>
+        <Setter Property="FontStyle" Value="Normal" />
         <Setter Property="Background" Value="LightBlue" />
-        <Setter Property="Foreground" Value="DarkBlue"  />
+        <Setter Property="Foreground" Value="DarkBlue" />
         <Setter Property="BorderBrush" Value="DarkBlue" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="6" />
@@ -19,7 +14,6 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="MinHeight" Value="25" />
         <Setter Property="MinWidth" Value="100" />
-        <Setter Property="MaxWidth" Value="200" />
     </Style>
 
     <!-- Hover эффект -->
@@ -31,11 +25,91 @@
     <Style Selector="Button.menue:pressed">
         <Setter Property="Background" Value="#004578" />
     </Style>
-    
+
     <Style Selector="TextBox.accountview">
-        <Setter Property="MaxWidth" Value="200"/>
-        <Setter Property="Margin" Value="5"/>
+        <Setter Property="MaxWidth" Value="200" />
+        <Setter Property="Margin" Value="5" />
     </Style>
-  
+    
+   <!-- Основные стили кнопок -->
+
+<Style Selector="Button.btn-primary">
+    <Setter Property="Background" Value="#0078D7" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#005A9E" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="8 4" />
+    <Setter Property="Margin" Value="2" />
+</Style>
+
+<Style Selector="Button.btn-primary:pointerover">
+    <Setter Property="Background" Value="#0063B1" />
+</Style>
+
+<Style Selector="Button.btn-primary:pressed">
+    <Setter Property="Background" Value="#004578" />
+</Style>
+
+
+<Style Selector="Button.btn-success">
+    <Setter Property="Background" Value="#107C10" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#0B6A0B" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="8 4" />
+    <Setter Property="Margin" Value="2" />
+</Style>
+
+<Style Selector="Button.btn-success:pointerover">
+    <Setter Property="Background" Value="#0E6A0E" />
+</Style>
+
+<Style Selector="Button.btn-success:pressed">
+    <Setter Property="Background" Value="#095009" />
+</Style>
+
+
+<Style Selector="Button.btn-danger">
+    <Setter Property="Background" Value="#D83B01" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#C83701" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="8 4" />
+    <Setter Property="Margin" Value="2" />
+</Style>
+
+<Style Selector="Button.btn-danger:pointerover">
+    <Setter Property="Background" Value="#C83701" />
+</Style>
+
+<Style Selector="Button.btn-danger:pressed">
+    <Setter Property="Background" Value="#A83001" />
+</Style>
+
+
+<Style Selector="Button.btn-secondary">
+    <Setter Property="Background" Value="#605E5C" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="BorderBrush" Value="#484644" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Padding" Value="8 4" />
+    <Setter Property="Margin" Value="2" />
+</Style>
+
+<Style Selector="Button.btn-secondary:pointerover">
+    <Setter Property="Background" Value="#504E4C" />
+</Style>
+
+<Style Selector="Button.btn-secondary:pressed">
+    <Setter Property="Background" Value="#3B3A39" />
+</Style>
 
 </Styles>

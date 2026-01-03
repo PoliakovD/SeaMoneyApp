@@ -5,11 +5,12 @@
 
 
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
-             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
-
-             d:DataContext="{d:DesignInstance viewModels:OverallViewModel, IsDesignTimeCreatable=True}"
-             x:DataType="viewModels:OverallViewModel"
+             xmlns:vm="using:SeaMoneyApp.ViewModels"
+            
+             d:DataContext="{d:DesignInstance vm:OverallViewModel, IsDesignTimeCreatable=True}"
+             x:DataType="vm:OverallViewModel"
              x:Class="SeaMoneyApp.Views.OverallView">
+    
     <DockPanel LastChildFill="True">
 
         <StackPanel DockPanel.Dock="Left" Orientation="Vertical">

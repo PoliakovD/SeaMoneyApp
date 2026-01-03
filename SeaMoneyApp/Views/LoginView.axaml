@@ -1,16 +1,15 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-            
-             
              
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:c="clr-namespace:SeaMoneyApp.Components"
-             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
+             xmlns:vm="using:SeaMoneyApp.ViewModels"
              
-             d:DataContext="{d:DesignInstance viewModels:LoginViewModel, IsDesignTimeCreatable=True}"
-             x:DataType="viewModels:LoginViewModel"
+             d:DataContext="{d:DesignInstance vm:LoginViewModel, IsDesignTimeCreatable=True}"
+             x:DataType="vm:LoginViewModel"
              x:Class="SeaMoneyApp.Views.LoginView">
+    
     <UserControl.KeyBindings>
         <!-- Привязка: при нажатии Enter — выполнить LoginCommand -->
         <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}" />
