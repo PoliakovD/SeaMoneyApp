@@ -25,8 +25,6 @@ public partial class CoursesViewModel : RoutableViewModel
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
 
     private string? _errorMessage;
-
-    // private ChangeRubToDollar _selectedCourse = new();
     private ChangeRubToDollar? _selectedCourse;
     private ChangeRubToDollar? _beforeEditingCourse;
     private string _currentState;
@@ -36,21 +34,15 @@ public partial class CoursesViewModel : RoutableViewModel
     public ReactiveCommand<Unit, Unit> UpdateCoursesFromHttpCommand { get; }
     public ReactiveCommand<Unit, Unit> StopLoadFromHttpCommand { get; }
     public ReactiveCommand<Unit, Unit> DeleteCourseCommand { get; }
-
     public ReactiveCommand<Unit, Unit> EditCourseCommand { get; }
-
     public ReactiveCommand<Unit, Unit> CancelEditCourseCommand { get; }
-
     public ReactiveCommand<Unit, Unit> SaveCourseCommand { get; }
-
     public ReactiveCommand<Unit, Unit> AddCourseCommand { get; }
 
-    public ReactiveCommand<Unit, Unit> SaveAddedCourseCommand { get; }
-
-    public IObservable<bool> htmlRunning
+    public IObservable<bool> HtmlRunning
     {
-        get { return _htmlRunning; }
-        set { _htmlRunning = value; }
+        get => _htmlRunning;
+        set => this.RaiseAndSetIfChanged(ref _htmlRunning, value);
     }
 
     public IObservable<bool> CanDeleteSelectedCourse { get; set; }
@@ -101,10 +93,13 @@ public partial class CoursesViewModel : RoutableViewModel
 
     public CoursesViewModel()
     {
+        LogHost.Default.Debug("CoursesViewModel начальная инициализация");
+
         // Инициализация Chart
         ChartInit();
-        // загрузка курсов из бд
+        // Загрузка курсов из БД
         LoadFromDb();
+
         IsEditing = false;
         IsAdding = false;
         SelectedCourse = new();
@@ -112,266 +107,280 @@ public partial class CoursesViewModel : RoutableViewModel
         _updateService = Locator.Current.GetService<UpdateCourcesService>()
                          ?? throw new ArgumentNullException(nameof(_updateService));
 
-        htmlRunning = _updateService.WhenCanStartChanged;
-
+        HtmlRunning = _updateService.WhenCanStartChanged;
 
         UpdateCoursesFromHttpCommand = ReactiveCommand.CreateFromTask(
             UpdateEnumerableCourcesFromHttpAsync,
-            canExecute: htmlRunning
+            canExecute: HtmlRunning
         );
 
-
-        StopLoadFromHttpCommand = ReactiveCommand.Create(() => _ctsHttp?.Cancel(),
+        StopLoadFromHttpCommand = ReactiveCommand.Create(
+            () => _ctsHttp?.Cancel(),
             canExecute: UpdateCoursesFromHttpCommand.IsExecuting);
 
-        AddCourseCommand = ReactiveCommand.Create(AddCourse,
-            canExecute: this.WhenAnyValue(x => x.CanAddAnotherCourse));
-
-        CanDeleteSelectedCourse = this.WhenAnyValue(x => x.Courses, x => x.SelectedCourse,
-            (cources, cource) =>
+        CanDeleteSelectedCourse = this.WhenAnyValue(
+            x => x.Courses, 
+            x => x.SelectedCourse,
+            x=>x.IsEditing,
+            (courses, course,adding) =>
             {
-                if (cource is null) return false;
-                foreach (var c in cources)
-                {
-                    if (c.Date == cource.Date) return true;
-                }
-
-                return false;
+                if (course is null) return false;
+                if (adding) return false;
+                return courses.Any(c => c.Date.Date == course.Date.Date);
             });
 
-        // CancelEditCourceCommand =
-        //     ReactiveCommand.Create(CancelEditingCourse,
-        //         this.WhenAnyValue(x => x.IsEditing, (x) => x == true));
-
-        CancelEditCourseCommand =
-            ReactiveCommand.Create(CancelEditingCourse,
-                this.WhenAnyValue(
-                    x => x.IsEditing,
-                    x => x.Courses,
-                    x => x.SelectedCourse,
-                    x => x.IsAdding,
-                    (editing, cources, cource, adding) =>
-                    {
-                        if (adding) return true;
-                        if (cource is null) return false;
-                        foreach (var c in cources)
-                        {
-                            if (editing && c.Date == cource.Date) return true;
-                        }
-
-                        return false;
-                    }));
+        CancelEditCourseCommand = ReactiveCommand.Create(
+            CancelEditingCourse,
+            this.WhenAnyValue(
+                x => x.IsEditing,
+                x => x.Courses,
+                x => x.SelectedCourse,
+                x => x.IsAdding,
+                (editing, courses, course, adding) =>
+                {
+                    if (adding) return true;
+                    if (!editing || course is null) return false;
+                    return courses.Any(c => c.Date.Date == course.Date.Date);
+                }));
 
         DeleteCourseCommand = ReactiveCommand.Create(DeleteCourse, CanDeleteSelectedCourse);
 
-        EditCourseCommand = ReactiveCommand.Create(EditCourse,
+        EditCourseCommand = ReactiveCommand.Create(
+            EditCourse,
             this.WhenAnyValue(
                 x => x.IsEditing,
-                c => c.SelectedCourse,
-                (edit, cource) => !edit && cource is not null));
+                x => x.SelectedCourse,
+                (editing, course) => !editing && course is not null));
 
         SaveCourseCommand = ReactiveCommand.Create(SaveCourse, CanSaveCourse());
 
-        AddCourseCommand = ReactiveCommand.Create(AddCourse, this.WhenAnyValue(
-            x => x.IsEditing,
-            x => !x));
+        AddCourseCommand = ReactiveCommand.Create(
+            AddCourse,
+            this.WhenAnyValue(x => x.IsEditing, x => !x));
 
-        // Подписываемся на изменения ошибки
         _updateService.WhenErrorMessageChanged
             .BindTo(this, vm => vm.ErrorMessage);
-        CurrentState = "Просмотр";
-    }
 
+        CurrentState = "Просмотр";
+
+        LogHost.Default.Debug("CoursesViewModel инициализация завершена");
+    }
 
     private async Task UpdateEnumerableCourcesFromHttpAsync()
     {
+        LogHost.Default.Debug("Команда обновления курсов из HTTP запущена");
         _ctsHttp = new CancellationTokenSource(HttpTimeOut);
         var cToken = _ctsHttp.Token;
+
         try
         {
             cToken.ThrowIfCancellationRequested();
-            LogHost.Default.Debug("UpdateCourcesFromHttpCommand started");
 
             var counter = 0;
-
             await foreach (var course in _updateService.UpdateCourcesEnumerableAsync(Courses, cToken))
             {
-                //Cources.Add(course);
                 Courses.Insert(0, course);
                 _dbContext.ChangeRubToDollars.Add(course);
                 counter++;
-                ErrorMessage = $"Добавлено {counter} новых курсов.";
-                MaxX = MaxX > course.Date.Ticks ? MaxX : course.Date.Ticks;
+                MaxX = Math.Max(MaxX, course.Date.Ticks);
+
+                LogHost.Default.Debug($"Добавлен курс: {course.Date}, значение: {course.Value}");
             }
 
             if (counter > 0)
             {
                 _dbContext.SaveChanges();
                 ErrorMessage = $"Всего добавлено {counter} новых курсов.";
+                LogHost.Default.Info($"Сохранено {counter} новых курсов в БД");
             }
             else
             {
-                ErrorMessage = $"Все курсы соответствуют текущим";
+                ErrorMessage = "Все курсы уже актуальны.";
+                LogHost.Default.Info("Обновление завершено: новых данных нет");
             }
-
-            LogHost.Default.Debug("UpdateCourcesFromHttpCommand finished");
         }
         catch (OperationCanceledException)
         {
-            LogHost.Default.Debug("UpdateCourcesFromHttpCommand cancelled or timed out");
+            LogHost.Default.Warn("Загрузка курсов отменена или истекло время ожидания");
+            ErrorMessage = "Загрузка отменена или таймаут.";
         }
         catch (Exception ex)
         {
-            LogHost.Default.Error(ex, "UpdateCourcesFromHttpCommand error");
+            LogHost.Default.Error(ex, "Ошибка при загрузке курсов из HTTP");
+            ErrorMessage = $"Ошибка загрузки: {ex.Message}";
         }
     }
 
     private void LoadFromDb()
     {
+        LogHost.Default.Debug("Начало загрузки курсов из базы данных");
         try
         {
-            long min = Int64.MaxValue;
-            long max = 0L;
+            long min = long.MaxValue;
+            long max = 0;
+
             var courses = _dbContext.GetAllCources();
+            LogHost.Default.Info($"Загружено {courses.Count} курсов из БД");
+
             foreach (var course in courses)
             {
                 Courses.Insert(0, course);
             }
 
-            if (courses.Count > 1)
+            if (courses.Count > 0)
             {
-                min = courses[0].Date.Ticks;
-                max = courses.Last().Date.Ticks;
+                min = courses.Min(c => c.Date.Ticks);
+                max = courses.Max(c => c.Date.Ticks);
             }
-
 
             MinX = min;
             MaxX = max;
+
+            LogHost.Default.Debug($"Загрузка из БД завершена. Диапазон: {min} — {max}");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            LogHost.Default.Error(e.Message);
-            throw;
+            LogHost.Default.Error(ex, "Ошибка при загрузке данных из базы");
+            ErrorMessage = $"Ошибка БД: {ex.Message}";
         }
     }
 
     private void AddCourse()
     {
+        LogHost.Default.Debug("Добавление нового курса начато");
         try
-        {
-            var course = new ChangeRubToDollar()
+        { 
+            SelectedCourse = new ChangeRubToDollar
             {
                 Date = DateTime.Now,
                 Value = 0.0m
             };
-            SelectedCourse = course;
             IsAdding = true;
             IsEditing = true;
             CurrentState = "Добавление";
             CanSelectAnotherCource = false;
+
+            LogHost.Default.Info($"Новый курс создан с датой {SelectedCourse.Date}");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            LogHost.Default.Error(e.Message);
-            throw;
+            LogHost.Default.Error(ex, "Ошибка при создании нового курса");
+            ErrorMessage = $"Ошибка добавления: {ex.Message}";
         }
     }
 
-
     private void DeleteCourse()
     {
+        LogHost.Default.Debug("Попытка удаления курса");
         try
         {
             if (SelectedCourse is null)
             {
-                LogHost.Default.Debug("SelectedCourse cource is null");
+                LogHost.Default.Warn("Попытка удаления: SelectedCourse равен null");
                 return;
             }
 
-            var searchedCourse = Courses.FirstOrDefault(x => x.Date == SelectedCourse.Date);
-            LogHost.Default.Debug("DeleteCource started");
+            var searchedCourse = Courses.FirstOrDefault(x => x.Date.Date == SelectedCourse.Date.Date);
             if (searchedCourse is null)
             {
-                LogHost.Default.Debug("searched cource is null");
+                LogHost.Default.Warn("Курс для удаления не найден в коллекции");
                 return;
             }
 
-            ErrorMessage = $"Удален Курс за {searchedCourse.Date:dd.MM.yyyy}";
             Courses.Remove(searchedCourse);
             _updateService.DeleteCource(searchedCourse);
             SelectedCourse = null;
             IsEditing = false;
             CanAddAnotherCourse = true;
+
+            ErrorMessage = $"Курс за {searchedCourse.Date:dd.MM.yyyy} удалён";
+            LogHost.Default.Info($"Курс за {searchedCourse.Date} успешно удалён");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            LogHost.Default.Error(e.Message);
-            throw;
+            LogHost.Default.Error(ex, "Ошибка при удалении курса");
+            ErrorMessage = $"Ошибка удаления: {ex.Message}";
         }
     }
 
     private void EditCourse()
     {
+        LogHost.Default.Debug("Редактирование курса начато");
         try
         {
-            IsEditing = true;
-            _beforeEditingCourse = new ChangeRubToDollar()
+            if (SelectedCourse is null)
             {
-                Id = SelectedCourse!.Id,
-                Date = SelectedCourse!.Date,
-                Value = SelectedCourse!.Value
+                LogHost.Default.Warn("Попытка редактирования: SelectedCourse равен null");
+                return;
+            }
+
+            IsEditing = true;
+            _beforeEditingCourse = new ChangeRubToDollar
+            {
+                Id = SelectedCourse.Id,
+                Date = SelectedCourse.Date,
+                Value = SelectedCourse.Value
             };
             CurrentState = "Редактирование";
+
+            LogHost.Default.Info($"Начато редактирование курса за {SelectedCourse.Date}");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            LogHost.Default.Error(e.Message);
-            throw;
+            LogHost.Default.Error(ex, "Ошибка при старте редактирования курса");
+            ErrorMessage = $"Ошибка редактирования: {ex.Message}";
         }
     }
 
     private void CancelEditingCourse()
     {
+        LogHost.Default.Debug("Отмена редактирования курса");
         try
         {
             if (IsAdding)
             {
                 SelectedCourse = null;
                 IsAdding = false;
+                LogHost.Default.Info("Добавление курса отменено");
             }
-            else
+            else if (_beforeEditingCourse is not null && SelectedCourse is not null)
             {
-                var index = Courses.IndexOf(SelectedCourse!);
-                Courses[index] = new ChangeRubToDollar()
+                var index = Courses.IndexOf(SelectedCourse);
+                if (index >= 0)
                 {
-                    Id = _beforeEditingCourse!.Id,
-                    Date = _beforeEditingCourse.Date,
-                    Value = _beforeEditingCourse.Value
-                };
-                _beforeEditingCourse = null;
+                    Courses[index] = new ChangeRubToDollar
+                    {
+                        Id = _beforeEditingCourse.Id,
+                        Date = _beforeEditingCourse.Date,
+                        Value = _beforeEditingCourse.Value
+                    };
+                    LogHost.Default.Info($"Изменения для курса за {_beforeEditingCourse.Date} отменены" );
+                }
             }
 
+            _beforeEditingCourse = null;
             IsEditing = false;
             CurrentState = "Просмотр";
+            CanSelectAnotherCource = true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            LogHost.Default.Error(e.Message);
-            throw;
+            LogHost.Default.Error(ex, "Ошибка при отмене редактирования курса");
+            ErrorMessage = $"Ошибка отмены: {ex.Message}";
         }
     }
 
     private void SaveCourse()
     {
+        LogHost.Default.Debug("Сохранение изменений курса");
         try
         {
             if (IsAdding)
             {
-                var flag = Courses.FirstOrDefault(x =>
-                    x.Date.Day == SelectedCourse?.Date.Day &&
-                    x.Date.Month == SelectedCourse?.Date.Month &&
-                    x.Date.Year == SelectedCourse?.Date.Year);
-                if (flag is null)
+                var existing = Courses.FirstOrDefault(x =>
+                    x.Date.Date == SelectedCourse?.Date.Date);
+
+                if (existing is null)
                 {
                     _updateService.AddCource(SelectedCourse!);
                     Courses.Add(new ChangeRubToDollar
@@ -379,12 +388,15 @@ public partial class CoursesViewModel : RoutableViewModel
                         Date = SelectedCourse!.Date,
                         Value = SelectedCourse.Value
                     });
-                    ErrorMessage = $"Добавлен курс за {SelectedCourse.Date:d} число";
+                    ErrorMessage = $"Добавлен курс за {SelectedCourse.Date:d}";
+                    LogHost.Default.Info($"Новый курс за {SelectedCourse.Date} добавлен в БД и UI" );
                 }
                 else
                 {
-                    ErrorMessage = "Такая дата уже есть в базе.";
+                    ErrorMessage = "Курс на эту дату уже существует.";
+                    LogHost.Default.Warn($"Попытка добавить дубликат курса за {SelectedCourse?.Date}" );
                 }
+
                 IsAdding = false;
             }
             else
@@ -392,53 +404,51 @@ public partial class CoursesViewModel : RoutableViewModel
                 _updateService.UpdateCource(_beforeEditingCourse!, SelectedCourse!);
 
                 var index = Courses.IndexOf(SelectedCourse!);
-                Courses[index] = new ChangeRubToDollar()
+                if (index >= 0)
                 {
-                    Id = SelectedCourse!.Id,
-                    Date = SelectedCourse.Date,
-                    Value = SelectedCourse.Value
-                };
-                ErrorMessage = $"Сохранен курс за {Courses[index].Date:d} число";
+                    Courses[index] = new ChangeRubToDollar
+                    {
+                        Id = SelectedCourse!.Id,
+                        Date = SelectedCourse.Date,
+                        Value = SelectedCourse.Value
+                    };
+                }
+
+                ErrorMessage = $"Курс за {SelectedCourse?.Date:d} сохранён";
+                LogHost.Default.Info($"Курс за {SelectedCourse?.Date} обновлён" );
             }
 
             _beforeEditingCourse = null;
             SelectedCourse = null;
             CurrentState = "Просмотр";
             IsEditing = false;
+            CanSelectAnotherCource = true;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            LogHost.Default.Error(e.Message);
-            throw;
+            LogHost.Default.Error(ex, "Ошибка при сохранении курса");
+            ErrorMessage = $"Ошибка сохранения: {ex.Message}";
         }
     }
 
     private IObservable<bool> CanSaveCourse()
     {
-        try
-        {
-            return this.WhenAnyValue(
-                b => b.BeforeEditingCourse,
-                a => a.SelectedCourse,
-                e => e.IsEditing,
-                a => a.IsAdding,
-                c => c.Courses,
-                (before, after, isediting, isadding, courses) =>
+        LogHost.Default.Debug("Оценка возможности сохранения курса");
+        return this.WhenAnyValue(
+            x => x.BeforeEditingCourse,
+            x => x.SelectedCourse,
+            x => x.IsEditing,
+            x => x.IsAdding,
+            x => x.Courses,
+            (before, after, isEditing, isAdding, courses) =>
+            {
+                if (isAdding)
                 {
-                    if (isadding)
-                    {
-                        return isadding;
-                    }
-                    else
-                    {
-                        return isediting && (before?.Value != after?.Value || before?.Date != after?.Date);
-                    }
-                });
-        }
-        catch (Exception e)
-        {
-            LogHost.Default.Error(e.Message);
-            throw;
-        }
+                    return true;
+                }
+
+                return isEditing &&
+                       (before?.Value != after?.Value || before?.Date.Date != after?.Date.Date);
+            });
     }
 }
