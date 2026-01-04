@@ -26,26 +26,35 @@ namespace HtmlParcerCbrCources
             LogHost.Default.Info($"{HttpClient.DefaultProxy}");
         }
 
-        public static async Task<ChangeRubToDollar> GetUsdCourseOnDateAsync
+        public static async Task<ChangeRubToDollar>? GetUsdCourseOnDateAsync
             (DateTime date, CancellationToken cToken = default)
         {
             try
             {
                 cToken.ThrowIfCancellationRequested();
-               
-                
+
+
                 var course = await FetchCourseFromCbr(date, cToken);
                 if (course != null)
                 {
                     LogHost.Default.Debug($"Course cached for date {date:dd.MM.yyyy}: {course.Value}");
                     return course;
                 }
+                else
+                {
+                    LogHost.Default.Error("Fetched course is null");
+                }
+            }
+            catch (System.Net.Sockets.SocketException netEx)
+            {
+                LogHost.Default.Error(netEx, netEx.Message);
+                throw netEx.InnerException ?? netEx;
             }
             catch (Exception ex)
             {
                 LogHost.Default.Error(ex, ex.Message);
+                throw ex.InnerException ?? ex;
             }
-
             return null;
         }
 
@@ -115,8 +124,8 @@ namespace HtmlParcerCbrCources
             }
             catch (Exception ex)
             {
-                LogHost.Default.Error(ex, "Exception in GetUsdCourseOnDateAsync");
-                return null;
+                LogHost.Default.Error(ex, "Exception in FetchCourseFromCbr");
+                throw ex.InnerException ?? ex;
             }
         }
     }

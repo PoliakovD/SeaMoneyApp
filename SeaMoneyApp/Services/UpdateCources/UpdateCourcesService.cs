@@ -22,62 +22,22 @@ public class UpdateCourcesService : ReactiveObject
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
 
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
-    private readonly BehaviorSubject<bool> _canStart = new(true);
+    public readonly BehaviorSubject<bool> CanStart = new(true);
 
     public IObservable<string?> WhenErrorMessageChanged => _errorMessageSubject.AsObservable();
 
-    public IObservable<bool> WhenCanStartChanged => _canStart.AsObservable();
+    public IObservable<bool> WhenCanStartChanged => CanStart.AsObservable();
 
     public void DeleteCource(ChangeRubToDollar cource) => _dbContext.DeleteChangeRubToDollar(cource);
     public void UpdateCource(ChangeRubToDollar oldCource, ChangeRubToDollar newCource) => 
         _dbContext.UpdateChangeRubToDollar(oldCource,newCource);
     public void AddCource(ChangeRubToDollar cource) => _dbContext.AddChangeRubToDollar(cource);
     
-    public async Task<IEnumerable<ChangeRubToDollar>> UpdateCourcesAsync(
+    public async IAsyncEnumerable<ChangeRubToDollar> UpdateCoursesEnumerableAsync(
         ObservableCollection<ChangeRubToDollar> collection,
         CancellationToken cToken = default)
     {
-        var resultCollection = new ConcurrentQueue<ChangeRubToDollar>();
-        _canStart.OnNext(false); // Запрет на повторный запуск
-        string? errorMsg = null;
-        try
-        {
-            cToken.ThrowIfCancellationRequested();
-            _errorMessageSubject.OnNext(null); // Сброс ошибки
-
-            var dates = GetDatesFrom2020();
-            foreach (var date in dates)
-            {
-                if (IsDateExistInCollection(date, collection)) continue;
-                resultCollection.Enqueue(
-                    await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken));
-                await Task.Delay(100, cToken); // Анти-спам задержка
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            errorMsg = "Загрузка курсов отменена или вышло время ожидания";
-            LogHost.Default.Error(errorMsg);
-        }
-        catch (Exception ex)
-        {
-            errorMsg = $"Ошибка загрузки курсов: {ex.Message}";
-            LogHost.Default.Error(ex, errorMsg);
-        }
-        finally
-        {
-            if (errorMsg is not null) _errorMessageSubject.OnNext(errorMsg);
-            _canStart.OnNext(true);
-        }
-
-        return resultCollection;
-    }
-
-    public async IAsyncEnumerable<ChangeRubToDollar> UpdateCourcesEnumerableAsync(
-        ObservableCollection<ChangeRubToDollar> collection,
-        CancellationToken cToken = default)
-    {
-        _canStart.OnNext(false); // Запрет на повторный запуск
+        CanStart.OnNext(false); // Запрет на повторный запуск
 
         cToken.ThrowIfCancellationRequested();
         _errorMessageSubject.OnNext(null); // Сброс ошибки
@@ -86,11 +46,20 @@ public class UpdateCourcesService : ReactiveObject
         foreach (var date in dates)
         {
             if (IsDateExistInCollection(date, collection)) continue;
-            yield return await HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken);
+            var taskCourse = HtmlParcerCbrCources.HtmlParcerCbrCources.GetUsdCourseOnDateAsync(date, cToken);
+            if (taskCourse is null)
+            {
+                var errorMsg = $"Ошибка загрузки для даты {date}";
+                _errorMessageSubject.OnNext(errorMsg);
+                CanStart.OnNext(true);
+                throw new Exception(errorMsg);
+            }
+            yield return await taskCourse;
+            
             await Task.Delay(100, cToken); // Анти-спам задержка
         }
-
-        _canStart.OnNext(true);
+        
+        CanStart.OnNext(true);
         _errorMessageSubject.OnNext(null);
     }
 

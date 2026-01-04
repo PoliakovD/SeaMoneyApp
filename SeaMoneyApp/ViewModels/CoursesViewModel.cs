@@ -177,7 +177,14 @@ public partial class CoursesViewModel : RoutableViewModel
             cToken.ThrowIfCancellationRequested();
 
             var counter = 0;
-            await foreach (var course in _updateService.UpdateCourcesEnumerableAsync(Courses, cToken))
+            var asyncCourses = _updateService.UpdateCoursesEnumerableAsync(Courses, cToken);
+            if (asyncCourses is null)
+            {
+                LogHost.Default.Error("Ошибка при загрузке курсов из HTTP");
+                ErrorMessage = $"Ошибка загрузки: ";
+                return;
+            }
+            await foreach (var course in asyncCourses)
             {
                 Courses.Insert(0, course);
                 _dbContext.ChangeRubToDollars.Add(course);
@@ -185,6 +192,7 @@ public partial class CoursesViewModel : RoutableViewModel
                 MaxX = Math.Max(MaxX, course.Date.Ticks);
 
                 LogHost.Default.Debug($"Добавлен курс: {course.Date}, значение: {course.Value}");
+                ErrorMessage = ($"Добавлено {counter} новых курсов");
             }
 
             if (counter > 0)
@@ -207,6 +215,7 @@ public partial class CoursesViewModel : RoutableViewModel
         catch (Exception ex)
         {
             LogHost.Default.Error(ex, "Ошибка при загрузке курсов из HTTP");
+            _updateService.CanStart.OnNext(true);
             ErrorMessage = $"Ошибка загрузки: {ex.Message}";
         }
     }
@@ -383,7 +392,12 @@ public partial class CoursesViewModel : RoutableViewModel
                 if (existing is null)
                 {
                     _updateService.AddCource(SelectedCourse!);
-                    Courses.Add(new ChangeRubToDollar
+                    // Courses.Add(new ChangeRubToDollar
+                    // {
+                    //     Date = SelectedCourse!.Date,
+                    //     Value = SelectedCourse.Value
+                    // });
+                    Courses.Insert(0,new ChangeRubToDollar
                     {
                         Date = SelectedCourse!.Date,
                         Value = SelectedCourse.Value
