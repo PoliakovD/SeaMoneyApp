@@ -33,8 +33,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAutoUpdateCources", "Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AxilaryProj", "AxilaryProj", "{23265846-93D5-4D0C-9260-94A497C8BD68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConverterDateOffsett", "TestConverterDateOffsett\TestConverterDateOffsett.csproj", "{E1DC1062-0114-42B8-84E3-3B81EB853A9B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,10 +79,6 @@ Global
 		{31D28791-3C80-4C7F-B7E3-8ECFC4634501}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31D28791-3C80-4C7F-B7E3-8ECFC4634501}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31D28791-3C80-4C7F-B7E3-8ECFC4634501}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E1DC1062-0114-42B8-84E3-3B81EB853A9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E1DC1062-0114-42B8-84E3-3B81EB853A9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1DC1062-0114-42B8-84E3-3B81EB853A9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E1DC1062-0114-42B8-84E3-3B81EB853A9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +91,5 @@ Global
 		{0274A748-86C4-4853-AF27-47595A1EA4F4} = {C3883BFF-7AAA-4559-A3B4-4BC5A9297047}
 		{31D28791-3C80-4C7F-B7E3-8ECFC4634501} = {C3883BFF-7AAA-4559-A3B4-4BC5A9297047}
 		{C8BC30F1-46A5-4857-918B-92AA16E3C4E2} = {23265846-93D5-4D0C-9260-94A497C8BD68}
-		{E1DC1062-0114-42B8-84E3-3B81EB853A9B} = {C3883BFF-7AAA-4559-A3B4-4BC5A9297047}
 	EndGlobalSection
 EndGlobal
