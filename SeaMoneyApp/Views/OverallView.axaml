@@ -28,7 +28,11 @@
                     Classes="menue"/>
 
             <Button Content="{x:Static local:Localization.ToCourcesText}"
-                    Command="{Binding ToCourcesCommand}" 
+                    Command="{Binding ToCoursesCommand}" 
+                    Classes="menue"/>
+            
+            <Button Content="{x:Static local:Localization.ToSettingsText}"
+                    Command="{Binding ToAppSettingsCommand}" 
                     Classes="menue"/>
 
         </StackPanel>

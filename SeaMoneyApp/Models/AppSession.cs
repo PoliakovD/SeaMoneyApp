@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,14 +14,16 @@ using Splat;
 
 namespace SeaMoneyApp.Models;
 
-
-public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
+public class AppSession : ReactiveObject, IDisposable, IAsyncDisposable
 {
+    private const string DefaultCulture = "ru-RU";
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
     private Account? _currentAccount;
     private bool? _isAdmin;
     private bool _rememberMe = false;
-    public bool? IsAdmin 
+    private string _culture;
+
+    public bool? IsAdmin
     {
         get => _isAdmin;
         set => this.RaiseAndSetIfChanged(ref _isAdmin, value);
@@ -37,10 +40,15 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
         get => _currentAccount;
         set => this.RaiseAndSetIfChanged(ref _currentAccount, value);
     }
-    
+
+    public string Culture
+    {
+        get => _culture;
+        set => this.RaiseAndSetIfChanged(ref _culture, value);
+    }
 
     public bool IsLoggedIn => CurrentAccount is not null;
-    
+
 
     private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
     {
@@ -63,8 +71,8 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
         StartListeningToAuth();
 
         RestoreSession();
-        
     }
+
     public void StartListeningToAuth()
     {
         var authService = Locator.Current.GetService<IAuthorizationService>();
@@ -77,27 +85,39 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
         authService.WhenAccountInChanged
             .Subscribe(account => IsAdmin = account?.Login == "admin");
     }
+
     public bool RestoreSession()
     {
         LogHost.Default.Info("Restoring session");
         try
         {
-            var authFilePath = GetAuthFilePath();   
+            var authFilePath = GetAuthFilePath();
             if (!File.Exists(authFilePath)) return false;
 
             var json = File.ReadAllText(authFilePath);
-            
+
             var session = JsonService.Load<AppSessionRestore>(authFilePath);
-            
+
             LogHost.Default.Info("Restored session: " + json);
             //var saved = JsonConvert.DeserializeObject<AppSession>(json, _settings);
-            
-            if (session.SavedRememberMe == false) return false;
-            
+
+            if (session.SavedCulture is not null)
+            {
+                Culture = session.SavedCulture;
+                Localization.Localization.Culture = new CultureInfo(Culture);
+            }
+            else
+            {
+                Culture = DefaultCulture;
+                Localization.Localization.Culture = new CultureInfo(Culture);
+            }
+
+            RememberMe = session.SavedRememberMe;
+            if (RememberMe == false) return false;
+
             var account = _dbContext.Accounts
                 .Include(a => a.Position)
                 .FirstOrDefault(u => u.Login == session.SavedLogin);
-
             if (account != null)
             {
                 CurrentAccount = account;
@@ -105,14 +125,16 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
                 return true;
             }
             else LogHost.Default.Info("Auto-login failed for: " + session.SavedLogin);
-            
         }
         catch (Exception ex)
         {
             LogHost.Default.Error(ex, "Failed to restore session");
         }
+
         return false;
     }
+
+
     public void SaveSession()
     {
         LogHost.Default.Info("Saving session");
@@ -121,12 +143,13 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
             try
             {
                 ClearSavedSession();
-                
-                var authFilePath = GetAuthFilePath();   
+
+                var authFilePath = GetAuthFilePath();
                 var savedSession = new AppSessionRestore()
                 {
                     SavedLogin = CurrentAccount.Login,
-                    SavedRememberMe = RememberMe
+                    SavedRememberMe = RememberMe,
+                    SavedCulture = Culture
                 };
                 var json = JsonService.Save(savedSession, authFilePath);
                 //var json = JsonConvert.SerializeObject(session, Formatting.Indented, _settings);
@@ -142,34 +165,37 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
             }
         }
     }
+
     public async Task SaveSessionAsync()
     {
         LogHost.Default.Info("Saving session async");
-        if (RememberMe)
+        // if (RememberMe)
+        // {
+        try
         {
-            try
-            {
-                ClearSavedSession();
-                
-                var authFilePath = GetAuthFilePath();   
-                var savedSession = new AppSessionRestore()
-                {
-                    SavedLogin = CurrentAccount.Login,
-                    SavedRememberMe = RememberMe
-                };
-                var json = await JsonService.SaveAsync(savedSession, authFilePath);
-                //var json = JsonConvert.SerializeObject(session, Formatting.Indented, _settings);
+            ClearSavedSession();
 
-                LogHost.Default.Debug(json);
-
-                //File.WriteAllText(authFilePath, json);
-            }
-            catch (Exception ex)
+            var authFilePath = GetAuthFilePath();
+            var savedSession = new AppSessionRestore()
             {
-                LogHost.Default.Error(ex, "Failed to save session async");
-            }
+                SavedLogin = CurrentAccount.Login,
+                SavedRememberMe = RememberMe,
+                SavedCulture = Culture
+            };
+            var json = await JsonService.SaveAsync(savedSession, authFilePath);
+            //var json = JsonConvert.SerializeObject(session, Formatting.Indented, _settings);
+
+            LogHost.Default.Debug(json);
+
+            File.WriteAllText(authFilePath, json);
         }
+        catch (Exception ex)
+        {
+            LogHost.Default.Error(ex, "Failed to save session async");
+        }
+        // }
     }
+
     public void ClearSavedSession()
     {
         try
@@ -186,14 +212,15 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
 
     public void Dispose()
     {
-        SaveSession();
+        //SaveSession();
         _dbContext.Dispose();
     }
-    
+
     private record AppSessionRestore
     {
         public string? SavedLogin;
         public bool SavedRememberMe;
+        public string? SavedCulture;
     }
 
     public async ValueTask DisposeAsync()
@@ -201,4 +228,3 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
         await _dbContext.DisposeAsync();
     }
 }
-

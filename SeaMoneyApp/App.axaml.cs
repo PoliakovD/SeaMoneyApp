@@ -47,14 +47,7 @@ public partial class App : Application
 
         // Устанавливаем глобальный ViewLocator
         Locator.CurrentMutable.RegisterViewsForViewModels(typeof(App).Assembly);
-
-
-        // Регистрируем AppSession как синглтон
-        //Locator.CurrentMutable.RegisterLazySingleton(() => new AppSession());
-
-
-        //var appSession = new AppSession();
-        //appSession.RestoreSession();
+        
         var appSession = new AppSession();
         Locator.CurrentMutable.RegisterConstant(appSession);
 
@@ -91,6 +84,15 @@ public partial class App : Application
 
         if (appSession.CurrentAccount is null) router.NavigateAndCache<LoginViewModel>();
         else router.NavigateAndCache<OverallViewModel>();
+        // DEBUG
+        
+        LogHost.Default.Info($"appSession Culture:  {appSession.Culture}");
+        
+        // DEBUG
+        
+        
+        
+       
 
         LogHost.Default.Info("Registered views successfully");
 

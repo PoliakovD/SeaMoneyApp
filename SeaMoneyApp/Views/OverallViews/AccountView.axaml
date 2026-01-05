@@ -11,7 +11,7 @@
              d:DataContext="{d:DesignInstance viewModels:LogsViewModel, IsDesignTimeCreatable=True}"
              
              x:Class="SeaMoneyApp.Views.AccountView">
-   <DockPanel>
+   <DockPanel VerticalAlignment="Top">
        <TextBlock DockPanel.Dock="Top" 
                   HorizontalAlignment="Center"
                   Text="{Binding CurrentState}"
@@ -51,11 +51,11 @@
            <Button Content="Edit" Command="{Binding EditAccountCommand}" Classes="btn-primary" />
            <Button Content="Save" Command="{Binding SaveAccountCommand}" Classes="btn-success" />
            <Button Content="Cancel" Command="{Binding CancelEditAccountCommand}" Classes="btn-secondary" />
+           <Button DockPanel.Dock="Top" 
+                   Content="{x:Static local:Localization.LogoutText}" 
+                   Command="{Binding LogOutCommand}"
+                   Classes="btn-danger"
+                   Margin="20,0,0,0"/>
        </StackPanel>
-
-       <Button DockPanel.Dock="Top" 
-               Content="{x:Static local:Localization.LogoutText}" 
-               Command="{Binding LogOutCommand}"
-               Classes="btn-danger"/>
    </DockPanel>
 </UserControl>

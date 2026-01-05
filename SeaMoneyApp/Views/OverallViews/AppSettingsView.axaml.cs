@@ -14,4 +14,6 @@ public partial class AppSettingsView : ReactiveUserControl<AppSettingsViewModel>
         this.WhenActivated(disposables => { });
         AvaloniaXamlLoader.Load(this);
     }
+
+   
 }

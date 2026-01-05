@@ -75,4 +75,7 @@
     <data name="StopLoadCourcesFromHttpText" xml:space="preserve">
         <value>Остановить загрузку</value>
     </data>
+    <data name="ToSettingsText" xml:space="preserve">
+        <value>Настройки</value>
+    </data>
 </root>

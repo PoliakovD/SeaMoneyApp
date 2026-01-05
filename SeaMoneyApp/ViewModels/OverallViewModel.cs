@@ -17,8 +17,8 @@ public class OverallViewModel : RoutableViewModel, IScreenBackCommand
 {
     public ICommand ToLogsCommand { get; }
     public ICommand ToAccountCommand { get; }
-    
-    public ICommand ToCourcesCommand { get; }
+    public ICommand ToAppSettingsCommand { get; }
+    public ICommand ToCoursesCommand { get; }
     private RoutingState? _router;
 
     [IgnoreDataMember]
@@ -38,7 +38,8 @@ public class OverallViewModel : RoutableViewModel, IScreenBackCommand
        
         ToAccountCommand = ReactiveCommand.Create(() => { Router.NavigateAndCache<AccountViewModel>();});
         
-        ToCourcesCommand = ReactiveCommand.Create(() => { Router.NavigateAndCache<CoursesViewModel>(); });
+        ToCoursesCommand = ReactiveCommand.Create(() => { Router.NavigateAndCache<CoursesViewModel>(); });
         
+        ToAppSettingsCommand= ReactiveCommand.Create(() => { Router.NavigateAndCache<AppSettingsViewModel>(); });
     }
 }

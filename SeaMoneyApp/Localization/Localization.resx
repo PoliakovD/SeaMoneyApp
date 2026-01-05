@@ -83,4 +83,7 @@
     <data name="StopLoadCourcesFromHttpText" xml:space="preserve">
         <value>Stop Load From Http</value>
     </data>
+    <data name="ToSettingsText" xml:space="preserve">
+        <value>Settings</value>
+    </data>
 </root>
