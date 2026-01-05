@@ -11,8 +11,6 @@ namespace SeaMoneyApp.ViewModels;
 public partial class MainViewModel : ReactiveObject, IScreen, IScreenBackCommand
 {
     private RoutingState? _router;
-    
-    private Account? _currentAccount;
     public MainViewModel()
     {
         Router ??= new RoutingState();

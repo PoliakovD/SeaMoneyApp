@@ -36,7 +36,7 @@ public class RegistrationViewModel : RoutableViewModel
         set => this.RaiseAndSetIfChanged(ref _searchText, value);
     }
 
-    public ObservableCollection<Position> Positions { get; set; } = new ObservableCollection<Position>();
+    public ObservableCollection<Position> Positions { get; set; } 
 
     public ObservableCollection<short> ToursInRanks { get; set; } = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 

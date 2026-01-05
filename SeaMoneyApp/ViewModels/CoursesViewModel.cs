@@ -392,11 +392,6 @@ public partial class CoursesViewModel : RoutableViewModel
                 if (existing is null)
                 {
                     _updateService.AddCource(SelectedCourse!);
-                    // Courses.Add(new ChangeRubToDollar
-                    // {
-                    //     Date = SelectedCourse!.Date,
-                    //     Value = SelectedCourse.Value
-                    // });
                     Courses.Insert(0,new ChangeRubToDollar
                     {
                         Date = SelectedCourse!.Date,
@@ -417,19 +412,24 @@ public partial class CoursesViewModel : RoutableViewModel
             {
                 _updateService.UpdateCource(_beforeEditingCourse!, SelectedCourse!);
 
-                var index = Courses.IndexOf(SelectedCourse!);
-                if (index >= 0)
+                if (Courses.Contains(SelectedCourse))
                 {
+                    var index = Courses.IndexOf(SelectedCourse!);
                     Courses[index] = new ChangeRubToDollar
                     {
                         Id = SelectedCourse!.Id,
                         Date = SelectedCourse.Date,
                         Value = SelectedCourse.Value
                     };
-                }
 
-                ErrorMessage = $"Курс за {SelectedCourse?.Date:d} сохранён";
-                LogHost.Default.Info($"Курс за {SelectedCourse?.Date} обновлён" );
+                    ErrorMessage = $"Курс за {SelectedCourse?.Date:d} сохранён";
+                    LogHost.Default.Info($"Курс за {SelectedCourse?.Date} обновлён" );
+                }
+                else
+                {
+                    LogHost.Default.Error("Ошибка при сохранении курса");
+                    ErrorMessage = "Ошибка Сохранения курса";
+                }
             }
 
             _beforeEditingCourse = null;

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
@@ -22,8 +23,6 @@ public class AuthorizationService : IAuthorizationService, IDisposable
 {
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
 
-   
-
     private readonly BehaviorSubject<bool> _isLoggedInSubject = new(false);
     private readonly BehaviorSubject<Account?> _loggedInAccount = new(null);
     private readonly BehaviorSubject<string?> _errorMessageSubject = new(null);
@@ -39,8 +38,6 @@ public class AuthorizationService : IAuthorizationService, IDisposable
     public IObservable<Account?> WhenAccountInChanged => _loggedInAccount.AsObservable();
 
     public IObservable<string?> WhenErrorMessageChanged => _errorMessageSubject.AsObservable();
-
-
     
 
     public bool Login(string? username, string? password, bool rememberMe = false)
@@ -218,6 +215,64 @@ public class AuthorizationService : IAuthorizationService, IDisposable
         _errorMessageSubject?.Dispose();
         _lastLoginTime?.Dispose();
     }
+
+    public async Task<bool> UpdateAccountAsync(Account oldAccount, Account newAccount, CancellationToken token)
+    {
+        try
+        {
+            token.ThrowIfCancellationRequested();
+            var validation = ValidateCredentials(newAccount.Login, newAccount.Password);
+            if (!validation.IsValid)
+            {
+                _errorMessageSubject.OnNext(validation.ErrorMessage);
+                return false;
+            }
+            var secondValidation = ValidateAccountForUpdate(oldAccount, newAccount);
+            if (!secondValidation.IsValid)
+            {
+                _errorMessageSubject.OnNext(secondValidation.ErrorMessage);
+                return false;
+            }
+            _errorMessageSubject.OnNext("Аккаунт успешно изменен");
+            await _dbContext.UpdateAccountAsync(oldAccount,newAccount, token);
+            _loggedInAccount.OnNext(newAccount);
+            return true;
+        }
+        catch (OperationCanceledException oc)
+        {
+            _errorMessageSubject.OnNext("Вышло время ожидания сохранения");
+            LogHost.Default.Error(oc.Message);
+        }
+        catch (Exception e)
+        {
+            _errorMessageSubject.OnNext(e.Message);
+            LogHost.Default.Error(e.Message);
+        }
+
+        return false;
+    }
+
+    private ValidationResult ValidateAccountForUpdate(Account oldAccount, Account newAccount)
+    {
+        if (oldAccount.Login == newAccount.Login &&
+            oldAccount.Password == newAccount.Password &&
+            oldAccount.ToursInRank == newAccount.ToursInRank &&
+            oldAccount.Position!.Name == newAccount.Position!.Name)
+            return new ValidationResult(false, "Аккаунт без изменений");
+        if (oldAccount.Login != newAccount.Login)
+        {
+            var checkLoginFree = CheckLoginFree(newAccount.Login);
+            if (!checkLoginFree) return new ValidationResult(false, "Логин уже занят");
+        }
+        if (newAccount.ToursInRank<0||newAccount.ToursInRank>8) 
+            return new ValidationResult(false, "Некорректное количество контрактов");
+        if (newAccount.Position==null)
+            return new ValidationResult(false, "Некорректная должность");
+        
+        return new ValidationResult(true, "Ok");
+    }
+    private bool CheckLoginFree(string login)
+    => _dbContext.Accounts.FirstOrDefault(u => u.Login == login) is null;
 }
 
 internal record ValidationResult(bool IsValid, string ErrorMessage);

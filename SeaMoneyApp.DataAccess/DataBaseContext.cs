@@ -58,4 +58,30 @@ public class DataBaseContext : DbContext
         var positions = GetAllPositions();
         return positions.Where(product => product.Name.Contains(name, StringComparison.CurrentCultureIgnoreCase));
     }
+
+    public async Task UpdateAccountAsync(Account oldAccount, Account newAccount, CancellationToken token)
+    {
+        try
+        {
+            token.ThrowIfCancellationRequested();
+            var findedAccount = Accounts.FirstOrDefault(c => c.Id == oldAccount.Id);
+
+            if (findedAccount == null) throw new ArgumentNullException(nameof(findedAccount));
+
+            findedAccount.Login = newAccount.Login;
+            findedAccount.Password = newAccount.Password;
+            findedAccount.ToursInRank = newAccount.ToursInRank;
+            findedAccount.Password = newAccount.Password;
+            findedAccount.Position = await Positions.FirstAsync(p => p.Id == newAccount!.Position!.Id, token);
+
+            Accounts.Update(findedAccount);
+
+            await this.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        
+    }
 }

@@ -18,7 +18,6 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
 {
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
     private Account? _currentAccount;
-    private DateTime? _lastLoginTime;
     private bool? _isAdmin;
     private bool _rememberMe = false;
     public bool? IsAdmin 
@@ -38,12 +37,7 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
         get => _currentAccount;
         set => this.RaiseAndSetIfChanged(ref _currentAccount, value);
     }
-
-    public DateTime? LastLoginTime
-    {
-        get => _lastLoginTime;
-        set => this.RaiseAndSetIfChanged(ref _lastLoginTime, value);
-    }
+    
 
     public bool IsLoggedIn => CurrentAccount is not null;
     
@@ -66,11 +60,9 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
     public AppSession()
     {
         LogHost.Default.Info("Initializing AppSession");
-        if (!RestoreSession())
-        {
-            StartListeningToAuth();
-        }
-        
+        StartListeningToAuth();
+
+        RestoreSession();
         
     }
     public void StartListeningToAuth()
@@ -78,9 +70,6 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
         var authService = Locator.Current.GetService<IAuthorizationService>();
         authService.WhenAccountInChanged
             .BindTo(this, vm => vm.CurrentAccount);
-
-        authService.LastLoginTimeChanged
-            .BindTo(this, vm => vm.LastLoginTime);
 
         authService.WhenRememberMeChanged
             .BindTo(this, vm => vm.RememberMe);
@@ -112,10 +101,10 @@ public class AppSession : ReactiveObject,IDisposable, IAsyncDisposable
             if (account != null)
             {
                 CurrentAccount = account;
-                LastLoginTime=DateTime.Now;
                 LogHost.Default.Info("Auto-login succeeded for: " + account.Login);
                 return true;
             }
+            else LogHost.Default.Info("Auto-login failed for: " + session.SavedLogin);
             
         }
         catch (Exception ex)

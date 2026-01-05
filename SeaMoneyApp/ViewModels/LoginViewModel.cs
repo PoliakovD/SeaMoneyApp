@@ -103,7 +103,7 @@ public partial class LoginViewModel : RoutableViewModel
         LogHost.Default.Debug("CheckRestoredAppSession started");
         var appSession = Locator.Current.GetService<AppSession>();
         LogHost.Default.Debug($"CheckRestoredAppSession appSession is null? = {appSession == null}");
-        LogHost.Default.Warn($"App session {appSession}");
+        LogHost.Default.Debug($"appSession.CurrentAccount is null? = {appSession.CurrentAccount == null}");
         if (appSession.CurrentAccount != null)
         {
             GoToOverallView();

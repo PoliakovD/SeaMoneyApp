@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using SeaMoneyApp.DataAccess.Models;
 
@@ -16,5 +17,6 @@ public interface IAuthorizationService
     bool Register(string? login, string? password, Position? position, short? toursInRank);
     void Logout();
     void FlushErrorMessage();
+    Task<bool> UpdateAccountAsync(Account oldAccount, Account newAccount, CancellationToken token);
 
 }

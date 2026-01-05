@@ -10,24 +10,52 @@
              x:DataType="viewModels:AccountViewModel"
              d:DataContext="{d:DesignInstance viewModels:LogsViewModel, IsDesignTimeCreatable=True}"
              
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SeaMoneyApp.Views.AccountView">
-   <Grid>
-       <StackPanel Orientation="Vertical" DataContext="{Binding AppSession.CurrentAccount}">
+   <DockPanel>
+       <TextBlock DockPanel.Dock="Top" 
+                  HorizontalAlignment="Center"
+                  Text="{Binding CurrentState}"
+                  Foreground="MediumBlue"
+                  FontWeight="Bold"
+                  FontSize="15" />
+       <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
            <Label Content="{x:Static local:Localization.GeneralInfoText}"/>
-           <c:InputComponent IsReadOnly="True"
+           <c:InputComponent IsReadOnly="{Binding !IsEditing}"
                              Label="{x:Static local:Localization.LoginText}"
-                             Value="{Binding Login}"/>
-           <c:InputComponent IsReadOnly="True"
-                             Label="{x:Static local:Localization.PositionText}"
-                             Value="{Binding Position.Name}"/>
-           <c:InputComponent IsReadOnly="True"
+                             Value="{Binding CurrentAccount.Login}"/>
+           <!-- <c:InputComponent IsReadOnly="True" -->
+           <!--                   Label="{x:Static local:Localization.PositionText}" -->
+           <!--                   Value="{Binding CurrentAccount.Position.Name}"/> -->
+           <Grid>
+               <StackPanel Orientation="Vertical">
+                   <Label Content="{x:Static local:Localization.PositionText}"/>
+                   <AutoCompleteBox 
+                       IsEnabled="{Binding IsEditing}"
+                       ItemsSource="{Binding Positions}"
+                       SelectedItem="{Binding ViewedPosition}"
+                       FilterMode="Contains"/>
+               </StackPanel>
+           </Grid>
+           
+           <c:InputComponent IsReadOnly="{Binding !IsEditing}"
                              Label="{x:Static local:Localization.ToursInRankText}"
-                             Value="{Binding ToursInRank}"/>
+                             Value="{Binding CurrentAccount.ToursInRank}"/>
           
        </StackPanel>
-       <Button Content="{x:Static local:Localization.LogoutText}" 
+       <TextBlock DockPanel.Dock="Top"
+                  Text="{Binding ErrorMessage}"
+                  Foreground="Coral"
+                  FontWeight="Bold"
+                  FontSize="15" />
+       <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+           <Button Content="Edit" Command="{Binding EditAccountCommand}" Classes="btn-primary" />
+           <Button Content="Save" Command="{Binding SaveAccountCommand}" Classes="btn-success" />
+           <Button Content="Cancel" Command="{Binding CancelEditAccountCommand}" Classes="btn-secondary" />
+       </StackPanel>
+
+       <Button DockPanel.Dock="Top" 
+               Content="{x:Static local:Localization.LogoutText}" 
                Command="{Binding LogOutCommand}"
-               Classes="menue"/>
-   </Grid>
+               Classes="btn-danger"/>
+   </DockPanel>
 </UserControl>
