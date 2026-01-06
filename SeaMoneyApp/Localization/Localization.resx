@@ -134,4 +134,7 @@
     <data name="AdminPanelText" xml:space="preserve">
         <value>Admin Panel</value>
     </data>
+    <data name="ToContractsText" xml:space="preserve">
+        <value>Contracts</value>
+    </data>
 </root>

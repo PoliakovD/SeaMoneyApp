@@ -126,4 +126,7 @@
     <data name="AdminPanelText" xml:space="preserve">
         <value>Панель администратора</value>
     </data>
+    <data name="ToContractsText" xml:space="preserve">
+        <value>Контракты</value>
+    </data>
 </root>

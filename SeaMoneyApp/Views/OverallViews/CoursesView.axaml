@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+           
 
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:c="clr-namespace:SeaMoneyApp.Converters"
@@ -9,7 +9,7 @@
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
 
              x:DataType="viewModels:CoursesViewModel"
-             d:DataContext="{d:DesignInstance viewModels:CoursesViewModel, IsDesignTimeCreatable=True}"
+           
 
              x:Class="SeaMoneyApp.Views.OverallViews.CoursesView">
 

@@ -17,15 +17,13 @@
                   Text="{Binding CurrentState}"
                   Foreground="MediumBlue"
                   FontWeight="Bold"
-                  FontSize="15" />
+                  FontSize="20" />
        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
            <Label Content="{x:Static local:Localization.GeneralInfoText}"/>
            <c:InputComponent IsReadOnly="{Binding !IsEditing}"
                              Label="{x:Static local:Localization.LoginText}"
                              Value="{Binding CurrentAccount.Login}"/>
-           <!-- <c:InputComponent IsReadOnly="True" -->
-           <!--                   Label="{x:Static local:Localization.PositionText}" -->
-           <!--                   Value="{Binding CurrentAccount.Position.Name}"/> -->
+           
            <Grid>
                <StackPanel Orientation="Vertical">
                    <Label Content="{x:Static local:Localization.PositionText}"/>
@@ -46,7 +44,7 @@
                   Text="{Binding ErrorMessage}"
                   Foreground="Coral"
                   FontWeight="Bold"
-                  FontSize="15" />
+                  FontSize="20" />
        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
            <Button Content="{x:Static local:Localization.EditText}" 
                    Command="{Binding EditAccountCommand}" Classes="btn-primary" />
@@ -59,12 +57,15 @@
                    Command="{Binding LogOutCommand}"
                    Classes="btn-danger"
                    Margin="30,0,0,0"/>
-           <Button DockPanel.Dock="Top" 
-                   Content="{x:Static local:Localization.AdminPanelText}" 
-                   Command="{Binding ToAdminPanelCommand}"
-                   IsVisible="{Binding AppSession.IsAdmin}"
-                   Classes="btn-admin-panel"
-                   Margin="0,0,0,0"/>
+           
        </StackPanel>
+       <Button DockPanel.Dock="Top" 
+               HorizontalAlignment="Center"
+               
+               Content="{x:Static local:Localization.AdminPanelText}" 
+               Command="{Binding ToAdminPanelCommand}"
+               IsVisible="{Binding AppSession.IsAdmin}"
+               Classes="btn-admin-panel"
+               Margin="0,10,0,0"/>
    </DockPanel>
 </UserControl>

@@ -34,6 +34,14 @@
             <Button Content="{x:Static local:Localization.ToSettingsText}"
                     Command="{Binding ToAppSettingsCommand}" 
                     Classes="menue"/>
+            
+            <Button Content="{x:Static local:Localization.ToContractsText}"
+                    Command="{Binding ToContractsCommand}" 
+                    Classes="menue"/>
+            
+            <Button Content="{x:Static local:Localization.ToContractsText}"
+                    Command="{Binding ToIncomesCommand}" 
+                    Classes="menue"/>
 
         </StackPanel>
         <Grid>

@@ -1,15 +1,10 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
             
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              
-
              x:DataType="viewModels:AppSettingsViewModel"
-             d:DataContext="{d:DesignInstance viewModels:AppSettingsViewModel, IsDesignTimeCreatable=True}"
-             
              x:Class="SeaMoneyApp.Views.OverallViews.AppSettingsView">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="20">

@@ -44,6 +44,25 @@ public class DataBaseContext : DbContext
         ChangeRubToDollars.Add(course);
         this.SaveChanges();
     }
+    public void AddContract(Contract contract)
+    {
+        Contracts.Add(contract);
+        this.SaveChanges();
+    }
+    public void UpdateContract(Contract oldСontract, Contract newContract)
+    {
+        var findedContract = Contracts.FirstOrDefault(c => c.Id == oldСontract.Id);
+        
+        if (findedContract == null)  throw new ArgumentNullException(nameof(findedContract));
+        
+        findedContract.BeginDate=newContract.BeginDate;
+        findedContract.EndDate=newContract.EndDate;
+        findedContract.VesselName = newContract.VesselName;
+        findedContract.ContractDescription = newContract.ContractDescription;
+        
+        Contracts.Update(findedContract);
+        this.SaveChanges();
+    }
     public IEnumerable<Position> GetAllPositions()
     {
         return Positions.AsEnumerable();
@@ -53,11 +72,17 @@ public class DataBaseContext : DbContext
     {
         return ChangeRubToDollars.OrderBy(c=>c.Date).ToList();
     }
-
+    
     public IEnumerable<Position> GetPositionsByName(string name)
     {
         var positions = GetAllPositions();
         return positions.Where(product => product.Name.Contains(name, StringComparison.CurrentCultureIgnoreCase));
+    }
+    public void DeleteContract(Contract contract)
+    {
+        var findedCourse = Contracts.FirstOrDefault(c => c.Id == contract.Id);
+        Contracts.Remove(findedCourse);
+        this.SaveChanges();
     }
 
     public async Task UpdateAccountAsync(Account oldAccount, Account newAccount, CancellationToken token)
@@ -85,13 +110,14 @@ public class DataBaseContext : DbContext
         }
    
     }
-    // public async IAsyncEnumerable<Position> GetAllPositionsAsAsynEnumerable() =>  Positions.AsAsyncEnumerable();
-    // public async IAsyncEnumerable<ChangeRubToDollar> GetAllChangeRubToDollarsAsAsynEnumerable() => ChangeRubToDollars.AsAsyncEnumerable();
-    // public async IAsyncEnumerable<Account> GetAllAccountsAsAsynEnumerable() => Accounts.AsAsyncEnumerable();
-    // public async IAsyncEnumerable<Contract> GetAllContractsAsAsynEnumerable() => Contracts.AsAsyncEnumerable();
-    // public async IAsyncEnumerable<PersonalBonus> GetAllPersonalBonusesAsAsynEnumerable() => PersonalBonuses.AsAsyncEnumerable();
-    // public async IAsyncEnumerable<Salary> GetAllSalariesAsAsynEnumerable() => Salaries.AsAsyncEnumerable();
-    // public async IAsyncEnumerable<WageLog> GetAllWageLogsAsAsynEnumerable() => WageLogs.AsAsyncEnumerable();
+
+    public async IAsyncEnumerable<Contract>? GetUserContractsAsyncEnumerable(Account user)
+    {
+        await foreach (var item in this.Contracts.Where(x => x.Account.Id == user.Id).AsAsyncEnumerable())
+        {
+            yield return item;
+        }
+    }
     
     
 }

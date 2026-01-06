@@ -1,8 +1,160 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SeaMoneyApp.Views.OverallViews.ContractsView">
-    Welcome to Avalonia!
+﻿<UserControl  xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                
+              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
+              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
+              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
+              xmlns:c="clr-namespace:SeaMoneyApp.Converters"
+
+              x:DataType="viewModels:ContractsViewModel"
+              x:Class="SeaMoneyApp.Views.OverallViews.ContractsView">
+    <UserControl.Resources>
+        <c:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
+        <DataTemplate x:Key="TemplateContract"
+                      DataType="{x:Type TypeName=m:Contract}">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left">
+                <TextBlock
+                    Text="{Binding BeginDate,
+                UpdateSourceTrigger=PropertyChanged, Mode=OneWay, StringFormat=dd.MM.yyyy}"
+                    Margin="10,5,10,5"
+                    Width="100" />
+                
+                <TextBlock
+                    Text="{Binding EndDate,
+                UpdateSourceTrigger=PropertyChanged, Mode=OneWay, StringFormat=dd.MM.yyyy}"
+                    Margin="10,5,10,5"
+                    Width="100" />
+                
+                <TextBlock Text="{Binding VesselName,UpdateSourceTrigger=PropertyChanged}"
+                           Margin="10,5,10,5"
+                           Width="100" />
+                
+                <TextBlock Text="{Binding ContractDescription,UpdateSourceTrigger=PropertyChanged}"
+                           Margin="10,5,10,5"
+                           Width="100" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}"
+                   Foreground="Coral"
+                   FontWeight="Bold"
+                   FontSize="20" />
+        <!-- <StackPanel DockPanel.Dock="Top" -->
+        <!--             Margin="10" -->
+        <!--             Orientation="Horizontal"> -->
+        <!--     <DatePicker -->
+        <!--         SelectedDate="{Binding SelectedContract.BeginDate,  -->
+        <!--         Converter={StaticResource DateTimeToDateTimeOffsetConverter}, -->
+        <!--         UpdateSourceTrigger=PropertyChanged, -->
+        <!--         Mode=TwoWay}" -->
+        <!--         IsEnabled="{Binding IsEditing}" -->
+        <!--         MonthFormat="MM"  -->
+        <!--         Margin="10"/> -->
+        <!--      -->
+        <!--     <DatePicker -->
+        <!--         SelectedDate="{Binding SelectedContract.EndDate,  -->
+        <!--         Converter={StaticResource DateTimeToDateTimeOffsetConverter}, -->
+        <!--         UpdateSourceTrigger=PropertyChanged, -->
+        <!--         Mode=TwoWay}" -->
+        <!--         IsEnabled="{Binding IsEditing}" -->
+        <!--         MonthFormat="MM"  -->
+        <!--         Margin="10"/> -->
+        <!--      -->
+        <!--     <TextBox Text="{Binding SelectedContract.VesselName}" -->
+        <!--              Width="100" -->
+        <!--              IsEnabled="{Binding IsEditing}"  -->
+        <!--              Margin="10"/> -->
+        <!--     <TextBox Text="{Binding SelectedContract.ContractDescription}" -->
+        <!--              Width="100" -->
+        <!--              IsEnabled="{Binding IsEditing}"  -->
+        <!--              Margin="10"/> -->
+        <!--      -->
+        <!--     <Button Content="{x:Static local:Localization.DeleteText}"  -->
+        <!--             Command="{Binding DeleteContractCommand}" Classes="btn-danger" /> -->
+        <!--     <Button  Content="{x:Static local:Localization.AddText}"  -->
+        <!--              Command="{Binding AddContractCommand}" Classes="btn-primary" /> -->
+        <!--     <Button Content="{x:Static local:Localization.EditText}"  -->
+        <!--             Command="{Binding EditContractCommand}" Classes="btn-primary" /> -->
+        <!--     <Button  Content="{x:Static local:Localization.SaveText}"  -->
+        <!--              Command="{Binding SaveContractCommand}" Classes="btn-success" /> -->
+        <!--     <Button Content="{x:Static local:Localization.CancelText}"  -->
+        <!--             Command="{Binding CancelEditContractCommand}" Classes="btn-secondary" /> -->
+        <!-- </StackPanel> -->
+        <Grid DockPanel.Dock="Top"
+                    Margin="10"
+                    ColumnDefinitions="*,*,*"
+                    RowDefinitions="2*,*">
+            
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                <TextBlock Text="Begin Date"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                <DatePicker SelectedDate="{Binding SelectedContract.BeginDate, 
+                Converter={StaticResource DateTimeToDateTimeOffsetConverter},
+                UpdateSourceTrigger=PropertyChanged,
+                Mode=TwoWay}"
+                            IsEnabled="{Binding IsEditing}"
+                            MonthFormat="MM" 
+                            Margin="5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+                <TextBlock Text="End Date"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                <DatePicker
+                    SelectedDate="{Binding SelectedContract.EndDate, 
+                Converter={StaticResource DateTimeToDateTimeOffsetConverter},
+                UpdateSourceTrigger=PropertyChanged,
+                Mode=TwoWay}"
+                    IsEnabled="{Binding IsEditing}"
+                    MonthFormat="MM" 
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2"
+                        Grid.RowSpan="2" Orientation="Vertical">
+                <TextBlock Text="Descriptions"
+                           HorizontalAlignment="Center"/>
+                <TextBox Text="{Binding SelectedContract.ContractDescription}"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"
+                         IsEnabled="{Binding IsEditing}" 
+                         Margin="10"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                        Orientation="Horizontal">
+                <TextBlock Text="Vessel name:"
+                           VerticalAlignment="Center"/>
+                <TextBox Text="{Binding SelectedContract.VesselName}"
+                         IsEnabled="{Binding IsEditing}" 
+                         Margin="10"
+                         Width="120"
+                         HorizontalAlignment="Stretch"/>
+                <Button Content="{x:Static local:Localization.DeleteText}" 
+                        Command="{Binding DeleteContractCommand}" Classes="btn-danger" />
+                <Button  Content="{x:Static local:Localization.AddText}" 
+                         Command="{Binding AddContractCommand}" Classes="btn-primary" />
+                <Button Content="{x:Static local:Localization.EditText}" 
+                        Command="{Binding EditContractCommand}" Classes="btn-primary" />
+                <Button  Content="{x:Static local:Localization.SaveText}" 
+                         Command="{Binding SaveContractCommand}" Classes="btn-success" />
+                <Button Content="{x:Static local:Localization.CancelText}" 
+                        Command="{Binding CancelEditContractCommand}" Classes="btn-secondary" />
+            </StackPanel>
+        </Grid>
+            
+        
+        <ListBox ItemsSource="{Binding UserContracts}"
+                 ItemTemplate="{StaticResource ResourceKey=TemplateContract}"
+                 SelectedItem="{Binding SelectedContract, Mode=OneWayToSource}"
+                 SelectionMode="Single"
+                 IsEnabled="{Binding !IsEditing}">
+        </ListBox>
+    </DockPanel>
 </UserControl>

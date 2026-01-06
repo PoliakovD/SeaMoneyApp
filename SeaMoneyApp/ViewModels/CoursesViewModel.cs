@@ -29,6 +29,7 @@ public partial class CoursesViewModel : RoutableViewModel
     private ChangeRubToDollar? _beforeEditingCourse;
     private string _currentState;
     private bool _isEditing;
+    private bool _isAdding;
 
     private CancellationTokenSource _ctsHttp;
     public ReactiveCommand<Unit, Unit> UpdateCoursesFromHttpCommand { get; }
@@ -65,9 +66,6 @@ public partial class CoursesViewModel : RoutableViewModel
         set => this.RaiseAndSetIfChanged(ref _currentState, value);
     }
 
-    public bool CanSelectAnotherCource { get; set; } = true;
-    public bool CanAddAnotherCourse { get; set; } = true;
-
     public string? ErrorMessage
     {
         get => _errorMessage;
@@ -89,7 +87,7 @@ public partial class CoursesViewModel : RoutableViewModel
     private readonly UpdateCourcesService _updateService;
     private IObservable<bool> _canDeleteSelectedCourse;
     private IObservable<bool> _htmlRunning;
-    private bool _isAdding;
+    
 
     public CoursesViewModel()
     {
@@ -267,8 +265,7 @@ public partial class CoursesViewModel : RoutableViewModel
             IsAdding = true;
             IsEditing = true;
             CurrentState = Localization.Localization.AddingText;
-            CanSelectAnotherCource = false;
-
+            
             LogHost.Default.Info($"Новый курс создан с датой {SelectedCourse.Date}");
         }
         catch (Exception ex)
@@ -300,8 +297,7 @@ public partial class CoursesViewModel : RoutableViewModel
             _updateService.DeleteCource(searchedCourse);
             SelectedCourse = null;
             IsEditing = false;
-            CanAddAnotherCourse = true;
-
+           
             ErrorMessage = $"Курс за {searchedCourse.Date:dd.MM.yyyy} удалён";
             LogHost.Default.Info($"Курс за {searchedCourse.Date} успешно удалён");
         }
@@ -370,7 +366,6 @@ public partial class CoursesViewModel : RoutableViewModel
             _beforeEditingCourse = null;
             IsEditing = false;
             CurrentState = Localization.Localization.ViewText;
-            CanSelectAnotherCource = true;
         }
         catch (Exception ex)
         {
@@ -436,7 +431,6 @@ public partial class CoursesViewModel : RoutableViewModel
             SelectedCourse = null;
             CurrentState = Localization.Localization.ViewText;
             IsEditing = false;
-            CanSelectAnotherCource = true;
         }
         catch (Exception ex)
         {
