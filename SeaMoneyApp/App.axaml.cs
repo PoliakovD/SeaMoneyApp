@@ -54,8 +54,7 @@ public partial class App : Application
 
         var screen = new MainViewModel();
 
-        // Регистрируем screen как команду для перемещения назад как синглтон
-        Locator.CurrentMutable.RegisterConstant<IScreenBackCommand>(screen);
+       
 
         switch (ApplicationLifetime)
         {
@@ -82,8 +81,20 @@ public partial class App : Application
 
         var router = Locator.Current.GetService<IScreen>()?.Router;
 
-        if (appSession.CurrentAccount is null) router.NavigateAndCache<LoginViewModel>();
-        else router.NavigateAndCache<OverallViewModel>();
+        if (appSession.CurrentAccount is null)
+        {
+            // Регистрируем screen как команду для перемещения назад как синглтон
+            Locator.CurrentMutable.RegisterConstant<IScreenBackCommand>(screen);
+            router.NavigateAndCache<LoginViewModel>();
+        }
+        else
+        {
+            var overalViewModel = new OverallViewModel();
+            
+            // Регистрируем screen как команду для перемещения назад как синглтон
+            Locator.CurrentMutable.RegisterConstant<IScreenBackCommand>(overalViewModel);
+            router.NavigateAndCache<OverallViewModel>(overalViewModel);
+        }
         // DEBUG
         
         LogHost.Default.Info($"appSession Culture:  {appSession.Culture}");

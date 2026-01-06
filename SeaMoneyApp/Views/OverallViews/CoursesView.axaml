@@ -134,11 +134,16 @@
                      Width="100"
                      IsEnabled="{Binding IsEditing}" 
                      Margin="10"/>
-            <Button Content="Del" Command="{Binding DeleteCourseCommand}" Classes="btn-danger" />
-            <Button Content="Add" Command="{Binding AddCourseCommand}" Classes="btn-primary" />
-            <Button Content="Edit" Command="{Binding EditCourseCommand}" Classes="btn-primary" />
-            <Button Content="Save" Command="{Binding SaveCourseCommand}" Classes="btn-success" />
-            <Button Content="Cancel" Command="{Binding CancelEditCourseCommand}" Classes="btn-secondary" />
+            <Button Content="{x:Static local:Localization.DeleteText}" 
+                    Command="{Binding DeleteCourseCommand}" Classes="btn-danger" />
+            <Button  Content="{x:Static local:Localization.AddText}" 
+                     Command="{Binding AddCourseCommand}" Classes="btn-primary" />
+            <Button Content="{x:Static local:Localization.EditText}" 
+                    Command="{Binding EditCourseCommand}" Classes="btn-primary" />
+            <Button  Content="{x:Static local:Localization.SaveText}" 
+                     Command="{Binding SaveCourseCommand}" Classes="btn-success" />
+            <Button Content="{x:Static local:Localization.CancelText}" 
+                    Command="{Binding CancelEditCourseCommand}" Classes="btn-secondary" />
         </StackPanel>
 
         <ListBox ItemsSource="{Binding Courses}"

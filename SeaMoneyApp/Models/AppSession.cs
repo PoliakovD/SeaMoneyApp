@@ -19,11 +19,11 @@ public class AppSession : ReactiveObject, IDisposable, IAsyncDisposable
     private const string DefaultCulture = "ru-RU";
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
     private Account? _currentAccount;
-    private bool? _isAdmin;
+    private bool _isAdmin;
     private bool _rememberMe = false;
     private string _culture;
 
-    public bool? IsAdmin
+    public bool IsAdmin
     {
         get => _isAdmin;
         set => this.RaiseAndSetIfChanged(ref _isAdmin, value);
@@ -68,20 +68,22 @@ public class AppSession : ReactiveObject, IDisposable, IAsyncDisposable
     public AppSession()
     {
         LogHost.Default.Info("Initializing AppSession");
-        StartListeningToAuth();
+        
 
         RestoreSession();
+        StartListeningToAuth();
     }
 
     public void StartListeningToAuth()
     {
         var authService = Locator.Current.GetService<IAuthorizationService>();
+        
         authService.WhenAccountInChanged
             .BindTo(this, vm => vm.CurrentAccount);
 
         authService.WhenRememberMeChanged
             .BindTo(this, vm => vm.RememberMe);
-
+        
         authService.WhenAccountInChanged
             .Subscribe(account => IsAdmin = account?.Login == "admin");
     }
@@ -91,6 +93,8 @@ public class AppSession : ReactiveObject, IDisposable, IAsyncDisposable
         LogHost.Default.Info("Restoring session");
         try
         {
+            var authService = Locator.Current.GetService<IAuthorizationService>();
+            
             var authFilePath = GetAuthFilePath();
             if (!File.Exists(authFilePath)) return false;
 
@@ -120,7 +124,10 @@ public class AppSession : ReactiveObject, IDisposable, IAsyncDisposable
                 .FirstOrDefault(u => u.Login == session.SavedLogin);
             if (account != null)
             {
-                CurrentAccount = account;
+                // CurrentAccount = account;
+                //
+                authService!.Login(account.Login,account.Password, session.SavedRememberMe);
+                
                 LogHost.Default.Info("Auto-login succeeded for: " + account.Login);
                 return true;
             }

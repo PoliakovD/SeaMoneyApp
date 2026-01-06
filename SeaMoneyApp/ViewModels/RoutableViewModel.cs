@@ -13,8 +13,8 @@ public abstract partial class RoutableViewModel : ReactiveObject,IRoutableViewMo
     public RoutableViewModel()
     {
        
-        HostScreen ??= Locator.Current.GetService<IScreen>()
-                       ?? throw new InvalidOperationException("IScreen not registered");
+         HostScreen ??= Locator.Current.GetService<IScreen>()
+                        ?? throw new InvalidOperationException("IScreen not registered");
         
         UrlPathSegment = this.GetType().Name.Replace("ViewModel", "").ToLower();
     }

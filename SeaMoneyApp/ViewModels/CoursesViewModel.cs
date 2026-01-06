@@ -161,7 +161,7 @@ public partial class CoursesViewModel : RoutableViewModel
         _updateService.WhenErrorMessageChanged
             .BindTo(this, vm => vm.ErrorMessage);
 
-        CurrentState = "Просмотр";
+        CurrentState = Localization.Localization.ViewText;
 
         LogHost.Default.Debug("CoursesViewModel инициализация завершена");
     }
@@ -266,7 +266,7 @@ public partial class CoursesViewModel : RoutableViewModel
             };
             IsAdding = true;
             IsEditing = true;
-            CurrentState = "Добавление";
+            CurrentState = Localization.Localization.AddingText;
             CanSelectAnotherCource = false;
 
             LogHost.Default.Info($"Новый курс создан с датой {SelectedCourse.Date}");
@@ -330,7 +330,7 @@ public partial class CoursesViewModel : RoutableViewModel
                 Date = SelectedCourse.Date,
                 Value = SelectedCourse.Value
             };
-            CurrentState = "Редактирование";
+            CurrentState = Localization.Localization.EditingText;
 
             LogHost.Default.Info($"Начато редактирование курса за {SelectedCourse.Date}");
         }
@@ -369,7 +369,7 @@ public partial class CoursesViewModel : RoutableViewModel
 
             _beforeEditingCourse = null;
             IsEditing = false;
-            CurrentState = "Просмотр";
+            CurrentState = Localization.Localization.ViewText;
             CanSelectAnotherCource = true;
         }
         catch (Exception ex)
@@ -434,7 +434,7 @@ public partial class CoursesViewModel : RoutableViewModel
 
             _beforeEditingCourse = null;
             SelectedCourse = null;
-            CurrentState = "Просмотр";
+            CurrentState = Localization.Localization.ViewText;
             IsEditing = false;
             CanSelectAnotherCource = true;
         }

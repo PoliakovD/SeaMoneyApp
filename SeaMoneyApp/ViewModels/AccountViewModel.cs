@@ -15,6 +15,7 @@ using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Models;
 using SeaMoneyApp.Services.Authorization;
+using SeaMoneyApp.Views;
 using Splat;
 
 namespace SeaMoneyApp.ViewModels;
@@ -27,8 +28,10 @@ public class AccountViewModel : RoutableViewModel
     private Account _currentAccount;
     private Position? _viewedPosition;
     private Position? _beforeEditingPosition;
+    private bool _isAdminPanelEnabled;
     
     public ReactiveCommand<Unit, Unit>? LogOutCommand { get; private set; }
+    public ReactiveCommand<Unit, Unit>? ToAdminPanelCommand { get; private set; }
     public ReactiveCommand<Unit, Unit> EditAccountCommand { get; }
     public ReactiveCommand<Unit, Unit> CancelEditAccountCommand { get; }
     public ReactiveCommand<Unit, Unit> SaveAccountCommand { get; }
@@ -47,6 +50,12 @@ public class AccountViewModel : RoutableViewModel
     {
         get => _isEditing;
         private set => this.RaiseAndSetIfChanged(ref _isEditing, value);
+    }
+    
+    public bool IsAdminPanelEnabled
+    {
+        get => _isAdminPanelEnabled;
+        private set => this.RaiseAndSetIfChanged(ref _isAdminPanelEnabled, value);
     }
 
     public string? ErrorMessage
@@ -90,7 +99,7 @@ public class AccountViewModel : RoutableViewModel
         InitPositions();
         
         IsEditing = false;
-        CurrentState = "Просмотр";
+        CurrentState = Localization.Localization.ViewText;
         
         LogOutCommand = ReactiveCommand.Create(() =>
             {
@@ -101,6 +110,9 @@ public class AccountViewModel : RoutableViewModel
             this.WhenAnyValue(x => x.AppSession.CurrentAccount)
                 .Any(x => x != null));
         
+        ToAdminPanelCommand = ReactiveCommand.Create(GoToAdminPaneliVew,
+            this.WhenAnyValue(x => x.AppSession, (a)=>a.IsAdmin));
+       
         authService.WhenErrorMessageChanged
             .BindTo(this, vm => vm.ErrorMessage);
 
@@ -113,8 +125,6 @@ public class AccountViewModel : RoutableViewModel
 
         CancelEditAccountCommand = ReactiveCommand.Create(CancelEditAccount,
             this.WhenAnyValue(x => x.IsEditing));
-
-       
     }
 
     private void GoToLoginView()
@@ -129,6 +139,19 @@ public class AccountViewModel : RoutableViewModel
 
         // Переходим к новой вьюхе
         HostScreen!.Router.NavigateAndCache<LoginViewModel>();
+    }
+    
+    private void GoToAdminPaneliVew()
+    {
+        var check = Locator.Current.GetService<IScreenBackCommand>() is OverallViewModel;
+        if (check)
+        {
+            var backRouter = Locator.Current.GetService<IScreenBackCommand>().Router;
+        
+            // Переходим к новой вьюхе
+            backRouter.NavigateAndCache<AdminPanelMainViewModel>();
+        }
+        
     }
 
     private void InitPositions()
@@ -170,7 +193,7 @@ public class AccountViewModel : RoutableViewModel
             }
 
             IsEditing = true;
-            CurrentState = "Редактирование";
+            CurrentState = Localization.Localization.EditingText;
             LogHost.Default.Info($"Начато редактирование аккаунта {_beforeEditingAccount.Login}");
         }
         catch (Exception ex)
@@ -197,7 +220,7 @@ public class AccountViewModel : RoutableViewModel
             }
         };
         IsEditing = false;
-        CurrentState = "Просмотр";
+        CurrentState = Localization.Localization.ViewText;
         
         ViewedPosition = Positions.First(p=>p.Id == CurrentAccount.Position.Id);
         
@@ -219,7 +242,7 @@ public class AccountViewModel : RoutableViewModel
 
             if (result)
             {
-                CurrentState = "Просмотр";
+                CurrentState = Localization.Localization.ViewText;
                 IsEditing = false;
                 await AppSession.SaveSessionAsync();
             }

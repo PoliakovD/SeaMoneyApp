@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Models;
+using SeaMoneyApp.Localization;
 using Splat;
 
 
@@ -159,7 +160,7 @@ public class AuthorizationService : IAuthorizationService, IDisposable
         
         _isLoggedInSubject.OnNext(false);
         _loggedInAccount.OnNext(null);
-        _errorMessageSubject.OnNext(null);
+        _errorMessageSubject.OnNext(" ");
         _lastLoginTime.OnNext(null);
 
         LogHost.Default.Info("User logged out");
@@ -233,14 +234,14 @@ public class AuthorizationService : IAuthorizationService, IDisposable
                 _errorMessageSubject.OnNext(secondValidation.ErrorMessage);
                 return false;
             }
-            _errorMessageSubject.OnNext("Аккаунт успешно изменен");
+            _errorMessageSubject.OnNext(Localization.Localization.AccountSuccessfulyChangedText);
             await _dbContext.UpdateAccountAsync(oldAccount,newAccount, token);
             _loggedInAccount.OnNext(newAccount);
             return true;
         }
         catch (OperationCanceledException oc)
         {
-            _errorMessageSubject.OnNext("Вышло время ожидания сохранения");
+            _errorMessageSubject.OnNext(Localization.Localization.SaveTimeOutText);
             LogHost.Default.Error(oc.Message);
         }
         catch (Exception e)
@@ -258,16 +259,16 @@ public class AuthorizationService : IAuthorizationService, IDisposable
             oldAccount.Password == newAccount.Password &&
             oldAccount.ToursInRank == newAccount.ToursInRank &&
             oldAccount.Position!.Name == newAccount.Position!.Name)
-            return new ValidationResult(false, "Аккаунт без изменений");
+            return new ValidationResult(false, Localization.Localization.AccountUnchangedText);
         if (oldAccount.Login != newAccount.Login)
         {
             var checkLoginFree = CheckLoginFree(newAccount.Login);
-            if (!checkLoginFree) return new ValidationResult(false, "Логин уже занят");
+            if (!checkLoginFree) return new ValidationResult(false, Localization.Localization.loginOccupiedText);
         }
         if (newAccount.ToursInRank<0||newAccount.ToursInRank>8) 
-            return new ValidationResult(false, "Некорректное количество контрактов");
+            return new ValidationResult(false, Localization.Localization.InvalidToursInRankText);
         if (newAccount.Position==null)
-            return new ValidationResult(false, "Некорректная должность");
+            return new ValidationResult(false, Localization.Localization.InvalidPositionText);
         
         return new ValidationResult(true, "Ok");
     }

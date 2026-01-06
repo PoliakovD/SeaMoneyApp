@@ -78,4 +78,52 @@
     <data name="ToSettingsText" xml:space="preserve">
         <value>Настройки</value>
     </data>
+    <data name="CancelText" xml:space="preserve">
+        <value>Отмена</value>
+    </data>
+    <data name="AddText" xml:space="preserve">
+        <value>Добавить</value>
+    </data>
+    <data name="ViewText" xml:space="preserve">
+        <value>Просмотр</value>
+    </data>
+    <data name="EditingText" xml:space="preserve">
+        <value>Редактирование</value>
+    </data>
+    <data name="AddingText" xml:space="preserve">
+        <value>Добавление</value>
+    </data>
+    <data name="DownloadErrorText" xml:space="preserve">
+        <value>Ошибка загрузки</value>
+    </data>
+    <data name="InvalidPositionText" xml:space="preserve">
+        <value>Некорректная должность</value>
+    </data>
+    <data name="InvalidToursInRankText" xml:space="preserve">
+        <value>Некорректное количество контрактов</value>
+    </data>
+    <data name="loginOccupiedText" xml:space="preserve">
+        <value>Логин уже занят</value>
+    </data>
+    <data name="AccountUnchangedText" xml:space="preserve">
+        <value>Аккаунт без изменений</value>
+    </data>
+    <data name="AccountSuccessfulyChangedText" xml:space="preserve">
+        <value>Аккаунт успешно изменен</value>
+    </data>
+    <data name="SaveTimeOutText" xml:space="preserve">
+        <value>Вышло время ожидания сохранения</value>
+    </data>
+    <data name="DeleteText" xml:space="preserve">
+        <value>Удалить</value>
+    </data>
+    <data name="EditText" xml:space="preserve">
+        <value>Редактировать</value>
+    </data>
+    <data name="SaveText" xml:space="preserve">
+        <value>Сохранить</value>
+    </data>
+    <data name="AdminPanelText" xml:space="preserve">
+        <value>Панель администратора</value>
+    </data>
 </root>

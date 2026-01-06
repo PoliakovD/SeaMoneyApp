@@ -71,7 +71,55 @@
     <data name="ToSettingsText" xml:space="preserve">
         <value>Settings</value>
     </data>
+    <data name="CancelText" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
     <data name="ToursInRankText" xml:space="preserve">
-        <value>Tours in rank text</value>
+        <value>Tours in rank</value>
+    </data>
+    <data name="AddText" xml:space="preserve">
+        <value>Add</value>
+    </data>
+    <data name="ViewText" xml:space="preserve">
+        <value>View</value>
+    </data>
+    <data name="EditingText" xml:space="preserve">
+        <value>Editing</value>
+    </data>
+    <data name="AddingText" xml:space="preserve">
+        <value>Adding</value>
+    </data>
+    <data name="DownloadErrorText" xml:space="preserve">
+        <value>Download error</value>
+    </data>
+    <data name="InvalidPositionText" xml:space="preserve">
+        <value>Invalid position</value>
+    </data>
+    <data name="InvalidToursInRankText" xml:space="preserve">
+        <value>Invalid tours in rank</value>
+    </data>
+    <data name="loginOccupiedText" xml:space="preserve">
+        <value>This login is occupied</value>
+    </data>
+    <data name="AccountUnchangedText" xml:space="preserve">
+        <value>Account unchanged</value>
+    </data>
+    <data name="AccountSuccessfulyChangedText" xml:space="preserve">
+        <value>Account successfuly changed</value>
+    </data>
+    <data name="SaveTimeOutText" xml:space="preserve">
+        <value>Save time out</value>
+    </data>
+    <data name="DeleteText" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="EditText" xml:space="preserve">
+        <value>Edit</value>
+    </data>
+    <data name="SaveText" xml:space="preserve">
+        <value>Save</value>
+    </data>
+    <data name="AdminPanelText" xml:space="preserve">
+        <value>Admin Panel</value>
     </data>
 </root>

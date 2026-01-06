@@ -8,6 +8,7 @@ public class DataBaseContext : DbContext
     public DbSet<Account> Accounts { get; set; }
     public DbSet<ChangeRubToDollar> ChangeRubToDollars { get; set; }
     public DbSet<PersonalBonus> PersonalBonuses { get; set; }
+    public DbSet<Contract> Contracts { get; set; }
     public DbSet<Position> Positions { get; set; }
     public DbSet<Salary> Salaries { get; set; }
     public DbSet<WageLog> WageLogs { get; set; }
@@ -82,6 +83,15 @@ public class DataBaseContext : DbContext
         {
             throw;
         }
-        
+   
     }
+    // public async IAsyncEnumerable<Position> GetAllPositionsAsAsynEnumerable() =>  Positions.AsAsyncEnumerable();
+    // public async IAsyncEnumerable<ChangeRubToDollar> GetAllChangeRubToDollarsAsAsynEnumerable() => ChangeRubToDollars.AsAsyncEnumerable();
+    // public async IAsyncEnumerable<Account> GetAllAccountsAsAsynEnumerable() => Accounts.AsAsyncEnumerable();
+    // public async IAsyncEnumerable<Contract> GetAllContractsAsAsynEnumerable() => Contracts.AsAsyncEnumerable();
+    // public async IAsyncEnumerable<PersonalBonus> GetAllPersonalBonusesAsAsynEnumerable() => PersonalBonuses.AsAsyncEnumerable();
+    // public async IAsyncEnumerable<Salary> GetAllSalariesAsAsynEnumerable() => Salaries.AsAsyncEnumerable();
+    // public async IAsyncEnumerable<WageLog> GetAllWageLogsAsAsynEnumerable() => WageLogs.AsAsyncEnumerable();
+    
+    
 }

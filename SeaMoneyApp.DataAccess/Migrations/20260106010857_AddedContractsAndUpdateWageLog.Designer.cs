@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SeaMoneyApp.DataAccess;
 
@@ -10,9 +11,11 @@ using SeaMoneyApp.DataAccess;
 namespace SeaMoneyApp.DataAccess.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260106010857_AddedContractsAndUpdateWageLog")]
+    partial class AddedContractsAndUpdateWageLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.11");
@@ -85,7 +88,7 @@ namespace SeaMoneyApp.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("table_contracts");
+                    b.ToTable("contracts");
                 });
 
             modelBuilder.Entity("SeaMoneyApp.DataAccess.Models.PersonalBonus", b =>

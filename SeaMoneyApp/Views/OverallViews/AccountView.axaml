@@ -48,14 +48,23 @@
                   FontWeight="Bold"
                   FontSize="15" />
        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-           <Button Content="Edit" Command="{Binding EditAccountCommand}" Classes="btn-primary" />
-           <Button Content="Save" Command="{Binding SaveAccountCommand}" Classes="btn-success" />
-           <Button Content="Cancel" Command="{Binding CancelEditAccountCommand}" Classes="btn-secondary" />
+           <Button Content="{x:Static local:Localization.EditText}" 
+                   Command="{Binding EditAccountCommand}" Classes="btn-primary" />
+           <Button Content="{x:Static local:Localization.SaveText}" 
+                   Command="{Binding SaveAccountCommand}" Classes="btn-success" />
+           <Button Content="{x:Static local:Localization.CancelText}" 
+                   Command="{Binding CancelEditAccountCommand}" Classes="btn-secondary" />
            <Button DockPanel.Dock="Top" 
                    Content="{x:Static local:Localization.LogoutText}" 
                    Command="{Binding LogOutCommand}"
                    Classes="btn-danger"
-                   Margin="20,0,0,0"/>
+                   Margin="30,0,0,0"/>
+           <Button DockPanel.Dock="Top" 
+                   Content="{x:Static local:Localization.AdminPanelText}" 
+                   Command="{Binding ToAdminPanelCommand}"
+                   IsVisible="{Binding AppSession.IsAdmin}"
+                   Classes="btn-admin-panel"
+                   Margin="0,0,0,0"/>
        </StackPanel>
    </DockPanel>
 </UserControl>

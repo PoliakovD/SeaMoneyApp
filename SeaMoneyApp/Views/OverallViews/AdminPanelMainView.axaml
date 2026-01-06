@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+           
              
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:c="clr-namespace:SeaMoneyApp.Components"
@@ -9,10 +9,19 @@
              d:DataContext="{d:DesignInstance viewModels:AdminPanelMainViewModel, IsDesignTimeCreatable=True}"
              x:DataType="viewModels:AdminPanelMainViewModel"
              
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SeaMoneyApp.Views.AdminPanelMainView">
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Logs"/>
-            <Button Content="ToLogs" Command="{Binding ToLogsCommand}"/>
+        <StackPanel Orientation="Vertical">
+            <ComboBox  x:Name="ComboBoxSelector" ItemsSource="{Binding Data.Keys}"
+                      SelectedItem="{Binding SelectedList}"/>
+            <!-- <ListBox ItemsSource="{Binding Accounts}"/> -->
+            <DataGrid ItemsSource="{Binding SelectedData}"
+                      GridLinesVisibility="All"
+                      Margin="20"
+                      AutoGenerateColumns="True">
+                <!-- <DataGrid.Columns> -->
+                <!--     <DataGridTextColumn Header="First Name"  Binding="{Binding Login}"/> -->
+                <!--     <DataGridTextColumn Header="Last Name" Binding="{Binding Password}" /> -->
+                <!-- </DataGrid.Columns> -->
+            </DataGrid>
         </StackPanel>
 </UserControl>
