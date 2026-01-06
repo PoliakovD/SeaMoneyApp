@@ -15,7 +15,8 @@
         <!-- Привязка: при нажатии Enter — выполнить RegistrationCommand -->
         <KeyBinding Gesture="Enter" Command="{Binding RegistrationCommand}" />
     </UserControl.KeyBindings>
-    <Grid RowDefinitions="*,*,*,*,*,*,*,*,*">
+    <Grid RowDefinitions="*,*,*,*,*,*,*,*,*"
+          MaxWidth="450">
         <c:InputComponent Grid.Row="1" Label="{x:Static local:Localization.LoginText}"
                           Value="{Binding Path=Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         
@@ -43,10 +44,12 @@
         <StackPanel Grid.Row="7" Orientation="Horizontal">
             
             <Button  Content="{x:Static local:Localization.EnterText}" 
-                     Command="{Binding HostScreen.Router.NavigateBack}" />
+                     Command="{Binding HostScreen.Router.NavigateBack}" 
+                     Classes="btn-secondary"/>
             
             <Button  Margin="40,0,0,0" Content="{x:Static local:Localization.RegistrationText}" 
-                     Command="{Binding RegistrationCommand}" />
+                     Command="{Binding RegistrationCommand}" 
+                     Classes="menue"/>
             
         </StackPanel>
     </Grid>

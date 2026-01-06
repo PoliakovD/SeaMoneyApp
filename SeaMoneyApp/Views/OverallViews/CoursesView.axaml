@@ -51,7 +51,7 @@
         <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}"
                    Foreground="Coral"
                    FontWeight="Bold"
-                   FontSize="15" />
+                   FontSize="20" />
 
 
         <Grid DockPanel.Dock="Top" RowDefinitions="200, 50">
@@ -117,7 +117,8 @@
         <TextBlock DockPanel.Dock="Top" Text="{Binding CurrentState}"
                    Foreground="MediumBlue"
                    FontWeight="Bold"
-                   FontSize="15" />
+                   FontSize="20"
+                   Margin="20,20,0,0"/>
         <StackPanel DockPanel.Dock="Top"
                     Margin="10"
                     Orientation="Horizontal">

@@ -14,7 +14,7 @@
         <!-- Привязка: при нажатии Enter — выполнить LoginCommand -->
         <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}" />
     </UserControl.KeyBindings>
-    <Grid>
+    <Grid MaxWidth="450">
         <StackPanel Orientation="Vertical">
             
             <TextBlock Text="{x:Static local:Localization.Authorization}" Margin="5" />
@@ -37,9 +37,11 @@
                 IsVisible="{Binding ErrorMessage}" />
             <StackPanel  Orientation="Horizontal">
                 <Button  Content="{x:Static local:Localization.EnterText}" 
-                         Command="{Binding LoginCommand}"/>
+                         Command="{Binding LoginCommand}"
+                         Classes="menue"/>
                 <Button  Margin="40,0,0,0" Content="{x:Static local:Localization.RegistrationText}" 
-                         Command="{Binding ToRegistrationCommand}" />
+                         Command="{Binding ToRegistrationCommand}" 
+                         Classes="btn-secondary"/>
             </StackPanel>
             
             

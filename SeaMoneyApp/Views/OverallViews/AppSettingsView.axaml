@@ -12,11 +12,10 @@
              
              x:Class="SeaMoneyApp.Views.OverallViews.AppSettingsView">
     <Grid>
-        <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical" Margin="20">
             <TextBlock Text="{x:Static local:Localization.LocalizationText}"/>
             <ComboBox ItemsSource="{Binding Languages.Keys}"
                       SelectedItem="{Binding SelectedLanguage}"/>
-            <TextBlock Text="{Binding CurrentCulture.Name}"/>
         </StackPanel>
     </Grid>
 </UserControl>

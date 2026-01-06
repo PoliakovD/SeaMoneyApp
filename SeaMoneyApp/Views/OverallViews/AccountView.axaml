@@ -11,7 +11,7 @@
              d:DataContext="{d:DesignInstance viewModels:LogsViewModel, IsDesignTimeCreatable=True}"
              
              x:Class="SeaMoneyApp.Views.AccountView">
-   <DockPanel VerticalAlignment="Top">
+   <DockPanel VerticalAlignment="Top" MaxWidth="450">
        <TextBlock DockPanel.Dock="Top" 
                   HorizontalAlignment="Center"
                   Text="{Binding CurrentState}"

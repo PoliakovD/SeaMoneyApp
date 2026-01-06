@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using ReactiveUI;
 using System.Reactive;
 using System.Reactive.Linq;
+using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Localization;
 using SeaMoneyApp.Models;
 using Splat;
@@ -16,12 +17,11 @@ public class AppSettingsViewModel : RoutableViewModel
 {
     public Dictionary<string, string> Languages { get; } = new()
     {
-        { "Русский","ru-RU" },
-        { "English","en-US" }
+        { "Русский", "ru-RU" },
+        { "English", "en-US" }
     };
 
     private CultureInfo _currentCulture;
-
 
     public CultureInfo? CurrentCulture
     {
@@ -46,13 +46,23 @@ public class AppSettingsViewModel : RoutableViewModel
         this.WhenAnyValue(x => x.SelectedLanguage).Subscribe(new Action<string>(async _ =>
         {
             LogHost.Default.Debug("Selected language Start Event: " + _);
+
+            if (Languages[_] == Localization.Localization.Culture.Name)
+            {
+                LogHost.Default.Debug("Selected language Same: " + _);
+                return;
+            }
+
             Localization.Localization.Culture = CultureInfo.GetCultureInfo(Languages[_]);
             LogHost.Default.Debug("Selected language Finish Event: " + _);
-            LogHost.Default.Debug("Selected language Selected Event: " + Localization.Localization.Culture.Name);
+            LogHost.Default.Debug("Selected language Selected Event: " + _ + " / " +
+                                  Localization.Localization.Culture.Name);
             var appsession = Locator.Current.GetService<AppSession>();
             appsession.Culture = Localization.Localization.Culture.Name;
             await appsession.SaveSessionAsync();
-
+            
+            Locator.Current.GetService<IScreen>().Router.NavigateAndCache<OverallViewModel>();
+            
         }));
     }
 }

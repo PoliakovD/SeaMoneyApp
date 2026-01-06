@@ -14,4 +14,5 @@ public partial class OverallView : ReactiveUserControl<OverallViewModel>
         this.WhenActivated(disposable => { });
         AvaloniaXamlLoader.Load(this);
     }
+    
 }
