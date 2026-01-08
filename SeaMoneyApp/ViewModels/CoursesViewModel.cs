@@ -32,13 +32,13 @@ public partial class CoursesViewModel : RoutableViewModel
     private bool _isAdding;
 
     private CancellationTokenSource _ctsHttp;
-    public ReactiveCommand<Unit, Unit> UpdateCoursesFromHttpCommand { get; }
-    public ReactiveCommand<Unit, Unit> StopLoadFromHttpCommand { get; }
-    public ReactiveCommand<Unit, Unit> DeleteCourseCommand { get; }
-    public ReactiveCommand<Unit, Unit> EditCourseCommand { get; }
-    public ReactiveCommand<Unit, Unit> CancelEditCourseCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveCourseCommand { get; }
-    public ReactiveCommand<Unit, Unit> AddCourseCommand { get; }
+    public ReactiveCommand<Unit, Unit> UpdateCoursesFromHttpCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> StopLoadFromHttpCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> DeleteCourseCommand { get;set;  }
+    public ReactiveCommand<Unit, Unit> EditCourseCommand { get;set;  }
+    public ReactiveCommand<Unit, Unit> CancelEditCourseCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> SaveCourseCommand { get;set;  }
+    public ReactiveCommand<Unit, Unit> AddCourseCommand { get;set;  }
 
     public IObservable<bool> HtmlRunning
     {
@@ -84,14 +84,16 @@ public partial class CoursesViewModel : RoutableViewModel
         private set => this.RaiseAndSetIfChanged(ref _isAdding, value);
     }
 
-    private readonly UpdateCourcesService _updateService;
+    private UpdateCourcesService _updateService;
     private IObservable<bool> _canDeleteSelectedCourse;
     private IObservable<bool> _htmlRunning;
     
 
     public CoursesViewModel()
     {
-        LogHost.Default.Debug("CoursesViewModel начальная инициализация");
+        Task.Run(() =>
+        {
+            LogHost.Default.Debug("CoursesViewModel начальная инициализация");
 
         // Инициализация Chart
         ChartInit();
@@ -162,6 +164,8 @@ public partial class CoursesViewModel : RoutableViewModel
         CurrentState = Localization.Localization.ViewText;
 
         LogHost.Default.Debug("CoursesViewModel инициализация завершена");
+        });
+        
     }
 
     private async Task UpdateEnumerableCourcesFromHttpAsync()

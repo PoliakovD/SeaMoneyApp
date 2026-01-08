@@ -39,7 +39,7 @@
                     Command="{Binding ToContractsCommand}" 
                     Classes="menue"/>
             
-            <Button Content="{x:Static local:Localization.ToContractsText}"
+            <Button Content="{x:Static local:Localization.ToIncomesText}"
                     Command="{Binding ToIncomesCommand}" 
                     Classes="menue"/>
 

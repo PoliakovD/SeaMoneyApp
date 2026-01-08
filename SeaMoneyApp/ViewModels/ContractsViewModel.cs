@@ -26,11 +26,11 @@ public class ContractsViewModel: RoutableViewModel
     private bool _isAdding;
 
     
-    public ReactiveCommand<Unit, Unit> DeleteContractCommand { get; }
-    public ReactiveCommand<Unit, Unit> EditContractCommand { get; }
-    public ReactiveCommand<Unit, Unit> CancelEditContractCommand { get; }
-    public ReactiveCommand<Unit, Unit> SaveContractCommand { get; }
-    public ReactiveCommand<Unit, Unit> AddContractCommand { get; }
+    public ReactiveCommand<Unit, Unit> DeleteContractCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> EditContractCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> CancelEditContractCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> SaveContractCommand { get; set; }
+    public ReactiveCommand<Unit, Unit> AddContractCommand { get; set; }
     public IObservable<bool> CanDeleteSelectedContract { get; set; }
     
     public string CurrentState
@@ -70,7 +70,9 @@ public class ContractsViewModel: RoutableViewModel
 
     public ContractsViewModel()
     {
-        LogHost.Default.Debug("ContractsViewModel начальная инициализация");
+        Task.Run(() =>
+        {
+            LogHost.Default.Debug("ContractsViewModel начальная инициализация");
         
         _dbContext = Locator.Current.GetService<DataBaseContext>()!;
         _appSession = Locator.Current.GetService<AppSession>()!;
@@ -124,6 +126,8 @@ public class ContractsViewModel: RoutableViewModel
         CurrentState = Localization.Localization.ViewText;
 
         LogHost.Default.Debug("CoursesViewModel инициализация завершена");
+        });
+        
     }
 
     private async Task LoadUserContracts()

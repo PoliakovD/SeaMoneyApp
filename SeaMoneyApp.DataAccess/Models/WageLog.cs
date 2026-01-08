@@ -26,6 +26,22 @@ public class WageLog
     
     [ForeignKey("change_rub_to_dollar_id")]
     public ChangeRubToDollar? ChangeRubToDollar { get; set; }
-    
-    
+
+    public WageLog()
+    {
+        
+    }
+
+    public WageLog(WageLog wageLog)
+    {
+        Id = wageLog.Id;
+        Date = wageLog.Date;
+        AmountInRub = wageLog.AmountInRub;
+        ToursInRank = wageLog.ToursInRank;
+        Account = wageLog.Account;
+        ChangeRubToDollar = wageLog.ChangeRubToDollar;
+        Contract = wageLog.Contract;
+        Position = wageLog.Position;
+    }
+
 }

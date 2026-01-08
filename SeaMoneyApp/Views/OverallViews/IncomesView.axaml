@@ -6,8 +6,101 @@
              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-             
+
              x:DataType="viewModels:IncomesViewModel"
              x:Class="SeaMoneyApp.Views.IncomesView">
-    Welcome to Avalonia!
+    <UserControl.Resources>
+        <c:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />
+        <DataTemplate x:Key="TemplateWageLog"
+                      DataType="{x:Type TypeName=m:WageLog}">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left">
+                <TextBlock
+                    Text="{Binding Date,
+                UpdateSourceTrigger=PropertyChanged, Mode=OneWay, StringFormat=dd.MM.yyyy}"
+                    Margin="10,5,10,5"
+                    Width="80" />
+                <TextBlock Text="{Binding AmountInRub,UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                           Margin="10,5,10,5"
+                           Width="90" />
+                <TextBlock
+                    Text="{Binding ChangeRubToDollar.Value,
+                        UpdateSourceTrigger=PropertyChanged,
+                        Mode=OneWay,
+                        StringFormat={}{0} руб/$}"
+                    Margin="10,5,10,5"
+                    Width="100" />
+                <TextBlock Margin="10,5,10,5">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat=" {0} / {1} / {2} - {3}">
+                            <Binding Path="Position.Name" />
+                            <Binding Path="Contract.VesselName" />
+                            <Binding Path="Contract.BeginDate" StringFormat="d" />
+                            <Binding Path="Contract.EndDate" StringFormat="d" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="TemplateContract"
+                      DataType="{x:Type TypeName=m:Contract}">
+            <TextBlock>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat=" {0}: {1} - {2}">
+                        <Binding Path="VesselName" />
+                        <Binding Path="BeginDate" StringFormat="dd.MM.yyyy" />
+                        <Binding Path="EndDate" StringFormat="dd.MM.yyyy" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Top">
+            <TextBlock Text="{Binding CurrentState}"
+                       Foreground="MediumBlue"
+                       FontWeight="Bold"
+                       FontSize="20"
+                       Margin="20,20,0,0" />
+            <StackPanel Margin="10"
+                        Orientation="Horizontal">
+                <DatePicker
+                    SelectedDate="{Binding SelectedWageLog.Date, 
+                    Converter={StaticResource DateTimeToDateTimeOffsetConverter},
+                    UpdateSourceTrigger=PropertyChanged,
+                    Mode=TwoWay}"
+                    IsEnabled="{Binding IsEditing}"
+                    MonthFormat="MM"
+                    Margin="10" />
+                <TextBox Text="{Binding SelectedWageLog.AmountInRub}"
+                         Width="100"
+                         IsEnabled="{Binding IsEditing}"
+                         Margin="10" />
+                <ComboBox ItemsSource="{Binding AvailableContracts}"
+                          SelectedItem="{Binding SelectedContract}"
+                          ItemTemplate="{StaticResource TemplateContract}" 
+                          IsEnabled="{Binding IsEditing}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="Coral"
+                       FontWeight="Bold"
+                       FontSize="15" />
+            <StackPanel Orientation="Horizontal">
+                <Button Content="{x:Static local:Localization.DeleteText}"
+                        Command="{Binding DeleteWageLogCommand}" Classes="btn-danger" />
+                <Button Content="{x:Static local:Localization.AddText}"
+                        Command="{Binding AddWageLogCommand}" Classes="btn-primary" />
+                <Button Content="{x:Static local:Localization.EditText}"
+                        Command="{Binding EditWageLogCommand}" Classes="btn-primary" />
+                <Button Content="{x:Static local:Localization.SaveText}"
+                        Command="{Binding SaveWageLogCommand}" Classes="btn-success" />
+                <Button Content="{x:Static local:Localization.CancelText}"
+                        Command="{Binding CancelEditWageLogCommand}" Classes="btn-secondary" />
+            </StackPanel>
+        </StackPanel>
+        <ListBox ItemsSource="{Binding WageLogs}"
+                 SelectedItem="{Binding SelectedWageLog}"
+                 ItemTemplate="{StaticResource TemplateWageLog}" />
+    </DockPanel>
 </UserControl>

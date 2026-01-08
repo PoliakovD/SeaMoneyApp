@@ -137,4 +137,7 @@
     <data name="ToContractsText" xml:space="preserve">
         <value>Contracts</value>
     </data>
+    <data name="ToIncomesText" xml:space="preserve">
+        <value>Incomes</value>
+    </data>
 </root>
