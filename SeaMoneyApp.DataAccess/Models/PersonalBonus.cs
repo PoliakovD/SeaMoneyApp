@@ -14,6 +14,8 @@ public class PersonalBonus
     
     [ForeignKey("position_id")]
     public Position? Position { get; set; }
+    [Column("is_deleted")]
+    public bool IsDeleted{ get; set; }
     
     [Column("personal_bonus")] [Required] public decimal PersonalBonusValue { get; set; }
     

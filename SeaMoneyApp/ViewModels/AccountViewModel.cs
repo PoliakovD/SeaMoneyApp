@@ -149,7 +149,7 @@ public class AccountViewModel : RoutableViewModel
             var backRouter = Locator.Current.GetService<IScreenBackCommand>().Router;
         
             // Переходим к новой вьюхе
-            backRouter.NavigateAndCache<AdminPanelMainViewModel>();
+            backRouter.NavigateAndNotCache<AdminPanelMainViewModel>();
         }
         
     }

@@ -24,6 +24,8 @@ public class Contract
     
     [ForeignKey("account_id")]
     public Account? Account { get; set; }
+    [Column("is_deleted")]
+    public bool IsDeleted{ get; set; }
     public Contract()
     {
         
@@ -37,5 +39,10 @@ public class Contract
         BeginDate = contract.BeginDate.Date;
         EndDate = contract.EndDate.Value.Date;
         Account = contract.Account;
+        IsDeleted = contract.IsDeleted;
+    }
+    public override string ToString()
+    {
+        return $"{VesselName}, {BeginDate:d} -  {EndDate:d},  Account - {Account}";
     }
 }

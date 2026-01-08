@@ -16,4 +16,11 @@ public class ChangeRubToDollar
     
     [Column("date")]
     public DateTime Date { get; set; }
+    
+    [Column("is_deleted")]
+    public bool IsDeleted{ get; set; }
+    public override string ToString()
+    {
+        return $"{Date:d} - {Value}";
+    }
 }

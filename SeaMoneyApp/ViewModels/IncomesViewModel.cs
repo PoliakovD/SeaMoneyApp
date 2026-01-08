@@ -20,7 +20,7 @@ public class IncomesViewModel : RoutableViewModel
 {
     private const int DefaultTimoutDb = 10000;
     private CancellationTokenSource _cts = new(DefaultTimoutDb);
-    
+
     private DataBaseContext _dbContext;
     private AppSession _appSession;
 
@@ -29,9 +29,9 @@ public class IncomesViewModel : RoutableViewModel
     private WageLog? _beforeEditingWageLog;
     private Contract? _selectedContract;
     private string _currentState;
-    private bool _isEditing;
-    private bool _isAdding;
-    public ObservableCollection<WageLog> WageLogs { get; set; }= [];
+    private bool _isEditing = false;
+    private bool _isAdding = false;
+    public ObservableCollection<WageLog> WageLogs { get; set; } = [];
     public ObservableCollection<Contract> AvailableContracts { get; set; } = [];
 
     public ReactiveCommand<Unit, Unit> DeleteWageLogCommand { get; set; }
@@ -86,10 +86,16 @@ public class IncomesViewModel : RoutableViewModel
     public IncomesViewModel()
     {
         LogHost.Default.Debug("IncomesViewModel старт инициализациии");
-        
+
         // var t = Task.Run(InitWageLogs)
         //     .ContinueWith(async (x) => await Task.Run(() => InitCommands())).Result;
-        InitWageLogs().ContinueWith(async (x) => await Task.Run(() => InitCommands()).WaitAsync(_cts.Token));
+
+
+        // InitWageLogs().ContinueWith(async (x) => await Task.Run(() => InitCommands()).WaitAsync(_cts.Token));
+
+        InitWageLogs();
+        InitCommands();
+
         LogHost.Default.Debug("IncomesViewModel конец инициализациии");
     }
 
@@ -113,6 +119,7 @@ public class IncomesViewModel : RoutableViewModel
         {
             AvailableContracts.Add(contract);
         }
+        
 
         if (AvailableContracts.Count == 0)
         {
@@ -123,10 +130,8 @@ public class IncomesViewModel : RoutableViewModel
         {
             ErrorMessage = "Поступления не найдены.";
         }
-        
-        IsEditing = false;
-        IsAdding = false;
-        
+
+
         LogHost.Default.Debug("InitWageLogs конец инициализациии");
     }
 
@@ -309,7 +314,9 @@ public class IncomesViewModel : RoutableViewModel
     private IObservable<bool> CanAddWageLog()
     {
         LogHost.Default.Debug("Оценка возможности сохранения WageLog");
-        return this.WhenAnyValue(x => x.IsEditing, x => !x);
+        return this.WhenAnyValue(x => x.IsEditing
+            , x => x.AvailableContracts,
+            (editing, contracts) => !editing && contracts.Count > 0);
     }
 
     private async Task SaveWageLog()
@@ -317,6 +324,7 @@ public class IncomesViewModel : RoutableViewModel
         LogHost.Default.Debug("Сохранение изменений WageLog");
         try
         {
+            SelectedWageLog.Contract = SelectedContract;
             if (IsAdding)
             {
                 var notExistingCheck = WageLogs.FirstOrDefault(x =>
@@ -327,10 +335,10 @@ public class IncomesViewModel : RoutableViewModel
                     var dbAddResult = await _dbContext.AddWageLogAsync(SelectedWageLog!);
                     if (dbAddResult)
                     {
-                        var insert = new WageLog(SelectedWageLog);
-                        WageLogs.Insert(0, insert);
                         ErrorMessage = $"Добавлен WageLog за {SelectedWageLog.Date:d}";
                         LogHost.Default.Info($"Новый WageLog за {SelectedWageLog.Date} добавлен в БД и UI");
+                        var insert = new WageLog(SelectedWageLog);
+                        WageLogs.Insert(0, insert);
                     }
                     else
                     {

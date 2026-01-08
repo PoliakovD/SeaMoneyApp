@@ -189,7 +189,7 @@ public partial class CoursesViewModel : RoutableViewModel
             await foreach (var course in asyncCourses)
             {
                 Courses.Insert(0, course);
-                _dbContext.ChangeRubToDollars.Add(course);
+                _dbContext.AddChangeRubToDollar(course);
                 counter++;
                 MaxX = Math.Max(MaxX, course.Date.Ticks);
 
@@ -199,7 +199,6 @@ public partial class CoursesViewModel : RoutableViewModel
 
             if (counter > 0)
             {
-                _dbContext.SaveChanges();
                 ErrorMessage = $"Всего добавлено {counter} новых курсов.";
                 LogHost.Default.Info($"Сохранено {counter} новых курсов в БД");
             }

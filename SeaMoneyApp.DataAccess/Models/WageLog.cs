@@ -23,6 +23,8 @@ public class WageLog
     [ForeignKey("position_id")] public Position? Position { get; set; }
 
     [ForeignKey("account_id")] public Account? Account { get; set; }
+    [Column("is_deleted")]
+    public bool IsDeleted{ get; set; }
     
     [ForeignKey("change_rub_to_dollar_id")]
     public ChangeRubToDollar? ChangeRubToDollar { get; set; }
@@ -42,6 +44,11 @@ public class WageLog
         ChangeRubToDollar = wageLog.ChangeRubToDollar;
         Contract = wageLog.Contract;
         Position = wageLog.Position;
+        IsDeleted = wageLog.IsDeleted;
+    }
+    public override string ToString()
+    {
+        return $"{Date:d}, {AmountInRub},  Account - {Account}, {Contract},{Position}";
     }
 
 }

@@ -24,6 +24,10 @@ namespace SeaMoneyApp.DataAccess.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("TEXT")
@@ -59,6 +63,10 @@ namespace SeaMoneyApp.DataAccess.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("date");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_deleted");
+
                     b.Property<decimal>("Value")
                         .HasColumnType("TEXT")
                         .HasColumnName("value");
@@ -87,6 +95,10 @@ namespace SeaMoneyApp.DataAccess.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("end_date");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("VesselName")
                         .HasColumnType("TEXT")
                         .HasColumnName("vessel_name");
@@ -107,6 +119,10 @@ namespace SeaMoneyApp.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_deleted");
 
                     b.Property<decimal>("PersonalBonusValue")
                         .HasColumnType("TEXT")
@@ -136,6 +152,10 @@ namespace SeaMoneyApp.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -169,6 +189,10 @@ namespace SeaMoneyApp.DataAccess.Migrations
                     b.Property<decimal>("FidelityBonus")
                         .HasColumnType("TEXT")
                         .HasColumnName("fidelity_bonus");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_deleted");
 
                     b.Property<decimal>("PerformanceBonus")
                         .HasColumnType("TEXT")
@@ -206,6 +230,10 @@ namespace SeaMoneyApp.DataAccess.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("TEXT")
                         .HasColumnName("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("is_deleted");
 
                     b.Property<short>("ToursInRank")
                         .HasColumnType("INTEGER")

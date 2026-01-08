@@ -43,10 +43,10 @@ public class OverallViewModel : RoutableViewModel, IScreenBackCommand
         
         ToCoursesCommand = ReactiveCommand.Create(() => { Router.NavigateAndCache<CoursesViewModel>(); });
         
-        ToAppSettingsCommand= ReactiveCommand.Create(() => { Router.NavigateAndCache<AppSettingsViewModel>(); });
+        ToAppSettingsCommand= ReactiveCommand.Create(() => { Router.NavigateAndNotCache<AppSettingsViewModel>(); });
 
-        ToContractsCommand = ReactiveCommand.Create(() => Router.NavigateAndCache<ContractsViewModel>());
+        ToContractsCommand = ReactiveCommand.Create(() => Router.NavigateAndNotCache<ContractsViewModel>());
         
-        ToIncomesCommand= ReactiveCommand.Create(() => Router.NavigateAndCache<IncomesViewModel>());
+        ToIncomesCommand= ReactiveCommand.Create(() => Router.NavigateAndNotCache<IncomesViewModel>());
     }
 }

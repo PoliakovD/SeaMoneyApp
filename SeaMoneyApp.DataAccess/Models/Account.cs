@@ -25,5 +25,12 @@ public class Account
     [Column("tours_in_rank")]
     [Required]
     public short ToursInRank{ get; set; }
+    [Column("is_deleted")]
+    public bool IsDeleted{ get; set; }
     
+
+    public override string ToString()
+    {
+        return Login;
+    }
 }
