@@ -10,7 +10,7 @@ using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Services.UpdateCources;
 using Splat;
 
-namespace SeaMoneyApp.ViewModels;
+namespace SeaMoneyApp.ViewModels.OveralViewModels;
 
 public partial class CoursesViewModel : RoutableViewModel
 {

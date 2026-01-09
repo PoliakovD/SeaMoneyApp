@@ -1,0 +1,14 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             
+             xmlns:local="clr-namespace:SeaMoneyApp.Localization"
+             xmlns:c="clr-namespace:SeaMoneyApp.Converters"
+             xmlns:m="using:SeaMoneyApp.DataAccess.Models"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+
+             x:DataType="overalViewModels:MainStatisticViewModel"
+             
+             x:Class="SeaMoneyApp.Views.OverallViews.MainStatisticView">
+    Welcome to Avalonia!
+</UserControl>

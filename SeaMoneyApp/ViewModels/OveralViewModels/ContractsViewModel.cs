@@ -11,7 +11,7 @@ using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Models;
 using Splat;
 
-namespace SeaMoneyApp.ViewModels;
+namespace SeaMoneyApp.ViewModels.OveralViewModels;
 
 public class ContractsViewModel : RoutableViewModel
 {

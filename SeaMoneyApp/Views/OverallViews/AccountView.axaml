@@ -1,16 +1,13 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:c="clr-namespace:SeaMoneyApp.Components"
-             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
+             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+
+             x:DataType="overalViewModels:AccountViewModel"
              
-             x:DataType="viewModels:AccountViewModel"
-             d:DataContext="{d:DesignInstance viewModels:LogsViewModel, IsDesignTimeCreatable=True}"
-             
-             x:Class="SeaMoneyApp.Views.AccountView">
+             x:Class="SeaMoneyApp.Views.OverallViews.AccountView">
    <DockPanel VerticalAlignment="Top" MaxWidth="450">
        <TextBlock DockPanel.Dock="Top" 
                   HorizontalAlignment="Center"

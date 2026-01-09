@@ -7,7 +7,7 @@ using Avalonia.Threading;
 using ReactiveUI;
 using SeaMoneyApp.Services.Logger;
 
-namespace SeaMoneyApp.ViewModels;
+namespace SeaMoneyApp.ViewModels.OveralViewModels;
 
 public class LogsViewModel : RoutableViewModel
 {

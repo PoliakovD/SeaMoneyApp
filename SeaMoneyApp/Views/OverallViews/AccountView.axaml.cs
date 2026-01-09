@@ -1,11 +1,9 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
-using SeaMoneyApp.ViewModels;
+using SeaMoneyApp.ViewModels.OveralViewModels;
 
-namespace SeaMoneyApp.Views;
+namespace SeaMoneyApp.Views.OverallViews;
 
 public partial class AccountView :   ReactiveUserControl<AccountViewModel>
 {

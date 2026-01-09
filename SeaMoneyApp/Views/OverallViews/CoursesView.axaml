@@ -4,18 +4,14 @@
 
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:c="clr-namespace:SeaMoneyApp.Converters"
-             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
 
-             x:DataType="viewModels:CoursesViewModel"
+             x:DataType="overalViewModels:CoursesViewModel"
            
 
              x:Class="SeaMoneyApp.Views.OverallViews.CoursesView">
-
-    <UserControl.Styles>
-        <StyleInclude Source="avares://SeaMoneyApp/Styles/OverallViewStyles.axaml" />
-    </UserControl.Styles>
 
     <UserControl.Resources>
         <c:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />

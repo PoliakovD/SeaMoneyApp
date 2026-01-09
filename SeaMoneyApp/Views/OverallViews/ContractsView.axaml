@@ -2,11 +2,11 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 
               xmlns:local="clr-namespace:SeaMoneyApp.Localization"
-              xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
               xmlns:m="using:SeaMoneyApp.DataAccess.Models"
               xmlns:c="clr-namespace:SeaMoneyApp.Converters"
+              xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
 
-              x:DataType="viewModels:ContractsViewModel"
+              x:DataType="overalViewModels:ContractsViewModel"
               x:Class="SeaMoneyApp.Views.OverallViews.ContractsView">
     <UserControl.Resources>
         <c:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter" />

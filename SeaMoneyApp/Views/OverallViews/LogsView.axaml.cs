@@ -8,6 +8,7 @@ using Avalonia.Media;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using SeaMoneyApp.ViewModels;
+using SeaMoneyApp.ViewModels.OveralViewModels;
 using Splat;
 
 namespace SeaMoneyApp.Views.OverallViews;

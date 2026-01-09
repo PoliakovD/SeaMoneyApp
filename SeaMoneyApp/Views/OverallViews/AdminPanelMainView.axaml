@@ -3,13 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
            
              
-             xmlns:local="clr-namespace:SeaMoneyApp.Localization"
-             xmlns:c="clr-namespace:SeaMoneyApp.Components"
-             xmlns:viewModels="clr-namespace:SeaMoneyApp.ViewModels"
-             d:DataContext="{d:DesignInstance viewModels:AdminPanelMainViewModel, IsDesignTimeCreatable=True}"
-             x:DataType="viewModels:AdminPanelMainViewModel"
+             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+             d:DataContext="{d:DesignInstance overalViewModels:AdminPanelMainViewModel, IsDesignTimeCreatable=True}"
+             x:DataType="overalViewModels:AdminPanelMainViewModel"
              
-             x:Class="SeaMoneyApp.Views.AdminPanelMainView">
+             x:Class="SeaMoneyApp.Views.OverallViews.AdminPanelMainView">
         <StackPanel Orientation="Vertical">
             <ComboBox  x:Name="ComboBoxSelector" ItemsSource="{Binding Data.Keys}"
                       SelectedItem="{Binding SelectedList}"/>

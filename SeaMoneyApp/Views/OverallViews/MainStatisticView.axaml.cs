@@ -1,20 +1,16 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
-using SeaMoneyApp.ViewModels;
 using SeaMoneyApp.ViewModels.OveralViewModels;
 
 namespace SeaMoneyApp.Views.OverallViews;
 
-public partial class CoursesView : ReactiveUserControl<CoursesViewModel>
+public partial class MainStatisticView :  ReactiveUserControl<MainStatisticViewModel>
 {
-    public CoursesView()
+    public MainStatisticView()
     {
         this.WhenActivated(disposables => { });
         AvaloniaXamlLoader.Load(this);
     }
-
-    
 }

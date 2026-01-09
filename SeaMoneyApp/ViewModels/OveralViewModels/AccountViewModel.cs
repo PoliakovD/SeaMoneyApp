@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using ReactiveUI;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
@@ -13,7 +13,7 @@ using SeaMoneyApp.Models;
 using SeaMoneyApp.Services.Authorization;
 using Splat;
 
-namespace SeaMoneyApp.ViewModels;
+namespace SeaMoneyApp.ViewModels.OveralViewModels;
 
 public class AccountViewModel : RoutableViewModel
 {
