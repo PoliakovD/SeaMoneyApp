@@ -21,6 +21,7 @@ public class Contract
     
     [Column("end_date")]
     public DateTime? EndDate { get; set; }
+    [ForeignKey("position_id")] public Position? Position { get; set; }
     
     [ForeignKey("account_id")]
     public Account? Account { get; set; }
@@ -39,6 +40,7 @@ public class Contract
         BeginDate = contract.BeginDate.Date;
         EndDate = contract.EndDate.Value.Date;
         Account = contract.Account;
+        Position = contract.Position;
         IsDeleted = contract.IsDeleted;
     }
     public override string ToString()

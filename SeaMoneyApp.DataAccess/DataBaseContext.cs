@@ -72,7 +72,8 @@ public class DataBaseContext : DbContext
     public void AddContract(Contract contract)
     {
         
-        var findedContract = Contracts.Where(c=>c.Account.Id==contract.Account.Id)
+        var findedContract = Contracts.Include(cont=>cont.Account)
+            .Where(c=>c.Account.Id==contract.Account.Id)
             .FirstOrDefault(c => c.BeginDate == contract.BeginDate);
 
         if (findedContract == null) Contracts.Add(contract);
@@ -82,6 +83,7 @@ public class DataBaseContext : DbContext
             findedContract.EndDate = contract.EndDate;
             findedContract.VesselName = contract.VesselName;
             findedContract.ContractDescription = contract.ContractDescription;
+            findedContract.Position = contract.Position;
             findedContract.IsDeleted = false;
             Contracts.Update(findedContract);
         }
@@ -156,7 +158,7 @@ public class DataBaseContext : DbContext
     {
         await foreach (var item in this.Contracts
                            .Where(x => x.Account.Id == user.Id && !x.IsDeleted)
-                           .OrderBy(x => x.BeginDate)
+                           .OrderBy(x => x.BeginDate).Reverse()
                            .AsAsyncEnumerable())
         {
             yield return item;
@@ -171,7 +173,7 @@ public class DataBaseContext : DbContext
                            .Include(x => x.Contract)
                            .Include(x => x.Position)
                            .Where(x => x.Account.Id == user.Id)
-                           .OrderBy(x => x.Date)
+                           .OrderBy(x => x.Date).Reverse()
                            .AsAsyncEnumerable())
         {
             yield return item;
@@ -274,6 +276,13 @@ public class DataBaseContext : DbContext
             findedWageLog.Date = newWageLog.Date;
             findedWageLog.AmountInRub = newWageLog.AmountInRub;
             findedWageLog.Contract = newWageLog.Contract;
+            findedWageLog.ChangeRubToDollar = await GetChangeRubToDollarOnWageLogDateAsync(findedWageLog.Date.Value);
+            if (findedWageLog.ChangeRubToDollar is null)
+            {
+                var errMsg = $"В базе данных не найден курс для {findedWageLog.Date:d}";
+                _errorMessageSubject.OnNext(errMsg);
+                return false;
+            }
 
 
             WageLogs.Update(findedWageLog);

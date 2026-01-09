@@ -28,7 +28,10 @@ public class WageLog
     
     [ForeignKey("change_rub_to_dollar_id")]
     public ChangeRubToDollar? ChangeRubToDollar { get; set; }
-
+    public decimal? AmountInDollars =>
+        AmountInRub != null && ChangeRubToDollar?.Value != 0
+            ? AmountInRub / ChangeRubToDollar.Value
+            : null;
     public WageLog()
     {
         
