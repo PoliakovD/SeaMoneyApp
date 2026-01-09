@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using DynamicData.Binding;
-using DynamicData.Kernel;
 using ReactiveUI;
-using ReactiveUI.SourceGenerators;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Extensions;
@@ -107,10 +103,6 @@ public class RegistrationViewModel : RoutableViewModel
                 {
                     authService.FlushErrorMessage();
                     HostScreen.Router.NavigateAndCache<OverallViewModel>();
-                }
-                else
-                {
-                    return;
                 }
             },
             this

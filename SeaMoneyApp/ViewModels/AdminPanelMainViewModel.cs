@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using ReactiveUI;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
-using SeaMoneyApp.Extensions;
 using Splat;
 
 namespace SeaMoneyApp.ViewModels;
@@ -46,9 +41,6 @@ public class AdminPanelMainViewModel : RoutableViewModel
 
     public AdminPanelMainViewModel()
     {
-        var db = Locator.Current.GetService<DataBaseContext>();
-
-
         SelectedList = nameof(Account);
         InitAllTables();
         this.WhenAnyValue(
@@ -56,8 +48,6 @@ public class AdminPanelMainViewModel : RoutableViewModel
                 x => x.Data,
                 (selectedName, allNames) => allNames[selectedName])
             .Subscribe(s => SelectedData = s);
-
-       
     }
 
     private void InitAllTables()

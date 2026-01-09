@@ -2,25 +2,17 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using ReactiveUI;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Models;
-using SeaMoneyApp.Services.UpdateCources;
 using Splat;
 
 namespace SeaMoneyApp.ViewModels;
 
 public class IncomesViewModel : RoutableViewModel
 {
-    private const int DefaultTimoutDb = 10000;
-    private CancellationTokenSource _cts = new(DefaultTimoutDb);
-
     private DataBaseContext _dbContext;
     private AppSession _appSession;
 

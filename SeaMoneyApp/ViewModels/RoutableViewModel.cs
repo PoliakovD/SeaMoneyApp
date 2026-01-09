@@ -4,7 +4,7 @@ using Splat;
 
 namespace SeaMoneyApp.ViewModels;
 
-public abstract partial class RoutableViewModel : ReactiveObject,IRoutableViewModel
+public abstract class RoutableViewModel : ReactiveObject,IRoutableViewModel
 {
     public string UrlPathSegment { get; set; }
 

@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive;
-using DynamicData;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Kernel.Events;
 using LiveChartsCore.Kernel.Sketches;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Avalonia;
 using ReactiveUI;
 using SeaMoneyApp.DataAccess.Models;
 using Splat;
@@ -21,17 +17,13 @@ public partial class CoursesViewModel
 {
     private static double _defaultMinX = 0.0;
     private static double _defaultMaxX = 100.0;
-    private static double _defaultMinY = 0.0;
-    private static double _defaultMaxY = 100.0;
     private bool _isDown = false;
     private double _minX;
     private double _maxX;
-    private double _minY;
-    private double _maxY;
+
     private double _minXThumb;
     private double _maxXThumb;
-    private double _minYThumb;
-    private double _maxYThumb;
+
 
     public ReactiveCommand<ChartCommandArgs, Unit> ChartUpdatedCommand { get; private set; }
     public ReactiveCommand<PointerCommandArgs, Unit> PointerDownCommand { get; private set; }

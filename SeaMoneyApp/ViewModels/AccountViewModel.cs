@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows.Input;
 using System.Reactive.Linq;
 using System.Reactive;
 using System.Threading;
 using ReactiveUI;
-using ReactiveUI.SourceGenerators;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
 using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Models;
 using SeaMoneyApp.Services.Authorization;
-using SeaMoneyApp.Views;
 using Splat;
 
 namespace SeaMoneyApp.ViewModels;
@@ -28,7 +23,6 @@ public class AccountViewModel : RoutableViewModel
     private Account _currentAccount;
     private Position? _viewedPosition;
     private Position? _beforeEditingPosition;
-    private bool _isAdminPanelEnabled;
     
     public ReactiveCommand<Unit, Unit>? LogOutCommand { get; private set; }
     public ReactiveCommand<Unit, Unit>? ToAdminPanelCommand { get; private set; }
@@ -50,12 +44,6 @@ public class AccountViewModel : RoutableViewModel
     {
         get => _isEditing;
         private set => this.RaiseAndSetIfChanged(ref _isEditing, value);
-    }
-    
-    public bool IsAdminPanelEnabled
-    {
-        get => _isAdminPanelEnabled;
-        private set => this.RaiseAndSetIfChanged(ref _isAdminPanelEnabled, value);
     }
 
     public string? ErrorMessage
@@ -162,7 +150,7 @@ public class AccountViewModel : RoutableViewModel
 
         foreach (var position in positions)
         {
-            Positions!.Add(position);
+            Positions.Add(position);
         }
         ViewedPosition = Positions.First(p=>p.Id == CurrentAccount.Position.Id);
     }

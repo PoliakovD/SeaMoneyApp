@@ -2,13 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.Controls;
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
 using ReactiveUI;
 using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
@@ -85,7 +80,6 @@ public partial class CoursesViewModel : RoutableViewModel
     }
 
     private UpdateCourcesService _updateService;
-    private IObservable<bool> _canDeleteSelectedCourse;
     private IObservable<bool> _htmlRunning;
     
 
@@ -450,8 +444,7 @@ public partial class CoursesViewModel : RoutableViewModel
             x => x.SelectedCourse,
             x => x.IsEditing,
             x => x.IsAdding,
-            x => x.Courses,
-            (before, after, isEditing, isAdding, courses) =>
+            (before, after, isEditing, isAdding) =>
             {
                 if (isAdding)
                 {

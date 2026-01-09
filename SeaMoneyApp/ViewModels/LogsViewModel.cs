@@ -1,14 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
 using Avalonia.Threading;
 using ReactiveUI;
 using SeaMoneyApp.Services.Logger;
-using Splat;
 
 namespace SeaMoneyApp.ViewModels;
 

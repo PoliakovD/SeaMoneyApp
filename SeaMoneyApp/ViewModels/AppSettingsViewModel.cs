@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Avalonia.Controls;
 using ReactiveUI;
-using System.Reactive;
-using System.Reactive.Linq;
 using SeaMoneyApp.Extensions;
-using SeaMoneyApp.Localization;
 using SeaMoneyApp.Models;
 using Splat;
 
@@ -25,8 +21,8 @@ public class AppSettingsViewModel : RoutableViewModel
 
     public CultureInfo? CurrentCulture
     {
-        get { return _currentCulture; }
-        set { this.RaiseAndSetIfChanged(ref _currentCulture, value); }
+        get => _currentCulture;
+        set => this.RaiseAndSetIfChanged(ref _currentCulture, value);
     }
 
     private string _selectedLanguage;
@@ -36,26 +32,23 @@ public class AppSettingsViewModel : RoutableViewModel
         get => _selectedLanguage;
         set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
     }
-
-    public ReactiveCommand<SelectionChangedEventArgs, Unit> SelectedLanguageCommand { get; private set; }
-
     public AppSettingsViewModel()
     {
         CurrentCulture = Localization.Localization.Culture;
         SelectedLanguage = Languages.First(x => x.Value == CurrentCulture!.Name).Key;
-        this.WhenAnyValue(x => x.SelectedLanguage).Subscribe(new Action<string>(async _ =>
+        this.WhenAnyValue(x => x.SelectedLanguage).Subscribe(new Action<string>(async lang =>
         {
-            LogHost.Default.Debug("Selected language Start Event: " + _);
+            LogHost.Default.Debug("Selected language Start Event: " + lang);
 
-            if (Languages[_] == Localization.Localization.Culture.Name)
+            if (Languages[lang] == Localization.Localization.Culture.Name)
             {
-                LogHost.Default.Debug("Selected language Same: " + _);
+                LogHost.Default.Debug("Selected language Same: " + lang);
                 return;
             }
 
-            Localization.Localization.Culture = CultureInfo.GetCultureInfo(Languages[_]);
-            LogHost.Default.Debug("Selected language Finish Event: " + _);
-            LogHost.Default.Debug("Selected language Selected Event: " + _ + " / " +
+            Localization.Localization.Culture = CultureInfo.GetCultureInfo(Languages[lang]);
+            LogHost.Default.Debug("Selected language Finish Event: " + lang);
+            LogHost.Default.Debug("Selected language Selected Event: " + lang + " / " +
                                   Localization.Localization.Culture.Name);
             var appsession = Locator.Current.GetService<AppSession>();
             appsession.Culture = Localization.Localization.Culture.Name;

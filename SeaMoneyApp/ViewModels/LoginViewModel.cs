@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using System.ComponentModel;
-using System.Windows.Input;
 using System.Reactive.Linq;
 using System.Reactive;
 using ReactiveUI;
-using ReactiveUI.SourceGenerators;
 using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Models;
 using SeaMoneyApp.Services.Authorization;
@@ -14,8 +9,7 @@ using Splat;
 
 namespace SeaMoneyApp.ViewModels;
 
-[DataContract]
-public partial class LoginViewModel : RoutableViewModel
+public class LoginViewModel : RoutableViewModel
 {
     private string? _password = string.Empty;
     public ReactiveCommand<Unit, Unit>? LoginCommand { get; private set; }
@@ -24,7 +18,7 @@ public partial class LoginViewModel : RoutableViewModel
     public string? Password
     {
         get => _password;
-        set { this.RaiseAndSetIfChanged(ref _password, value); }
+        set => this.RaiseAndSetIfChanged(ref _password, value);
     }
 
     private string? _errorMessage = string.Empty;
@@ -32,7 +26,7 @@ public partial class LoginViewModel : RoutableViewModel
     public string? ErrorMessage
     {
         get => _errorMessage;
-        set { this.RaiseAndSetIfChanged(ref _errorMessage, value); }
+        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
     }
 
     private string? _username = string.Empty;
@@ -40,7 +34,7 @@ public partial class LoginViewModel : RoutableViewModel
     public string? Username
     {
         get => _username;
-        set { this.RaiseAndSetIfChanged(ref _username, value); }
+        set => this.RaiseAndSetIfChanged(ref _username, value);
     }
 
     private bool _rememberMe = false;
@@ -48,7 +42,7 @@ public partial class LoginViewModel : RoutableViewModel
     public bool RememberMe
     {
         get => _rememberMe;
-        set { this.RaiseAndSetIfChanged(ref _rememberMe, value); }
+        set => this.RaiseAndSetIfChanged(ref _rememberMe, value);
     }
 
 

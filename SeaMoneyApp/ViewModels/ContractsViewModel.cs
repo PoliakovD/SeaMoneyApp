@@ -262,11 +262,9 @@ public class ContractsViewModel : RoutableViewModel
     {
         LogHost.Default.Debug("Оценка возможности сохранения контракта");
         return this.WhenAnyValue(
-            x => x.BeforeEditingContract,
-            x => x.SelectedContract,
             x => x.IsEditing,
             x => x.IsAdding,
-            (before, after, isEditing, isAdding) =>
+            ( isEditing, isAdding) =>
             {
                 if (isAdding) return true;
                 return isEditing;
