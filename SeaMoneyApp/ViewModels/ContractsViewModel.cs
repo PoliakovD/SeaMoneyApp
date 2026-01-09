@@ -223,7 +223,7 @@ public class ContractsViewModel : RoutableViewModel
                     return;
                 }
 
-                if (!String.IsNullOrWhiteSpace(SelectedContract.VesselName))
+                if (String.IsNullOrWhiteSpace(SelectedContract.VesselName))
                 {
                     ErrorMessage = "Название судна не может быть пустым!";
                     return;
@@ -349,7 +349,8 @@ public class ContractsViewModel : RoutableViewModel
                 EndDate = DateTime.Now.Date + new TimeSpan(120, 0, 0, 0),
                 Account = _appSession.CurrentAccount,
                 VesselName = "Судно",
-                ContractDescription = "Описание"
+                ContractDescription = "Описание",
+                Position = _appSession.CurrentAccount.Position
             };
             IsAdding = true;
             IsEditing = true;

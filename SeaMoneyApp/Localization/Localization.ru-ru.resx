@@ -132,4 +132,16 @@
     <data name="ToIncomesText" xml:space="preserve">
         <value>Поступления</value>
     </data>
+    <data name="DescriptionText" xml:space="preserve">
+        <value>Описание</value>
+    </data>
+    <data name="VesselNameText" xml:space="preserve">
+        <value>Назвние Судна</value>
+    </data>
+    <data name="EndDateText" xml:space="preserve">
+        <value>Конец контракта</value>
+    </data>
+    <data name="BeginDateText" xml:space="preserve">
+        <value>Начало контракта</value>
+    </data>
 </root>

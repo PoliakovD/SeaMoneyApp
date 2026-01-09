@@ -140,4 +140,16 @@
     <data name="ToIncomesText" xml:space="preserve">
         <value>Incomes</value>
     </data>
+    <data name="DescriptionText" xml:space="preserve">
+        <value>Description</value>
+    </data>
+    <data name="VesselNameText" xml:space="preserve">
+        <value>Vessel Name</value>
+    </data>
+    <data name="EndDateText" xml:space="preserve">
+        <value>End date</value>
+    </data>
+    <data name="BeginDateText" xml:space="preserve">
+        <value>Begin date</value>
+    </data>
 </root>
