@@ -45,12 +45,15 @@ public partial class App : Application
         Locator.CurrentMutable.RegisterLazySingleton
             (() => new UpdateCourcesService());
 
+        // Регистрируем сервис сессии 
+        // var appSession = new AppSession();
+        // Locator.CurrentMutable.RegisterConstant(appSession);
+        Locator.CurrentMutable.RegisterLazySingleton(()=> new AppSession());
+        var appSession =Locator.Current.GetService<AppSession>();
+        
         // Устанавливаем глобальный ViewLocator
         Locator.CurrentMutable.RegisterViewsForViewModels(typeof(App).Assembly);
         
-        var appSession = new AppSession();
-        Locator.CurrentMutable.RegisterConstant(appSession);
-
 
         var screen = new MainViewModel();
 

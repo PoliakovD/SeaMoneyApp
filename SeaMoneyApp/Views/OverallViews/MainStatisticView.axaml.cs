@@ -1,4 +1,5 @@
 ﻿
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
@@ -13,4 +14,6 @@ public partial class MainStatisticView :  ReactiveUserControl<MainStatisticViewM
         this.WhenActivated(disposables => { });
         AvaloniaXamlLoader.Load(this);
     }
+
+    
 }

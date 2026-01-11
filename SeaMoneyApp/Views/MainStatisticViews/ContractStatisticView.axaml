@@ -1,0 +1,103 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+
+             xmlns:local="clr-namespace:SeaMoneyApp.Localization"
+             xmlns:c="clr-namespace:SeaMoneyApp.Components"
+             xmlns:statisticViewModels="clr-namespace:SeaMoneyApp.ViewModels.MainStatisticViewModels"
+             x:DataType="statisticViewModels:ContractStatisticViewModel"
+             xmlns:gm="using:SeaMoneyApp.Models"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+
+
+             x:Class="SeaMoneyApp.Views.MainStatisticViews.ContractStatisticView">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" 
+              ColumnDefinitions="*,2*"
+              MinHeight="250"
+              MinWidth="550">
+            <lvc:PieChart Grid.Column="0" HorizontalAlignment="Left" 
+                          Series="{Binding PieDurationSeries}"
+                          MinHeight="250"
+                          MinWidth="250">
+                <lvc:PieChart.Title>
+                    <lvc:XamlDrawnLabelVisual Text="Продолжительность"
+                                              TextSize="20"
+                                              Paint="{lvc:SolidColorPaint Color='#232323'}"/>
+                </lvc:PieChart.Title>
+
+            </lvc:PieChart>
+            <lvc:CartesianChart Grid.Column="1" HorizontalAlignment="Left" 
+                                Series="{Binding BarWageSeries}"
+                                MinHeight="250"
+                                MinWidth="650">
+                <lvc:CartesianChart.XAxes>
+                    <lvc:XamlAxis
+                        Labeler="{Binding LabelFormatter }"
+                        LabelsDensity="1"
+                        SeparatorsPaint="{lvc:SolidColorPaint Color='#c8c8c8'}"
+                        SeparatorsAtCenter="False"
+                        TicksPaint="{lvc:SolidColorPaint Color='#232323'}"
+                        TicksAtCenter="True"
+                        MinStep="1"
+                        ForceStepToMin="True"/>
+                </lvc:CartesianChart.XAxes>
+                <lvc:CartesianChart.YAxes>
+                    <lvc:XamlAxis IsVisible="False"/>
+                </lvc:CartesianChart.YAxes>
+                <lvc:CartesianChart.Title>
+                    <lvc:XamlDrawnLabelVisual Text="Зарплата по месяцам"
+                                              TextSize="20"
+                                              Paint="{lvc:SolidColorPaint Color='#232323'}"/>
+                </lvc:CartesianChart.Title>
+            </lvc:CartesianChart>
+        </Grid>
+        
+        <StackPanel DockPanel.Dock="Top" 
+                    Orientation="Vertical" 
+                    DataContext="{Binding Statistic}">
+            <TextBlock Text="{Binding Contract.BeginDate,
+                       StringFormat={}Начало - {0:d}}" />
+            <TextBlock Text="{Binding Contract.EndDate,
+                       StringFormat={}Конец - {0:d}}" />
+            <TextBlock Text="{Binding DurationDays,
+                       StringFormat={}Всего дней - {0}}" />
+            <TextBlock Text="{Binding LeftDays,
+                       StringFormat={}Осталось дней - {0}}" />
+            <TextBlock Text="{Binding PassedDays,
+                       StringFormat={}Прошло дней - {0}}" />
+            <TextBlock>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Заработано - {0:c} руб / {1:F2} $">
+                        <Binding Path="CurrentAchivedWageRub" />
+                        <Binding Path="CurrentAchivedWageDollar" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <TextBlock>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Расчетная - {0:c} руб / {1:F2} $">
+                        <Binding Path="MaxAvailableWageRub" />
+                        <Binding Path="MaxAvailableWageDollar" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <TextBlock>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Разница - {0:c} руб / {1:F2} $">
+                        <Binding Path="DiferenceRub" />
+                        <Binding Path="DiferenceDollar" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <TextBlock Text="{Binding AverageCource,
+                       StringFormat={}Средний курс - {0:F2}}" />
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding SelectedData}"
+                  GridLinesVisibility="All"
+                  Margin="20"
+                  AutoGenerateColumns="True"/>
+    </DockPanel>
+</UserControl>

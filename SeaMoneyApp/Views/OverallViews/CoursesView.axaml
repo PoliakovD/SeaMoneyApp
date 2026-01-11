@@ -73,7 +73,6 @@
                         MinLimit="{Binding MinX}"
                         MaxLimit="{Binding MaxX}" />
                 </lvc:CartesianChart.XAxes>
-
             </lvc:CartesianChart>
 
             <lvc:CartesianChart

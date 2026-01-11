@@ -140,4 +140,7 @@
     <data name="BeginDateText" xml:space="preserve">
         <value>Begin </value>
     </data>
+    <data name="ToMainStatistic" xml:space="preserve">
+        <value>Statistic</value>
+    </data>
 </root>

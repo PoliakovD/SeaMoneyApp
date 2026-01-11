@@ -39,7 +39,14 @@ public class DataBaseContext : DbContext
     public void DeleteChangeRubToDollar(ChangeRubToDollar course)
     {
         var findedCourse = ChangeRubToDollars.FirstOrDefault(c => c.Id == course.Id);
-        if (findedCourse is null) throw new ArgumentNullException(nameof(findedCourse));
+        if (findedCourse is null)
+        {
+            findedCourse = ChangeRubToDollars.FirstOrDefault(c => c.Date == course.Date);
+            if (findedCourse is null)
+            {
+                throw new ArgumentNullException(nameof(findedCourse));
+            }
+        }
         findedCourse.IsDeleted = true;
         ChangeRubToDollars.Update(findedCourse);
         this.SaveChanges();
@@ -164,6 +171,16 @@ public class DataBaseContext : DbContext
             yield return item;
         }
     }
+    public  IEnumerable<Contract>? GetUserContractsIEnumerable(Account user)
+    {
+         foreach (var item in this.Contracts
+                           .Where(x => x.Account.Id == user.Id && !x.IsDeleted)
+                           .OrderBy(x => x.BeginDate).Reverse()
+                           .AsEnumerable())
+        {
+            yield return item;
+        }
+    }
 
     public async IAsyncEnumerable<WageLog>? GetUserWageLogsAsyncEnumerable(Account user)
     {
@@ -175,6 +192,21 @@ public class DataBaseContext : DbContext
                            .Where(x => x.Account.Id == user.Id)
                            .OrderBy(x => x.Date).Reverse()
                            .AsAsyncEnumerable())
+        {
+            yield return item;
+        }
+    }
+    
+    public IEnumerable<WageLog>? GetUserWageLogsEnumerable(Account user)
+    {
+         foreach (var item in this.WageLogs
+                           .Include(x => x.ChangeRubToDollar)
+                           .Include(x => x.Account)
+                           .Include(x => x.Contract)
+                           .Include(x => x.Position)
+                           .Where(x => x.Account.Id == user.Id)
+                           .OrderBy(x => x.Date).Reverse()
+                           .AsEnumerable())
         {
             yield return item;
         }
@@ -319,5 +351,40 @@ public class DataBaseContext : DbContext
             LogHost.Default.Error(e.Message);
             throw;
         }
+    }
+    
+    public ChangeRubToDollar GeClosestChangeRubToDollarOnDate(DateTime date)
+    {
+        try
+        {
+            return  ChangeRubToDollars
+                .OrderBy(x => Math.Abs(x.Date.Ticks - date.Ticks))
+                .First();
+        }
+        catch (Exception e)
+        {
+            LogHost.Default.Error(e.Message);
+            throw;
+        }
+    }
+
+    public decimal GetMonthlyWage(Position position, int toursInRank, int year)
+    {
+        decimal result = 0.0m;
+        var findedBaseWage = Salaries
+            .Include(x => x.Position)
+            .Where(x => x.Position!.Id == position.Id)
+            .OrderBy(x => Math.Abs(x.Year - year)).FirstOrDefault();
+
+        var findedPersonalBonus = PersonalBonuses
+            .Include(x => x.Position)
+            .Where(x => x.Position!.Id == position.Id && x.ToursInRank == toursInRank)
+            .OrderBy(x => Math.Abs(x.year - year)).FirstOrDefault();
+
+        if (findedBaseWage != null) result += findedBaseWage.Total;
+        if (findedPersonalBonus != null) result += findedPersonalBonus.PersonalBonusValue;
+        
+        return result;
+
     }
 }

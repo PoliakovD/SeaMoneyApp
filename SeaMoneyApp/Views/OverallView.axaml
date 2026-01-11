@@ -18,6 +18,10 @@
             <Button Content="{x:Static local:Localization.BackText}"
                     Command="{Binding Router.NavigateBack}"
                     Classes="menue"/>
+            
+            <Button Content="{x:Static local:Localization.ToMainStatistic}"
+                    Command="{Binding ToMainStatisticCommand}" 
+                    Classes="menue"/>
 
             <Button Content="{x:Static local:Localization.ToLogsText}"
                     Command="{Binding ToLogsCommand}" 
@@ -42,6 +46,8 @@
             <Button Content="{x:Static local:Localization.ToIncomesText}"
                     Command="{Binding ToIncomesCommand}" 
                     Classes="menue"/>
+            
+           
 
         </StackPanel>
         <Grid>

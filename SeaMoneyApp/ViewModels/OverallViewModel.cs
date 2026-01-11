@@ -12,10 +12,12 @@ public class OverallViewModel : RoutableViewModel, IScreenBackCommand
     public ICommand ToAppSettingsCommand { get; }
     public ICommand ToCoursesCommand { get; }
     
+    public ICommand ToMainStatisticCommand { get; }
     public ICommand ToIncomesCommand { get; }
     public ICommand ToContractsCommand { get; }
     private RoutingState? _router;
-
+    
+    
 
     public RoutingState? Router
     {
@@ -39,5 +41,7 @@ public class OverallViewModel : RoutableViewModel, IScreenBackCommand
         ToContractsCommand = ReactiveCommand.Create(() => Router.NavigateAndNotCache<ContractsViewModel>());
         
         ToIncomesCommand= ReactiveCommand.Create(() => Router.NavigateAndNotCache<IncomesViewModel>());
+        
+        ToMainStatisticCommand = ReactiveCommand.Create(() => { Router.NavigateAndNotCache<MainStatisticViewModel>(); });
     }
 }

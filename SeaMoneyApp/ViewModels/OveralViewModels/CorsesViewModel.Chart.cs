@@ -182,7 +182,4 @@ public partial class CoursesViewModel
                 break;
         }
     }
-
-    public static Func<double, string> DateTimeFormat =>
-        value => Convert.ToDateTime(value).ToString("mm.yyyy");
 }

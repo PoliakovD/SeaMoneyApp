@@ -29,7 +29,8 @@ public class Salary
     public decimal PerformanceBonus { get; set; }
 
     [Column("is_deleted")] public bool IsDeleted { get; set; }
-
+    
+    public decimal Total =>  BasicWage + FidelityBonus + Vacation + PerformanceBonus + CrewOvertime + CompanyBonus;
     public override string ToString()
     {
         return $"{Position} / Basic - {BasicWage}, CrewOvertime - {CrewOvertime}," +

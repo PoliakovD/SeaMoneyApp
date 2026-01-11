@@ -1,14 +1,52 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             
+            
+             xmlns:reactiveUi="http://reactiveui.net"
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:c="clr-namespace:SeaMoneyApp.Converters"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
+             xmlns:gm="using:SeaMoneyApp.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
              xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+             xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
 
              x:DataType="overalViewModels:MainStatisticViewModel"
-             
+
              x:Class="SeaMoneyApp.Views.OverallViews.MainStatisticView">
-    Welcome to Avalonia!
+    <UserControl.Resources>
+        <DataTemplate x:Key="TemplateContractStatistic"
+                      DataType="{x:Type TypeName=gm:ContractStatistic}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Margin="10,5,10,5">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat=" {0} / {1} / {2} - {3}">
+                            <Binding Path="Contract.Position.Name" />
+                            <Binding Path="Contract.VesselName" />
+                            <Binding Path="Contract.BeginDate" StringFormat="d" />
+                            <Binding Path="Contract.EndDate" StringFormat="d" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    <DockPanel LastChildFill="True">
+        <ListBox DockPanel.Dock="Left"
+                 ItemsSource="{Binding WageService.ContractWageLogsDictionary.Values}"
+                 ItemTemplate="{StaticResource TemplateContractStatistic}"
+                 SelectedItem="{Binding SelectedContractStatistic, 
+                 Mode=OneWayToSource, 
+                 UpdateSourceTrigger=PropertyChanged}">
+        </ListBox>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding SelectedContractStatistic}"
+                   FontSize="30"/>
+        <Grid>
+            <reactiveUi:RoutedViewHost Router="{Binding Router}">
+                <reactiveUi:RoutedViewHost.DefaultContent>
+                    <TextBlock> Not Finded Contracts</TextBlock>
+                </reactiveUi:RoutedViewHost.DefaultContent>
+            </reactiveUi:RoutedViewHost>
+        </Grid>
+    </DockPanel>
+    
 </UserControl>

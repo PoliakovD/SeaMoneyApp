@@ -144,4 +144,7 @@
     <data name="BeginDateText" xml:space="preserve">
         <value>Начало контракта</value>
     </data>
+    <data name="ToMainStatistic" xml:space="preserve">
+        <value>Статистика</value>
+    </data>
 </root>
