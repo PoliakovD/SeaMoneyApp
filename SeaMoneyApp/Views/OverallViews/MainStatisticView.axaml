@@ -1,13 +1,13 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-            
+
              xmlns:reactiveUi="http://reactiveui.net"
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
              xmlns:c="clr-namespace:SeaMoneyApp.Converters"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
              xmlns:gm="using:SeaMoneyApp.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OverallViewModels"
              xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
 
              x:DataType="overalViewModels:MainStatisticViewModel"
@@ -31,15 +31,53 @@
         </DataTemplate>
     </UserControl.Resources>
     <DockPanel LastChildFill="True">
-        <ListBox DockPanel.Dock="Left"
-                 ItemsSource="{Binding WageService.ContractWageLogsDictionary.Values}"
-                 ItemTemplate="{StaticResource TemplateContractStatistic}"
-                 SelectedItem="{Binding SelectedContractStatistic, 
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <StackPanel Orientation="Vertical">
+                <TextBlock
+                    Text="{Binding WageService.UserContracts.Count,
+                    StringFormat={}Всего {0} контрактов}"
+                    Classes="Statistic"/>
+                <TextBlock
+                    Text="{Binding WageService.TotalWorkedDays,
+                    StringFormat={}Всего отработано {0:N} дней}"
+                    Classes="Statistic"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock
+                    Text="{Binding WageService.TotalAchivedInRubles,
+                    StringFormat={}Всего заработано {0:F2} руб}"
+                    Classes="Statistic" />
+                <TextBlock
+                    Text="{Binding WageService.TotalAchivedInDollars,
+                    StringFormat={}Всего заработано  {0:F2} $}"
+                    Classes="Statistic" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock
+                    Text="{Binding WageService.DifferenceRubles,
+                    StringFormat={}Разница {0:F2} руб}"
+                    Classes="Statistic" />
+                <TextBlock
+                    Text="{Binding WageService.DifferenceDollar,
+                    StringFormat={}Разница  {0:F2} $}"
+                    Classes="Statistic" />
+            </StackPanel>
+
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Left" Orientation="Vertical">
+
+            <TextBlock Text="{x:Static local:Localization.ContractsText}"
+                       FontSize="20" 
+                       HorizontalAlignment="Center"/>
+
+            <ListBox ItemsSource="{Binding WageService.ContractWageLogsDictionary.Values}"
+                     ItemTemplate="{StaticResource TemplateContractStatistic}"
+                     SelectedItem="{Binding SelectedContractStatistic, 
                  Mode=OneWayToSource, 
                  UpdateSourceTrigger=PropertyChanged}">
-        </ListBox>
-        <TextBlock DockPanel.Dock="Top" Text="{Binding SelectedContractStatistic}"
-                   FontSize="30"/>
+
+            </ListBox>
+        </StackPanel>
         <Grid>
             <reactiveUi:RoutedViewHost Router="{Binding Router}">
                 <reactiveUi:RoutedViewHost.DefaultContent>
@@ -48,5 +86,5 @@
             </reactiveUi:RoutedViewHost>
         </Grid>
     </DockPanel>
-    
+
 </UserControl>

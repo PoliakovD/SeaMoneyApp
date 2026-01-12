@@ -11,7 +11,7 @@ using ReactiveUI;
 using SeaMoneyApp.DataAccess.Models;
 using Splat;
 
-namespace SeaMoneyApp.ViewModels.OveralViewModels;
+namespace SeaMoneyApp.ViewModels.OverallViewModels;
 
 public partial class CoursesViewModel
 {

@@ -147,4 +147,7 @@
     <data name="ToMainStatistic" xml:space="preserve">
         <value>Статистика</value>
     </data>
+    <data name="ContractsText" xml:space="preserve">
+        <value>Контракты</value>
+    </data>
 </root>

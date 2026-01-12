@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             
              xmlns:local="clr-namespace:SeaMoneyApp.Localization"
-             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OverallViewModels"
 
              x:DataType="overalViewModels:AppSettingsViewModel"
              x:Class="SeaMoneyApp.Views.OverallViews.AppSettingsView">

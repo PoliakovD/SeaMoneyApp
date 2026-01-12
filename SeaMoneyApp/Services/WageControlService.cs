@@ -18,10 +18,15 @@ public class WageControlService: ReactiveObject
     public ObservableCollection<WageLog> WageLogs { get; set; } = [];
     public AvaloniaDictionary<Contract,ContractStatistic> ContractWageLogsDictionary { get; set; } = [];
     
- 
     
+    public double TotalWorkedDays { get; set; } = 0;
     public decimal TotalAchivedInRubles { get; set; } = 0.0m;
     public decimal TotalAchivedInDollars { get; set; } = 0.0m;
+    public decimal MaxAchivedInRubles { get; set; } = 0.0m;
+    public decimal MaxAchivedInDollars { get; set; } = 0.0m;
+    
+    public decimal DifferenceRubles => MaxAchivedInRubles - TotalAchivedInRubles;
+    public decimal DifferenceDollar => MaxAchivedInDollars - TotalAchivedInDollars;
     
     private readonly DataBaseContext _dbContext = Locator.Current.GetService<DataBaseContext>()!;
     private readonly AppSession _appSession = Locator.Current.GetService<AppSession>()!;
@@ -56,10 +61,14 @@ public class WageControlService: ReactiveObject
     {
         foreach (var contract in UserContracts)
         {
-            ContractWageLogsDictionary.Add(contract, new ContractStatistic(contract,WageLogs));
+            var statistic = new ContractStatistic(contract, WageLogs);
+            ContractWageLogsDictionary.Add(contract,statistic );
             
-            TotalAchivedInRubles+=ContractWageLogsDictionary[contract].CurrentAchivedWageRub;
-            TotalAchivedInDollars+=ContractWageLogsDictionary[contract].CurrentAchivedWageDollar;
+            TotalAchivedInRubles+=statistic.CurrentAchivedWageRub;
+            TotalAchivedInDollars+=statistic.CurrentAchivedWageDollar;
+            TotalWorkedDays += statistic.PassedDays;
+            MaxAchivedInRubles += statistic.MaxAvailableWageRub;
+            MaxAchivedInDollars += statistic.MaxAvailableWageDollar;
         }
     }
     

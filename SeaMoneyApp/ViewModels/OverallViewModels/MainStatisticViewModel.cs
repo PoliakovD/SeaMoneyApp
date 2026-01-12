@@ -7,7 +7,7 @@ using SeaMoneyApp.Models;
 using SeaMoneyApp.Services;
 using SeaMoneyApp.ViewModels.MainStatisticViewModels;
 
-namespace SeaMoneyApp.ViewModels.OveralViewModels;
+namespace SeaMoneyApp.ViewModels.OverallViewModels;
 
 public class MainStatisticViewModel : RoutableViewModel, IScreen
 {
@@ -28,14 +28,19 @@ public class MainStatisticViewModel : RoutableViewModel, IScreen
     public MainStatisticViewModel()
     {
         WageService = new WageControlService();
-        SelectedContractStatistic = WageService.ContractWageLogsDictionary.Values.First();
+        SelectedContractStatistic = WageService.ContractWageLogsDictionary.Values.FirstOrDefault();
         Router ??= new RoutingState();
-        this.WhenAnyValue(x => x.SelectedContractStatistic)
-            .Subscribe((contract) =>
-            {
-                if(contract is not null)
-                Router.NavigateAndNotCache<ContractStatisticViewModel>(new ContractStatisticViewModel(contract));
-            });
+        if (SelectedContractStatistic is not null)
+        {
+            this.WhenAnyValue(x => x.SelectedContractStatistic)
+                .Subscribe((contract) =>
+                {
+                    if(contract is not null)
+                        Router.NavigateAndNotCache<ContractStatisticViewModel>(new ContractStatisticViewModel(contract));
+                });
+        }
+       
+        
     }
 
     

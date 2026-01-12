@@ -6,7 +6,7 @@
              xmlns:c="clr-namespace:SeaMoneyApp.Converters"
              xmlns:m="using:SeaMoneyApp.DataAccess.Models"
              xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
-             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+             xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OverallViewModels"
 
              x:DataType="overalViewModels:CoursesViewModel"
            

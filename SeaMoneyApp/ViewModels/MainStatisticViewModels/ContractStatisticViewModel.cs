@@ -15,14 +15,13 @@ namespace SeaMoneyApp.ViewModels.MainStatisticViewModels;
 
 public class ContractStatisticViewModel : RoutableViewModel
 {
-    private IEnumerable _selectedData;
+    private ObservableCollection<ContractStatisticValue> _selectedStatistic;
 
-    public IEnumerable SelectedData
+    public ObservableCollection<ContractStatisticValue> SelectedStatistic
     {
-        get => _selectedData;
-        set => this.RaiseAndSetIfChanged(ref _selectedData, value);
+        get => _selectedStatistic;
+        set => this.RaiseAndSetIfChanged(ref _selectedStatistic, value);
     }
-
     public ContractStatistic Statistic
     {
         get => _statistic;
@@ -49,7 +48,9 @@ public class ContractStatisticViewModel : RoutableViewModel
         try
         {
             Init(statistic);
-            SelectedData = Statistic.MonthlyStatistic.Values;
+            var statisticsList =statistic.MonthlyStatistic.Values.ToList(); 
+            
+            SelectedStatistic = new  ObservableCollection<ContractStatisticValue>(statisticsList);
         }
         catch (Exception e)
         {
@@ -61,22 +62,11 @@ public class ContractStatisticViewModel : RoutableViewModel
 
     private void Init(ContractStatistic statistic)
     {
-        // Statistic = statistic;
-        // PieDurationSeries =
-        // [
-        //     new PieSeries<double> { Name = "Прошло", Values = PassedDaysPie },
-        //     new PieSeries<double> { Name = "Осталось", Values = LeftDaysPie }
-        // ];
-        // var cs1 = new ColumnSeries<decimal>()
-        // {
-        //     Name = "Получено",
-        //     Values = TestValues
-        // };
-        // // LogHost.Default.Error($"{cs1.Name}, {cs1.Values.First()}");
-        // BarWageSeries = new ISeries[1];
-        // BarWageSeries[0] = cs1;
 
         Statistic = statistic;
+        SelectedStatistic = new(Statistic.MonthlyStatistic.Values.ToList());
+        
+      
         PieDurationSeries =
         [
             new PieSeries<double> { Name = "Прошло", Values = PassedDaysPie },
@@ -95,30 +85,15 @@ public class ContractStatisticViewModel : RoutableViewModel
                 Values = MaxWages
             }
         ];
-        // LogHost.Default.Error($"{cs1.Name}, {cs1.Values.First()}");
-
-
-        // LogHost.Default.Info($"{BarWageSeries.Length}");
-        // int counter = 0;
-        // foreach (var (key, statisticValue) in Statistic.MonthlyStatistic)
-        // {
-        //     LogHost.Default.Info(counter.ToString());
-        //     LogHost.Default.Info(statisticValue.ToString());
-        //     BarWageSeries[counter] = new  ColumnSeries<decimal>
-        //     {
-        //         Name = key.ToString(),
-        //         // Values = [statisticValue.AchivedRub,statisticValue.MaxRub]
-        //         Values = [statisticValue.AchivedRub]
-        //     };
-        //     counter++;
-        // }
     }
 
     public Func<double, string> LabelFormatter => (value) =>
     {
-        if (value <0) return "00000000";
-        if (value > Statistic.MonthlyStatistic.Keys.Count -1) return "9999999999";
-        var intValue = Statistic.MonthlyStatistic.Keys.ToList() [(int)value];
+        var initMonth = Statistic.MonthlyStatistic.Keys.First();
+        var intValue = initMonth + value;
+
+        if (intValue > 12) intValue -= 12;
+        
         switch (intValue)
         {
             case 1: return "Январь";
@@ -136,4 +111,6 @@ public class ContractStatisticViewModel : RoutableViewModel
             default: return "Неопределен";
         }
     };
+    
+    
 }

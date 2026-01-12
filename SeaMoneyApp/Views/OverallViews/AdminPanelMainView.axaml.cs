@@ -1,7 +1,7 @@
 ﻿using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
-using SeaMoneyApp.ViewModels.OveralViewModels;
+using SeaMoneyApp.ViewModels.OverallViewModels;
 
 namespace SeaMoneyApp.Views.OverallViews;
 

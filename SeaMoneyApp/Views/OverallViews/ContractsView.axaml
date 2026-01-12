@@ -4,7 +4,7 @@
               xmlns:local="clr-namespace:SeaMoneyApp.Localization"
               xmlns:m="using:SeaMoneyApp.DataAccess.Models"
               xmlns:c="clr-namespace:SeaMoneyApp.Converters"
-              xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OveralViewModels"
+              xmlns:overalViewModels="clr-namespace:SeaMoneyApp.ViewModels.OverallViewModels"
 
               x:DataType="overalViewModels:ContractsViewModel"
               x:Class="SeaMoneyApp.Views.OverallViews.ContractsView">

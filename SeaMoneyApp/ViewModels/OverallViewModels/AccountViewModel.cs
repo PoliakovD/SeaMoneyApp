@@ -13,7 +13,7 @@ using SeaMoneyApp.Models;
 using SeaMoneyApp.Services.Authorization;
 using Splat;
 
-namespace SeaMoneyApp.ViewModels.OveralViewModels;
+namespace SeaMoneyApp.ViewModels.OverallViewModels;
 
 public class AccountViewModel : RoutableViewModel
 {

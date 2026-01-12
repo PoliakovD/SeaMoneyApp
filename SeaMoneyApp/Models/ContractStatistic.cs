@@ -57,11 +57,14 @@ public class ContractStatistic
         foreach (var wageLog in contractWages)
         {
             var received = wageLog.AmountInRub;
-            var month = wageLog.Date!.Value.Month;
             
+            var month = wageLog.Date!.Value.Month;
+            if (wageLog.Date.Value.Day < 15) --month;
+
+            if (month == 0) month = 12;
             
             var stat = MonthlyStatistic.ContainsKey(month) ? MonthlyStatistic[month] : new ContractStatisticValue();
-            stat.AchivedDollar += wageLog.AmountInDollars!.Value;
+            stat.AchivedDollar += Math.Round(wageLog.AmountInDollars!.Value,2);
             stat.AchivedRub += received!.Value;
             
             MonthlyStatistic.TryAdd(month, stat);
@@ -76,7 +79,7 @@ public class ContractStatistic
         int defaultDay = 15;
         var db = Locator.Current.GetService<DataBaseContext>();
         int year = Contract!.BeginDate.Year;
-        for (int month = Contract.BeginDate.Month; month != Contract.EndDate!.Value.Month; month++)
+        for (int month = Contract.BeginDate.Month; month != Contract.EndDate!.Value.Month+1; month++)
         {
             int workedDaysInMonth = 0;
             var daysInMonth = DateTime.DaysInMonth(year, month);
@@ -98,16 +101,17 @@ public class ContractStatistic
 
             var course = db.GeClosestChangeRubToDollarOnDate(new DateTime(year, month, 15));
             var fullMonthWage = db!.GetMonthlyWage(Contract.Position!, ToursInRank, year);
-            var availableMonthWageDoll = fullMonthWage * ((decimal)workedDaysInMonth / daysInMonth);
+            var availableMonthWageDoll = fullMonthWage * (workedDaysInMonth / 30.0m);
             var availableMonthWageRub = availableMonthWageDoll * course.Value;
             
             var stat = MonthlyStatistic.ContainsKey(month) ? MonthlyStatistic[month] : new ContractStatisticValue();
             stat.MaxDoll = Math.Round(availableMonthWageDoll,2);
-            stat.MaxRub =  Math.Round(availableMonthWageRub,2); 
+            stat.MaxRub =  Math.Round(availableMonthWageRub,2);
+            stat.Month = GetMonth(month);
             
             MonthlyStatistic.TryAdd(month, stat);
 
-            if (month == 12)
+            if (month == 12 && month != Contract.EndDate!.Value.Month) 
             {
                 month = 0;
                 ++year;
@@ -161,21 +165,38 @@ public class ContractStatistic
     {
         return $"{Contract.BeginDate} - {Contract.EndDate},{StateString()},{MonthlyStatistic.Count}";
     }
+
+    public string GetMonth(int month)
+    {
+        switch (month)
+        {
+            case 1: return "Январь";
+            case 2: return "Февраль";
+            case 3: return "Март";
+            case 4: return "Апрель";
+            case 5: return "Май";
+            case 6: return "Июнь";
+            case 7: return "Июль";
+            case 8: return "Август";
+            case 9: return "Сентябрь";
+            case 10: return "Октябрь";
+            case 11: return "Ноябрь";
+            case 12: return "Декабрь";
+            default: return "Неопределен";
+        }
+    }
 }
 
-public record ContractStatisticValue()
+public class ContractStatisticValue()
 {
-    public decimal AchivedRub = 0.0m;
-    public decimal AchivedDollar = 0.0m;
-    public decimal MaxRub = 0.0m;
-    public decimal MaxDoll = 0.0m;
+    public string Month { get; set; }
+    public decimal AchivedRub { get; set; } = 0.0m;
+    public decimal MaxRub { get; set; }= 0.0m;
+    public decimal AchivedDollar { get; set; }= 0.0m;
+    public decimal MaxDoll { get; set; }= 0.0m;
+    
 }
 
-public class ContractStatisticDurationPieData
-{
-    public string Name { get; set; } = "";
-    public double[] Values { get; set; } = [];
-}
 
 public enum ContractStates
 {

@@ -8,7 +8,7 @@ using SeaMoneyApp.DataAccess;
 using SeaMoneyApp.DataAccess.Models;
 using Splat;
 
-namespace SeaMoneyApp.ViewModels.OveralViewModels;
+namespace SeaMoneyApp.ViewModels.OverallViewModels;
 
 public class AdminPanelMainViewModel : RoutableViewModel
 {

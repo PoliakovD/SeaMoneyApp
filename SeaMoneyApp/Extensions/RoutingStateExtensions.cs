@@ -28,15 +28,12 @@ public static class RoutingStateExtensions
     }
     public static void NavigateAndNotCache<T>(this RoutingState router, RoutableViewModel routableViewModel) 
     {
-        var type = typeof(T);
         router.Navigate.Execute(routableViewModel);
     }
     public static void NavigateAndNotCache<T>(this RoutingState router, Func<T>? factory = null) 
         where T : RoutableViewModel, new()
     {
-        var type = typeof(T);
-        var vm =  factory?.Invoke() ?? new T();
-        router.Navigate.Execute(vm);
+        router.Navigate.Execute(factory?.Invoke() ?? new T());
     }
     
     public static void ClearCache(this RoutingState router)

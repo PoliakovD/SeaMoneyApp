@@ -10,26 +10,28 @@
 
 
              x:Class="SeaMoneyApp.Views.MainStatisticViews.ContractStatisticView">
-    <DockPanel>
-        <Grid DockPanel.Dock="Top" 
+    <DockPanel Background="AliceBlue" LastChildFill="True">
+        <Grid DockPanel.Dock="Top"
               ColumnDefinitions="*,2*"
               MinHeight="250"
               MinWidth="550">
-            <lvc:PieChart Grid.Column="0" HorizontalAlignment="Left" 
+            <lvc:PieChart Grid.Column="0" HorizontalAlignment="Left"
                           Series="{Binding PieDurationSeries}"
                           MinHeight="250"
-                          MinWidth="250">
+                          MinWidth="250"
+                          Background="AliceBlue">
                 <lvc:PieChart.Title>
                     <lvc:XamlDrawnLabelVisual Text="Продолжительность"
                                               TextSize="20"
-                                              Paint="{lvc:SolidColorPaint Color='#232323'}"/>
+                                              Paint="{lvc:SolidColorPaint Color='#232323'}" />
                 </lvc:PieChart.Title>
 
             </lvc:PieChart>
-            <lvc:CartesianChart Grid.Column="1" HorizontalAlignment="Left" 
+            <lvc:CartesianChart Grid.Column="1" HorizontalAlignment="Left"
                                 Series="{Binding BarWageSeries}"
                                 MinHeight="250"
-                                MinWidth="650">
+                                MinWidth="650"
+                                Background="AliceBlue">
                 <lvc:CartesianChart.XAxes>
                     <lvc:XamlAxis
                         Labeler="{Binding LabelFormatter }"
@@ -39,33 +41,50 @@
                         TicksPaint="{lvc:SolidColorPaint Color='#232323'}"
                         TicksAtCenter="True"
                         MinStep="1"
-                        ForceStepToMin="True"/>
+                        ForceStepToMin="True" />
                 </lvc:CartesianChart.XAxes>
                 <lvc:CartesianChart.YAxes>
-                    <lvc:XamlAxis IsVisible="False"/>
+                    <lvc:XamlAxis IsVisible="False" />
                 </lvc:CartesianChart.YAxes>
                 <lvc:CartesianChart.Title>
                     <lvc:XamlDrawnLabelVisual Text="Зарплата по месяцам"
                                               TextSize="20"
-                                              Paint="{lvc:SolidColorPaint Color='#232323'}"/>
+                                              Paint="{lvc:SolidColorPaint Color='#232323'}" />
                 </lvc:CartesianChart.Title>
             </lvc:CartesianChart>
         </Grid>
-        
-        <StackPanel DockPanel.Dock="Top" 
-                    Orientation="Vertical" 
-                    DataContext="{Binding Statistic}">
-            <TextBlock Text="{Binding Contract.BeginDate,
-                       StringFormat={}Начало - {0:d}}" />
-            <TextBlock Text="{Binding Contract.EndDate,
-                       StringFormat={}Конец - {0:d}}" />
-            <TextBlock Text="{Binding DurationDays,
-                       StringFormat={}Всего дней - {0}}" />
-            <TextBlock Text="{Binding LeftDays,
-                       StringFormat={}Осталось дней - {0}}" />
-            <TextBlock Text="{Binding PassedDays,
-                       StringFormat={}Прошло дней - {0}}" />
-            <TextBlock>
+
+        <StackPanel DockPanel.Dock="Left"
+                    Orientation="Vertical"
+                    DataContext="{Binding Statistic}"
+                    Background="LightBlue">
+
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Text="{Binding Contract.BeginDate,
+                       StringFormat={}Начало - {0:d}}"
+                        Classes="MiniStatistic" />
+                    <TextBlock Text="{Binding Contract.EndDate,
+                       StringFormat={}Конец - {0:d}}"
+                               Classes="MiniStatistic" />
+                </StackPanel>
+            </Grid>
+
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding DurationDays,
+                       StringFormat={}Всего дней - {0}}"
+                           Classes="MiniStatistic" />
+                <TextBlock Text="{Binding LeftDays,
+                       StringFormat={}Осталось дней - {0}}"
+                           Classes="MiniStatistic" />
+                <TextBlock Text="{Binding PassedDays,
+                       StringFormat={}Прошло дней - {0}}"
+                           Classes="MiniStatistic" />
+            </StackPanel>
+
+            <TextBlock Classes="MiniStatistic">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}Заработано - {0:c} руб / {1:F2} $">
                         <Binding Path="CurrentAchivedWageRub" />
@@ -74,7 +93,7 @@
                 </TextBlock.Text>
             </TextBlock>
 
-            <TextBlock>
+            <TextBlock Classes="MiniStatistic">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}Расчетная - {0:c} руб / {1:F2} $">
                         <Binding Path="MaxAvailableWageRub" />
@@ -83,7 +102,7 @@
                 </TextBlock.Text>
             </TextBlock>
 
-            <TextBlock>
+            <TextBlock Classes="MiniStatistic">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}Разница - {0:c} руб / {1:F2} $">
                         <Binding Path="DiferenceRub" />
@@ -93,11 +112,15 @@
             </TextBlock>
 
             <TextBlock Text="{Binding AverageCource,
-                       StringFormat={}Средний курс - {0:F2}}" />
+                       StringFormat={}Средний курс - {0:F2}}"
+                       Classes="MiniStatistic" />
         </StackPanel>
-        <DataGrid ItemsSource="{Binding SelectedData}"
-                  GridLinesVisibility="All"
-                  Margin="20"
-                  AutoGenerateColumns="True"/>
+        <DataGrid DockPanel.Dock="Bottom"
+            ItemsSource="{Binding SelectedStatistic}"
+            Margin="20"
+            AutoGenerateColumns="True" IsReadOnly="True" 
+            GridLinesVisibility="All"
+            BorderThickness="1" BorderBrush="Gray"
+            />
     </DockPanel>
 </UserControl>

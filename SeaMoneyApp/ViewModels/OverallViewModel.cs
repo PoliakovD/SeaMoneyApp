@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using ReactiveUI;
 using SeaMoneyApp.Extensions;
-using SeaMoneyApp.ViewModels.OveralViewModels;
+using SeaMoneyApp.ViewModels.OverallViewModels;
 
 namespace SeaMoneyApp.ViewModels;
 

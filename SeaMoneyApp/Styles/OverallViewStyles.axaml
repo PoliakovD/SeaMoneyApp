@@ -122,5 +122,27 @@
 <Style Selector="Button.btn-secondary:pressed">
     <Setter Property="Background" Value="#3B3A39" />
 </Style>
+    
+    <Style Selector="TextBlock.Statistic">
+        <Setter Property="Margin" Value="10,5,10,5" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="DarkBlue" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="35" />
+        <Setter Property="MinWidth" Value="100" />
+    </Style>
+    
+    <Style Selector="TextBlock.MiniStatistic">
+        <Setter Property="Margin" Value="10,0,0,0" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="DarkBlue" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="MinHeight" Value="30" />
+        <Setter Property="MinWidth" Value="100" />
+        
+    </Style>
+
 
 </Styles>

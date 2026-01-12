@@ -7,7 +7,7 @@ using SeaMoneyApp.Extensions;
 using SeaMoneyApp.Models;
 using Splat;
 
-namespace SeaMoneyApp.ViewModels.OveralViewModels;
+namespace SeaMoneyApp.ViewModels.OverallViewModels;
 
 public class AppSettingsViewModel : RoutableViewModel
 {
