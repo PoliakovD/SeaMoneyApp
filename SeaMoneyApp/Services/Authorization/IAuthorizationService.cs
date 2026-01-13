@@ -14,6 +14,7 @@ public interface IAuthorizationService
     IObservable<string?> WhenErrorMessageChanged { get; }
     IObservable<bool> WhenRememberMeChanged { get; }
     bool Login(string? username, string? password, bool rememberMe);
+    void AutoLogin(string? username);
     bool Register(string? login, string? password, Position? position, short? toursInRank);
     void Logout();
     void FlushErrorMessage();

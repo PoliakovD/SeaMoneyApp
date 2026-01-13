@@ -12,20 +12,19 @@ namespace SeaMoneyApp.Models;
 
 public class ContractStatistic
 {
-    private ContractStates State { get; set;}
+    private ContractStates State { get; set; }
     public Contract? Contract { get; set; }
     public double DurationDays { get; set; }
     public double PassedDays { get; set; }
-    
-  
-    
+
+
     public double LeftDays => DurationDays - PassedDays;
     public Dictionary<int, ContractStatisticValue> MonthlyStatistic { get; set; } = [];
     public int ToursInRank { get; set; } = 0;
     public decimal CurrentAchivedWageRub { get; set; }
     public decimal CurrentAchivedWageDollar { get; set; }
 
-    public decimal AverageCource => CurrentAchivedWageRub / CurrentAchivedWageDollar;
+    public decimal AverageCource => CurrentAchivedWageDollar == 0?0: CurrentAchivedWageRub / CurrentAchivedWageDollar;
     public decimal DiferenceRub => MaxAvailableWageRub - CurrentAchivedWageRub;
     public decimal DiferenceDollar => MaxAvailableWageDollar - CurrentAchivedWageDollar;
     public decimal MaxAvailableWageRub { get; set; }
@@ -40,16 +39,17 @@ public class ContractStatistic
         PassedDays = (DateTime.Today.Date - Contract.BeginDate + TimeSpan.FromDays(1)).TotalDays;
 
         if (PassedDays > DurationDays) PassedDays = DurationDays;
-
-        ToursInRank = wageLogs.First().ToursInRank;
-
         InitState();
+        ToursInRank = Locator.Current.GetService<AppSession>().CurrentAccount.ToursInRank;
+        if (wageLogs.Any())
+        {
+            ToursInRank = wageLogs.FirstOrDefault().ToursInRank;
+            
+            InitCurrentAchivedWage(wageLogs);
+        }
         InitMaxAvailableWage();
-        InitCurrentAchivedWage(wageLogs);
-        
-        
     }
-    
+
     private void InitCurrentAchivedWage(IEnumerable<WageLog> wageLogs)
     {
         var contractWages = wageLogs.Where(x => x.Contract!.Id == Contract!.Id);
@@ -57,16 +57,16 @@ public class ContractStatistic
         foreach (var wageLog in contractWages)
         {
             var received = wageLog.AmountInRub;
-            
+
             var month = wageLog.Date!.Value.Month;
             if (wageLog.Date.Value.Day < 15) --month;
 
             if (month == 0) month = 12;
-            
+
             var stat = MonthlyStatistic.ContainsKey(month) ? MonthlyStatistic[month] : new ContractStatisticValue();
-            stat.AchivedDollar += Math.Round(wageLog.AmountInDollars!.Value,2);
+            stat.AchivedDollar += Math.Round(wageLog.AmountInDollars!.Value, 2);
             stat.AchivedRub += received!.Value;
-            
+
             MonthlyStatistic.TryAdd(month, stat);
 
             CurrentAchivedWageRub += received.Value;
@@ -79,7 +79,7 @@ public class ContractStatistic
         int defaultDay = 15;
         var db = Locator.Current.GetService<DataBaseContext>();
         int year = Contract!.BeginDate.Year;
-        for (int month = Contract.BeginDate.Month; month != Contract.EndDate!.Value.Month+1; month++)
+        for (int month = Contract.BeginDate.Month; month != Contract.EndDate!.Value.Month + 1; month++)
         {
             int workedDaysInMonth = 0;
             var daysInMonth = DateTime.DaysInMonth(year, month);
@@ -103,21 +103,22 @@ public class ContractStatistic
             var fullMonthWage = db!.GetMonthlyWage(Contract.Position!, ToursInRank, year);
             var availableMonthWageDoll = fullMonthWage * (workedDaysInMonth / 30.0m);
             var availableMonthWageRub = availableMonthWageDoll * course.Value;
-            
+
             var stat = MonthlyStatistic.ContainsKey(month) ? MonthlyStatistic[month] : new ContractStatisticValue();
-            stat.MaxDoll = Math.Round(availableMonthWageDoll,2);
-            stat.MaxRub =  Math.Round(availableMonthWageRub,2);
+            stat.MaxDoll = Math.Round(availableMonthWageDoll, 2);
+            stat.MaxRub = Math.Round(availableMonthWageRub, 2);
             stat.Month = GetMonth(month);
-            
+
             MonthlyStatistic.TryAdd(month, stat);
 
-            if (month == 12 && month != Contract.EndDate!.Value.Month) 
+            if (month == 12 && month != Contract.EndDate!.Value.Month)
             {
                 month = 0;
                 ++year;
             }
-            MaxAvailableWageRub+=stat.MaxRub;
-            MaxAvailableWageDollar += stat.MaxDoll ;
+
+            MaxAvailableWageRub += stat.MaxRub;
+            MaxAvailableWageDollar += stat.MaxDoll;
         }
     }
 
@@ -133,7 +134,7 @@ public class ContractStatistic
         }
     }
 
-    public string StateString() 
+    public string StateString()
     {
         return State switch
         {
@@ -154,12 +155,12 @@ public class ContractStatistic
         // return result;
         return MonthlyStatistic.Select((k) => k.Value.AchivedRub).ToList();
     }
+
     public List<decimal> GetMaxWages()
     {
         return MonthlyStatistic.Select((k) => k.Value.MaxRub).ToList();
-     
     }
-    
+
 
     public override string ToString()
     {
@@ -191,12 +192,10 @@ public class ContractStatisticValue()
 {
     public string Month { get; set; }
     public decimal AchivedRub { get; set; } = 0.0m;
-    public decimal MaxRub { get; set; }= 0.0m;
-    public decimal AchivedDollar { get; set; }= 0.0m;
-    public decimal MaxDoll { get; set; }= 0.0m;
-    
+    public decimal MaxRub { get; set; } = 0.0m;
+    public decimal AchivedDollar { get; set; } = 0.0m;
+    public decimal MaxDoll { get; set; } = 0.0m;
 }
-
 
 public enum ContractStates
 {

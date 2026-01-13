@@ -61,6 +61,7 @@ public class WageControlService: ReactiveObject
     {
         foreach (var contract in UserContracts)
         {
+            
             var statistic = new ContractStatistic(contract, WageLogs);
             ContractWageLogsDictionary.Add(contract,statistic );
             

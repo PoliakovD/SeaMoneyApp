@@ -374,12 +374,11 @@ public class DataBaseContext : DbContext
         var findedBaseWage = Salaries
             .Include(x => x.Position)
             .Where(x => x.Position!.Id == position.Id)
-            .OrderBy(x => Math.Abs(x.Year - year)).FirstOrDefault();
-
+            .OrderBy(x => Math.Abs(year-x.Year)).FirstOrDefault();
         var findedPersonalBonus = PersonalBonuses
             .Include(x => x.Position)
-            .Where(x => x.Position!.Id == position.Id && x.ToursInRank == toursInRank)
-            .OrderBy(x => Math.Abs(x.year - year)).FirstOrDefault();
+            .Where(x => x.Position.Id == position.Id&&x.ToursInRank==toursInRank)
+            .OrderBy(x => Math.Abs(year-x.year)).FirstOrDefault();
 
         if (findedBaseWage != null) result += findedBaseWage.Total;
         if (findedPersonalBonus != null) result += findedPersonalBonus.PersonalBonusValue;

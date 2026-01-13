@@ -115,12 +115,17 @@
                        StringFormat={}Средний курс - {0:F2}}"
                        Classes="MiniStatistic" />
         </StackPanel>
-        <DataGrid DockPanel.Dock="Bottom"
-            ItemsSource="{Binding SelectedStatistic}"
-            Margin="20"
-            AutoGenerateColumns="True" IsReadOnly="True" 
-            GridLinesVisibility="All"
-            BorderThickness="1" BorderBrush="Gray"
+        <Grid  DockPanel.Dock="Bottom">
+            <DataGrid
+                ItemsSource="{Binding SelectedStatistic}"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                Margin="20"
+                AutoGenerateColumns="True" IsReadOnly="True" 
+                GridLinesVisibility="All"
+                BorderThickness="1" BorderBrush="Gray"
             />
+        </Grid>
+        
     </DockPanel>
 </UserControl>

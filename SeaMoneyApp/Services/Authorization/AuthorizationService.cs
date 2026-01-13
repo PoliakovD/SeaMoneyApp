@@ -86,6 +86,17 @@ public class AuthorizationService : IAuthorizationService, IDisposable
         return false;
     }
 
+    public void AutoLogin(string? username)
+    {
+        var account = _dbContext.Accounts
+            .Include(a => a.Position)
+            .FirstOrDefault(u => u.Login == username);
+        _isLoggedInSubject.OnNext(true);
+        _errorMessageSubject.OnNext(null);
+        _loggedInAccount.OnNext(account);
+        _lastLoginTime.OnNext(DateTime.Now);
+    }
+
     public bool Register(string? login, string? password, Position? position, short? toursInRank)
     {
         _errorMessageSubject.OnNext(null); // Сброс ошибки
@@ -137,11 +148,8 @@ public class AuthorizationService : IAuthorizationService, IDisposable
             _dbContext.Accounts.Add(account);
             // Уведомляем подписчиков
             _dbContext.SaveChanges();
-            _isLoggedInSubject.OnNext(true);
-            _errorMessageSubject.OnNext(null);
-            _loggedInAccount.OnNext(account);
-            _lastLoginTime.OnNext(DateTime.Now);
-
+            var uName=_dbContext.Accounts.FirstOrDefault(u => u.Login == login)!.Login;
+            AutoLogin(uName);
             LogHost.Default.Debug("User registred and logged in: " + login);
             return true;
         }

@@ -14,6 +14,7 @@ public class LoginViewModel : RoutableViewModel
     private string? _password = string.Empty;
     public ReactiveCommand<Unit, Unit>? LoginCommand { get; private set; }
     public ReactiveCommand<Unit, Unit>? ToRegistrationCommand { get; private set; }
+    public IAuthorizationService AuthorizationService => Locator.Current.GetService<IAuthorizationService>();
 
     public string? Password
     {
@@ -48,16 +49,14 @@ public class LoginViewModel : RoutableViewModel
 
     public LoginViewModel()
     {
-        var authService = Locator.Current.GetService<IAuthorizationService>()
-                          ?? throw new InvalidOperationException("IAuthorizationService not registered");
 
 
         LoginCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (authService.Login(Username, Password, RememberMe))
+                if (AuthorizationService.Login(Username, Password, RememberMe))
                 {
                     // очищаем ErrorMessage
-                    authService.FlushErrorMessage();
+                    AuthorizationService.FlushErrorMessage();
                     GoToOverallView();
                     await Locator.Current.GetService<AppSession>()!.SaveSessionAsync();
                 }
@@ -73,7 +72,7 @@ public class LoginViewModel : RoutableViewModel
 
 
         // Подписываемся на изменения ошибки
-        authService.WhenErrorMessageChanged
+        AuthorizationService.WhenErrorMessageChanged
             .BindTo(this, vm => vm.ErrorMessage);
         
         CheckRestoredAppSession();
@@ -98,8 +97,10 @@ public class LoginViewModel : RoutableViewModel
         var appSession = Locator.Current.GetService<AppSession>();
         LogHost.Default.Debug($"CheckRestoredAppSession appSession is null? = {appSession == null}");
         LogHost.Default.Debug($"appSession.CurrentAccount is null? = {appSession.CurrentAccount == null}");
+       
         if (appSession.CurrentAccount != null)
         {
+            AuthorizationService.AutoLogin(appSession.CurrentAccount.Login);
             GoToOverallView();
         }
     }
