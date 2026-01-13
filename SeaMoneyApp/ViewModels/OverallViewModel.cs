@@ -28,7 +28,7 @@ public class OverallViewModel : RoutableViewModel, IScreenBackCommand
     public OverallViewModel()
     {
         Router ??= new RoutingState();
-        
+        Router.NavigateAndNotCache<MainStatisticViewModel>();
 
         ToLogsCommand = ReactiveCommand.Create(() => { Router.NavigateAndCache<LogsViewModel>(); });
        
