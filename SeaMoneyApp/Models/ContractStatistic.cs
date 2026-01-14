@@ -52,7 +52,9 @@ public class ContractStatistic
 
     private void InitCurrentAchivedWage(IEnumerable<WageLog> wageLogs)
     {
-        var contractWages = wageLogs.Where(x => x.Contract!.Id == Contract!.Id);
+        var contractWages = wageLogs
+            .Where(x => x.Contract!.Id == Contract!.Id)
+            .OrderBy(x=>x.Date);
         if (contractWages is null) return;
         foreach (var wageLog in contractWages)
         {

@@ -89,8 +89,8 @@ public class ContractStatisticViewModel : RoutableViewModel
 
     public Func<double, string> LabelFormatter => (value) =>
     {
-        var initMonth = Statistic.MonthlyStatistic.Keys.First();
-        var intValue = initMonth + value;
+        var initMonth = Statistic.Contract!.BeginDate.Month;
+        var intValue = initMonth + (int)value;
 
         if (intValue > 12) intValue -= 12;
         
