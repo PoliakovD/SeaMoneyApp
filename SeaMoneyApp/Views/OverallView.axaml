@@ -51,7 +51,6 @@
 
         </StackPanel>
         <Grid>
-
             <reactiveUi:RoutedViewHost Router="{Binding Router}">
                 <reactiveUi:RoutedViewHost.DefaultContent>
                     <TextBlock> Welcome!!!</TextBlock>
